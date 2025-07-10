@@ -4,20 +4,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a bilingual (English/French/German) classical music website for Avanti Classic, built with Angular 11. The project showcases artists, releases, and videos with internationalization support. It includes both a main Angular application and a static site generator (SSG) built with Deno and Eta templates.
+This is a multilingual (English/French/German) classical music website for Avanti Classic. Currently migrating from Baptiste's custom SSG to Astro for better maintainability and ecosystem support.
+
+### Current Architecture
+- **Astro Site** (`astro-site/`): Modern static site generator with Tailwind CSS
+- **Legacy SSG** (`ssg-eta/`): Baptiste's custom Deno/Eta implementation (working reference)
+- **Admin CMS**: Planned Supabase + Next.js backend for content management
 
 ## Development Commands
 
-### Angular Application
-- **Development server**: `npm start` or `ng serve` - Serves at http://localhost:4200
-- **Build**: `npm run build` or `ng build --prod` - Production build with optimizations
-- **Test**: `npm test` or `ng test` - Runs unit tests via Karma
-- **Lint**: `npm run lint` or `ng lint` - Runs TSLint for code quality
-- **E2E Tests**: `npm run e2e` or `ng e2e` - Runs end-to-end tests via Protractor
+### Astro Application (astro-site/)
+- **Development server**: `cd astro-site && npm run dev` - Serves at http://localhost:4321
+- **Build**: `cd astro-site && npm run build` - Production build with optimizations
+- **Preview**: `cd astro-site && npm run preview` - Preview production build locally
 
-### Static Site Generator (ssg-eta/)
-- **Build SSG**: `deno run --allow-read --allow-write main.ts` - Generates static site in `_site/`
-- **Watch mode**: `deno run --allow-read --allow-write watch.ts` - Watches for changes and rebuilds
+### Static Site Generator (ssg-eta/) - Legacy
+- **Build SSG**: `deno run --allow-read --allow-write --allow-env main.ts` - Generates static site in `_site/`
+- **Watch mode**: `deno run --allow-read --allow-write --allow-env watch.ts` - Watches for changes and rebuilds
 - **Serve locally**: `python3 -m http.server 8080` (from `_site/` directory)
 
 ## Architecture

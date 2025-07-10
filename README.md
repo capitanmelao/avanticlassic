@@ -1,141 +1,147 @@
-# Avanticlassic - Classical Music Label Website
+# Avanticlassic Website
 
-A multilingual classical music website for Avanti Classic, a boutique Belgian record label. Built with a modern SSG architecture and upcoming admin CMS.
+A multilingual classical music label website built with Astro, featuring artists, releases, and videos with comprehensive content management.
 
-## 🎼 Project Overview
+## 🚀 Quick Start
 
-Showcases classical music artists, releases, and videos with elegant design and multilingual support (English, French, German).
+### Local Development
 
-**Live Site**: https://ssg-eta.vercel.app/ (Baptiste's SSG implementation)
-
-## 🏗️ Architecture
-
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Admin CMS     │    │   SSG System    │    │   Static Site   │
-│   (Coming Soon) │───▶│   (ssg-eta/)    │───▶│   (Vercel)      │
-│   • Secure Auth │    │   • Deno + Eta  │    │   • Multi-lang  │
-│   • Image Upload│    │   • JSON Data   │    │   • Fast + SEO  │
-│   • Content Mgmt│    │   • Auto Build  │    │   • CDN Ready   │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-```
-
-## 🚀 Current System (SSG)
-
-Baptiste's excellent static site generator using Deno and Eta templates.
-
-### Quick Start
 ```bash
-cd ssg-eta
-deno run --allow-read --allow-write main.ts    # Build site
-deno run --allow-read --allow-write watch.ts   # Development mode
-cd _site && python3 -m http.server 8080       # Local preview
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+# Site will be available at http://localhost:4321
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
 ```
 
-### Content Management (Current)
-- **Artists**: Edit `data/artists.json`
-- **Releases**: Edit `data/releases.json` 
-- **Videos**: Edit `data/videos.json`
-- **Translations**: Edit `i18n/*.json` files
-- **Images**: Place in `assets/images/`
+### Environment Setup
 
-## 🔐 Upcoming: Admin CMS
-
-Secure content management system for Fred (the label owner):
-- **Single Admin Login** with 2FA
-- **Image Upload** with automatic optimization
-- **Rich Content Editor** for descriptions/tracklists
-- **One-Click Publishing** to live site
-- **No Code Required** - web interface only
-
-### Cost-Effective Hosting
-- **Supabase**: Free tier (auth + storage)
-- **Vercel**: Free tier (static hosting)
-- **Total Cost**: ~$1/month (just domain)
-
-## 📁 Repository Structure
-
-```
-avanticlassic/
-├── ssg-eta/                 # Baptiste's SSG system (current)
-│   ├── data/               # JSON content files
-│   ├── eta-files/          # Templates and layouts
-│   ├── i18n/               # Translation files
-│   ├── services/           # Core SSG services
-│   └── _site/              # Generated static site
-├── documentation/          # Complete project docs
-│   ├── admin-cms-system.feat.md     # CMS specification
-│   ├── ssg-module.spec.md           # SSG technical docs
-│   └── *.md                         # Feature specs & guides
-└── CLAUDE.md              # Development guidelines
+1. Copy environment variables:
+```bash
+cp .env.example .env
 ```
 
-## 🎯 Development Roadmap
+2. Update `.env` with your Supabase credentials:
+```env
+SUPABASE_URL=https://cfyndmpjohwtvzljtypr.supabase.co
+SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+SITE_URL=https://your-domain.vercel.app
+```
 
-### ✅ Phase 1: Complete (Analysis & Cleanup)
-- Repository cleaned and organized
-- Comprehensive documentation created
-- SSG system analyzed and documented
+## 🌍 Multilingual Structure
 
-### 🔄 Phase 2: Admin CMS Development (Next)
-- Supabase backend setup
-- Admin authentication with 2FA
-- Content management interface
+The site supports English (en), French (fr), and German (de):
+
+- `/en/` - English content
+- `/fr/` - French content  
+- `/de/` - German content
+- `/` - Redirects to `/en/`
+
+## 📁 Project Structure
+
+```
+/
+├── public/
+│   ├── images/           # Artist and release images
+│   ├── fonts/           # Helvetica font files
+│   └── favicon.ico
+├── src/
+│   ├── data/            # JSON data files
+│   ├── i18n/            # Translation files
+│   ├── layouts/         # Astro layouts
+│   ├── pages/           # Route pages
+│   ├── styles/          # Global CSS
+│   ├── types/           # TypeScript types
+│   └── utils/           # Utility functions
+├── astro.config.mjs     # Astro configuration
+├── tailwind.config.mjs  # Tailwind CSS config
+└── vercel.json          # Vercel deployment config
+```
+
+## 🎵 Features
+
+### Artists System
+- Paginated artist listing (6 per page)
+- Individual artist pages with biographies
+- Artist image galleries (responsive sizes)
+- Release and social media integration
+
+### Releases Catalog
+- Complete discography with cover art
+- Tracklist rendering with Markdown support
+- Artist associations and purchase links
+- Responsive album grid layout
+
+### Video Gallery
+- YouTube integration with thumbnails
+- Modal video player with autoplay
+- Paginated video listing
+- Mobile-optimized playback
+
+### Content Management
+- JSON-based content system
+- Multilingual translation support
+- SEO-optimized with hreflang tags
+- Open Graph meta tags
+
+## 🎨 Design System
+
+- **Framework**: Astro with Tailwind CSS
+- **Typography**: Custom Helvetica fonts
+- **Layout**: Responsive, mobile-first design
+- **Colors**: Blue accent (#38bdf8) with neutral grays
+- **Components**: Clean, minimal aesthetic
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+
+1. Connect your GitHub repository to Vercel
+2. Set environment variables in Vercel dashboard
+3. Deploy automatically on push to main branch
+
+### Environment Variables for Vercel
+
+```
+SUPABASE_URL=https://cfyndmpjohwtvzljtypr.supabase.co
+SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+SITE_URL=https://your-domain.vercel.app
+```
+
+## 📊 Performance
+
+- **Build**: 202 pages generated in ~1.5 seconds
+- **Languages**: 3 (EN/FR/DE)
+- **SEO**: Complete hreflang implementation
+- **Images**: Optimized responsive variants
+- **Loading**: Fast static site generation
+
+## 🔮 Future: Admin CMS
+
+Phase 2 will include:
+- Supabase-powered admin backend
+- 2FA authentication system
+- Rich content editor
 - Image upload and processing
-- Auto-publishing system
+- One-click publishing workflow
 
-### 🔮 Phase 3: Enhancement
-- Advanced search features
-- Analytics integration
-- Performance optimization
-- Mobile app (optional)
+## 🛠 Development
 
-## 🛠️ Technology Stack
+Built with modern web technologies:
+- **Astro 4.x** - Static site generation
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Utility-first styling
+- **Supabase** - Backend infrastructure (Phase 2)
 
-### Current (SSG)
-- **Runtime**: Deno
-- **Templates**: Eta
-- **Styling**: CSS + Custom components
-- **Deployment**: Vercel
-- **Content**: JSON files
+## 📄 License
 
-### Planned (Admin CMS)
-- **Backend**: Supabase (PostgreSQL + Auth + Storage)
-- **Frontend**: Next.js + Shadcn/ui
-- **Security**: JWT + TOTP 2FA
-- **Integration**: GitHub API + Vercel webhooks
-
-## 📊 Key Features
-
-- **🌍 Multilingual**: English, French, German
-- **📱 Responsive**: Mobile-first design
-- **⚡ Fast**: Static generation + CDN
-- **🔍 SEO**: Optimized meta tags and structure
-- **🎨 Elegant**: Baptiste's beautiful design
-- **🔒 Secure**: Admin-only content management
-- **💰 Cost-Effective**: <$50/month total hosting
-
-## 🤝 Credits
-
-- **Baptiste**: Original SSG architecture and elegant design
-- **Carlos**: Documentation, cleanup, and upcoming CMS
-- **Fred**: Content and label owner
-
-## 📖 Documentation
-
-See the `documentation/` folder for:
-- Technical specifications
-- Feature documentation
-- Development guidelines
-- Deployment procedures
-
-## 🚀 Getting Started
-
-1. **Explore the current site**: https://ssg-eta.vercel.app/
-2. **Read the docs**: Check `documentation/` folder
-3. **Test the SSG**: Follow Quick Start above
-4. **Follow development**: Watch for CMS updates
-
----
-
-*Transforming classical music presentation with modern web technology* 🎼
+Copyright © 2024 Avanticlassic. All rights reserved.
