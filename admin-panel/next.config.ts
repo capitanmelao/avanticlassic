@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  basePath: "/avantiadmin",
+  assetPrefix: "/avantiadmin",
+  trailingSlash: true,
 };
-
-export default nextConfig;
