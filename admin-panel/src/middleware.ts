@@ -1,20 +1,13 @@
-import { withAuth } from "next-auth/middleware"
+import { auth } from '@/auth'
 
-export default withAuth(
-  function middleware(req) {
-    // Additional middleware logic can go here
-  },
-  {
-    callbacks: {
-      authorized: ({ token }) => {
-        // Check if user has a valid token
-        return !!token
-      },
-    },
+export default auth((req) => {
+  // req.auth contains the session
+  if (!req.auth && req.nextUrl.pathname.startsWith('/dashboard')) {
+    const newUrl = new URL('/auth/signin', req.nextUrl.origin)
+    return Response.redirect(newUrl)
   }
-)
+})
 
-// Protect these routes
 export const config = {
   matcher: [
     '/dashboard/:path*',

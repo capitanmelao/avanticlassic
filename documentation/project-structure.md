@@ -29,29 +29,32 @@ avanticlassic/
 
 ## 🔐 **Admin Panel Structure (`admin-panel/`)**
 
-**Technology**: Next.js 14 + TypeScript + Tailwind CSS + NextAuth.js
+**Technology**: Next.js 15 + TypeScript + Tailwind CSS + Auth.js v5 + Supabase
+**Live URL**: https://avanticlassic-admin.vercel.app
 
 ```
 admin-panel/
 ├── 📄 README.md                    # Admin panel documentation
 ├── 📄 package.json                 # Next.js dependencies
 ├── 📄 next.config.ts               # Next.js configuration
-├── 📄 tailwind.config.ts           # Tailwind configuration
+├── 📄 tailwind.config.ts           # Tailwind configuration  
 ├── 📄 tsconfig.json                # TypeScript configuration
 ├── 📄 .env.example                 # Environment template
 ├── 📄 .env.local                   # Local environment (git ignored)
+├── 📄 .env.production              # Production environment (deployment)
+├── 📄 vercel.json                  # Vercel deployment configuration
 │
 ├── 📂 src/
 │   ├── 📂 app/                     # Next.js App Router
 │   │   ├── 📄 layout.tsx           # Root layout with providers
 │   │   ├── 📄 page.tsx             # Home page (redirects to dashboard)
-│   │   ├── 📄 providers.tsx        # NextAuth session provider
+│   │   ├── 📄 providers.tsx        # Session provider wrapper
 │   │   ├── 📄 globals.css          # Global styles
 │   │   │
-│   │   ├── 📂 api/
-│   │   │   └── 📂 auth/
+│   │   ├── 📂 api/                 # API Routes
+│   │   │   └── 📂 auth/            # Auth.js v5 API routes
 │   │   │       └── 📂 [...nextauth]/
-│   │   │           └── 📄 route.ts # NextAuth configuration
+│   │   │           └── 📄 route.ts # Auth handlers (GET/POST)
 │   │   │
 │   │   ├── 📂 auth/
 │   │   │   ├── 📂 signin/
@@ -59,20 +62,30 @@ admin-panel/
 │   │   │   └── 📂 error/
 │   │   │       └── 📄 page.tsx     # Authentication error page
 │   │   │
-│   │   └── 📂 dashboard/
-│   │       └── 📄 page.tsx         # Main admin dashboard
+│   │   └── 📂 dashboard/           # Protected admin area
+│   │       ├── 📄 page.tsx         # Main admin dashboard
+│   │       └── 📂 artists/         # Artist management
+│   │           ├── 📄 page.tsx     # Artists list
+│   │           └── 📂 new/
+│   │               └── 📄 page.tsx # Add new artist
 │   │
-│   └── 📄 middleware.ts            # Route protection middleware
+│   ├── 📄 auth.ts                  # Auth.js v5 configuration
+│   ├── 📄 middleware.ts            # Route protection middleware
+│   └── 📂 lib/
+│       └── 📄 supabase.ts          # Supabase client and types
 │
 └── 📂 public/                      # Static assets for admin panel
 ```
 
 ### **Admin Panel Key Features:**
-- 🔐 **Google OAuth Authentication** with NextAuth.js
-- 🛡️ **Single Admin Access** (Fred's email only)
+- 🔐 **Google OAuth Authentication** with Auth.js v5
+- 🛡️ **Single Admin Access** (carloszamalloa@gmail.com only)
 - 📱 **Responsive Design** with Tailwind CSS
 - 🔒 **Protected Routes** with middleware
 - 📊 **Dashboard Interface** with content statistics
+- 🗄️ **Supabase Integration** for data management
+- ⚡ **Server Actions** for modern form handling
+- 🚀 **Production Deployed** at avanticlassic-admin.vercel.app
 
 ---
 

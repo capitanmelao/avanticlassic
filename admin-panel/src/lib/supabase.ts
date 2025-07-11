@@ -19,13 +19,15 @@ if (!supabaseAnonKey) {
 // Client for browser-side operations
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-// Admin client for server-side operations
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false
-  }
-})
+// Admin client for server-side operations (only if service key exists)
+export const supabaseAdmin = supabaseServiceRoleKey 
+  ? createClient(supabaseUrl, supabaseServiceRoleKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    })
+  : null
 
 // Database types
 export interface Artist {

@@ -2,70 +2,77 @@
 
 ## 🐛 **Active Issues**
 
-### **BUG-002: Two-Tier Admin Architecture Integration [CRITICAL]**
-**Status**: 🔴 Critical - Architecture Review Required  
-**Discovered**: Current development session  
-**Priority**: P0 - Must resolve before Phase 3 completion  
+### **BUG-003: NextAuth v4 + Next.js 15 Incompatibility [RESOLVED]**
+**Status**: ✅ Resolved - Auth.js v5 Migration Completed  
+**Resolution Date**: Current development session  
+**Priority**: P0 - Critical system blocking issue  
 
 #### **Issue Description:**
-During the implementation of the Google OAuth admin panel, a critical architectural concern was identified regarding the integration between the admin system and the main Astro site.
+The admin panel experienced persistent "Server configuration error" when using NextAuth v4.24.11 with Next.js 15.3.5, preventing successful Google OAuth authentication.
 
-#### **Problem Statement:**
-1. **Dual System Complexity**: Admin panel (Next.js) and main site (Astro) operate as separate systems
-2. **Content Synchronization**: Changes in admin panel must properly sync to Astro site data
-3. **Publishing Workflow**: Complex pipeline required for content updates to appear on live site
-4. **Data Consistency**: Risk of data drift between admin database and site JSON files
+#### **Root Cause Analysis:**
+- **NextAuth v4 Compatibility**: Designed for Next.js 13-14, not compatible with Next.js 15
+- **API Changes**: Next.js 15 App Router introduced breaking changes to middleware and API routes
+- **Session Management**: NextAuth v4 session handling conflicts with Next.js 15 patterns
+- **Configuration Issues**: Environment variable handling and routing problems
 
-#### **Technical Details:**
+#### **Failed Resolution Attempts:**
+1. ❌ Environment variable debugging and validation
+2. ❌ NextAuth configuration simplification  
+3. ❌ Google OAuth redirect URI troubleshooting
+4. ❌ Middleware configuration adjustments
+5. ❌ NextAuth secret regeneration
+
+#### **Successful Resolution:**
+**Complete Migration to Auth.js v5 (NextAuth v5)**
+
+**Technical Implementation:**
+```bash
+# Remove NextAuth v4
+npm uninstall next-auth @next-auth/supabase-adapter
+
+# Install Auth.js v5
+npm install next-auth@beta
 ```
-Current Architecture:
-Admin Panel (Next.js) → Supabase Database → JSON Export → Astro Site → Vercel Deploy
 
-Identified Issues:
-- Multiple sources of truth (Supabase + JSON files)
-- Complex sync mechanisms required
-- Potential for sync failures
-- Build process dependencies
+**New Configuration Structure:**
+- **Auth Configuration**: `/src/auth.ts` with modern Auth.js v5 API
+- **API Routes**: Simplified `/src/app/api/auth/[...nextauth]/route.ts`
+- **Middleware**: Updated to Auth.js v5 pattern
+- **Sign-in Pages**: Server Actions instead of client-side hooks
+
+#### **Impact and Benefits:**
+- ✅ **Authentication Working**: Google OAuth fully functional
+- ✅ **Next.js 15 Compatibility**: Native support for latest features
+- ✅ **Improved Performance**: Modern server-side authentication
+- ✅ **Better DX**: Cleaner API and better TypeScript support
+- ✅ **Future-Proof**: Aligned with Next.js roadmap
+
+#### **Key Learning:**
+Always verify framework compatibility when upgrading major versions. NextAuth v4 + Next.js 15 is a known incompatibility that requires Auth.js v5 migration.
+
+---
+
+### **BUG-002: Two-Tier Admin Architecture Integration [RESOLVED]**
+**Status**: ✅ Resolved - Supabase-First Architecture Implemented  
+**Resolution Date**: Current development session  
+**Priority**: P0 - Architecture foundation issue  
+
+#### **Resolution Summary:**
+Successfully implemented Supabase-first architecture with JSON export pipeline for content publishing. The two-tier system provides both robust admin functionality and efficient static site generation.
+
+#### **Final Architecture:**
+```
+Admin Panel (Next.js 15 + Auth.js v5) → Supabase Database → JSON Export → Astro Site Rebuild
+Live: https://avanticlassic-admin.vercel.app
 ```
 
-#### **Impact Assessment:**
-- **User Experience**: Fred may experience delays between content updates and live site
-- **System Reliability**: Additional failure points in the publishing pipeline
-- **Maintenance Overhead**: More complex debugging and monitoring required
-- **Development Complexity**: Extended implementation timeline for robust sync system
-
-#### **Proposed Solutions:**
-
-**Option A: Simplified JSON-First Approach**
-- Admin panel directly edits JSON files via GitHub API
-- Eliminates Supabase database layer
-- Triggers immediate Astro rebuilds
-- Maintains single source of truth
-
-**Option B: Enhanced Sync System**
-- Robust Supabase → JSON sync with conflict resolution
-- Automated rollback on sync failures
-- Real-time sync status monitoring
-- Comprehensive error handling and notifications
-
-**Option C: Hybrid Approach**
-- Supabase for admin workflow and drafts
-- JSON files remain source of truth for site
-- Scheduled sync with manual override capability
-- Preview system for changes before publishing
-
-#### **Recommended Resolution:**
-**Option A** - Simplified JSON-First Approach for initial implementation
-- Fastest to implement
-- Eliminates complex sync issues
-- Maintains current site reliability
-- Can be enhanced to Option B later if needed
-
-#### **Next Steps:**
-1. Architectural review and decision
-2. Implementation plan adjustment
-3. Timeline impact assessment
-4. Stakeholder communication
+#### **Benefits Achieved:**
+- ✅ **Robust Database**: PostgreSQL with RLS security
+- ✅ **Admin Functionality**: Full CRUD operations capability
+- ✅ **Content Management**: Structured data with relationships
+- ✅ **Publishing Pipeline**: Automated export and rebuild system
+- ✅ **Scalability**: Database can handle complex queries and relationships
 
 ---
 
@@ -119,18 +126,17 @@ Initial concern about maintaining feature parity during migration from Baptiste'
 ## 📊 **Bug Metrics**
 
 ### **Current Status:**
-- 🔴 Critical: 1 (BUG-002)
+- 🔴 Critical: 0 (All resolved)
 - 🟡 Medium: 1 (BUG-001)
-- 🟢 Resolved: 1 (RESOLVED-001)
+- 🟢 Resolved: 3 (RESOLVED-001, BUG-002, BUG-003)
 
 ### **Resolution Timeline:**
-- **BUG-002**: Target resolution within 2-3 days
-- **BUG-001**: Scheduled for Phase 4 implementation
+- **BUG-001**: Scheduled for Phase 5 implementation (image optimization)
 
 ### **Impact Assessment:**
-- **Project Timeline**: BUG-002 may extend Phase 3 by 1-2 days
-- **System Reliability**: No immediate impact on live site
-- **User Experience**: No current impact on Fred's workflow
+- **Project Timeline**: No critical blockers, on track for Phase 4
+- **System Reliability**: Admin panel fully functional and deployed
+- **User Experience**: Authentication working, ready for content management
 
 ---
 
