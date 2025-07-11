@@ -27,8 +27,8 @@ cp .env.example .env.local
 3. Enable the Google+ API
 4. Go to "Credentials" → "Create Credentials" → "OAuth 2.0 Client IDs"
 5. Set authorized redirect URIs:
-   - `http://localhost:3000/api/auth/callback/google` (development)
-   - `https://your-admin-domain.vercel.app/api/auth/callback/google` (production)
+   - `http://localhost:3001/api/auth/callback/google` (development)
+   - `https://avanticlassic.vercel.app/avantiadmin/api/auth/callback/google` (production)
 6. Copy Client ID and Client Secret to `.env.local`
 
 ### 3. Install Dependencies
@@ -43,7 +43,7 @@ npm install
 npm run dev
 ```
 
-Visit `http://localhost:3000` and sign in with Fred's Google account.
+Visit `http://localhost:3001/avantiadmin` and sign in with Fred's Google account.
 
 ## 🔧 Configuration
 

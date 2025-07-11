@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  basePath: "/avantiadmin",
-  assetPrefix: "/avantiadmin",
-  trailingSlash: true,
+  // Remove basePath for development to avoid routing issues
+  // basePath will be handled by Vercel deployment configuration
 };

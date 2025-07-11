@@ -164,9 +164,12 @@ export default function Dashboard() {
               <div className="p-5">
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Manage Artists</h3>
                 <p className="text-gray-600 mb-4">Add, edit, or remove artist profiles and biographies.</p>
-                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                <a
+                  href="/dashboard/artists"
+                  className="block w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium text-center"
+                >
                   Manage Artists
-                </button>
+                </a>
               </div>
             </div>
 

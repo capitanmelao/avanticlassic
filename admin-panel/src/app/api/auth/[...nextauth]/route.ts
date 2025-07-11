@@ -13,6 +13,12 @@ const authOptions: NextAuthOptions = {
       // Only allow Fred's email to access the admin panel
       const allowedEmail = process.env.ADMIN_EMAIL || 'fred@avanticlassic.com'
       
+      console.log('=== DEBUG SIGNIN ===')
+      console.log('User email:', user.email)
+      console.log('Allowed email:', allowedEmail)
+      console.log('Match:', user.email === allowedEmail)
+      console.log('==================')
+      
       if (user.email === allowedEmail) {
         return true
       }
