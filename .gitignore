@@ -28,3 +28,4 @@ pnpm-debug.log*
 old-astro-site/ssg-eta/
 public 2/
 avanti-classic-template/
+.vercel
