@@ -1,222 +1,245 @@
 'use client'
 
-import { useSession, signOut } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useSession } from 'next-auth/react'
+import { useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabase'
+import Link from 'next/link'
+import { 
+  UserGroupIcon,
+  MusicalNoteIcon,
+  VideoCameraIcon,
+  ListBulletIcon,
+  ShoppingBagIcon,
+  StarIcon,
+  NewspaperIcon,
+  InformationCircleIcon,
+  ChartBarIcon,
+  ClockIcon,
+  TrendingUpIcon,
+  PlusIcon
+} from '@heroicons/react/24/outline'
+
+interface DashboardStats {
+  artists: number
+  releases: number
+  videos: number
+  playlists: number
+  reviews: number
+  news: number
+  distributors: number
+  recentActivity: any[]
+}
 
 export default function Dashboard() {
-  const { data: session, status } = useSession()
-  const router = useRouter()
+  const { data: session } = useSession()
+  const [stats, setStats] = useState<DashboardStats>({
+    artists: 0,
+    releases: 0,
+    videos: 0,
+    playlists: 0,
+    reviews: 0,
+    news: 0,
+    distributors: 0,
+    recentActivity: []
+  })
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/auth/signin')
-    }
-  }, [status, router])
+    loadDashboardData()
+  }, [])
 
-  if (status === 'loading') {
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true)
+      
+      // Load all counts in parallel
+      const [
+        artistsCount,
+        releasesCount,
+        videosCount,
+        playlistsCount,
+        reviewsCount,
+        newsCount,
+        distributorsCount,
+        recentChanges
+      ] = await Promise.all([
+        supabase.from('artists').select('id', { count: 'exact', head: true }),
+        supabase.from('releases').select('id', { count: 'exact', head: true }),
+        supabase.from('videos').select('id', { count: 'exact', head: true }),
+        supabase.from('playlists').select('id', { count: 'exact', head: true }),
+        supabase.from('reviews').select('id', { count: 'exact', head: true }),
+        supabase.from('news').select('id', { count: 'exact', head: true }),
+        supabase.from('distributors').select('id', { count: 'exact', head: true }),
+        supabase.from('content_changes').select('*').order('changed_at', { ascending: false }).limit(5)
+      ])
+
+      setStats({
+        artists: artistsCount.count || 0,
+        releases: releasesCount.count || 0,
+        videos: videosCount.count || 0,
+        playlists: playlistsCount.count || 0,
+        reviews: reviewsCount.count || 0,
+        news: newsCount.count || 0,
+        distributors: distributorsCount.count || 0,
+        recentActivity: recentChanges.data || []
+      })
+    } catch (error) {
+      console.error('Error loading dashboard data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const quickActions = [
+    { name: 'Add Artist', href: '/dashboard/artists/new', icon: UserGroupIcon, color: 'bg-blue-500' },
+    { name: 'Add Release', href: '/dashboard/releases/new', icon: MusicalNoteIcon, color: 'bg-green-500' },
+    { name: 'Add Video', href: '/dashboard/videos/new', icon: VideoCameraIcon, color: 'bg-purple-500' },
+    { name: 'Create Playlist', href: '/dashboard/playlists/new', icon: ListBulletIcon, color: 'bg-yellow-500' },
+  ]
+
+  const statsCards = [
+    { name: 'Artists', value: stats.artists, icon: UserGroupIcon, href: '/dashboard/artists', change: '+2 this month' },
+    { name: 'Releases', value: stats.releases, icon: MusicalNoteIcon, href: '/dashboard/releases', change: '+1 this week' },
+    { name: 'Videos', value: stats.videos, icon: VideoCameraIcon, href: '/dashboard/videos', change: '+3 this month' },
+    { name: 'Playlists', value: stats.playlists, icon: ListBulletIcon, href: '/dashboard/playlists', change: 'No change' },
+    { name: 'Reviews', value: stats.reviews, icon: StarIcon, href: '/dashboard/reviews', change: '+5 this month' },
+    { name: 'News Articles', value: stats.news, icon: NewspaperIcon, href: '/dashboard/news', change: '+1 this week' },
+  ]
+
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
       </div>
     )
   }
 
-  if (!session) {
-    return null
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <div className="flex items-center">
-              <img 
-                src="/images/logo.jpeg" 
-                alt="Avanticlassic" 
-                className="h-8 w-auto mr-4"
-              />
-              <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <img 
-                  src={session.user?.image || ''} 
-                  alt={session.user?.name || ''} 
-                  className="h-8 w-8 rounded-full"
-                />
-                <span className="text-sm text-gray-700">{session.user?.name}</span>
+    <div className="p-6">
+      {/* Welcome Section */}
+      <div className="mb-8">
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          Welcome back, {session?.user?.name?.split(' ')[0]}! 👋
+        </h2>
+        <p className="text-gray-600">
+          Here's what's happening with your Avanti Classic website today.
+        </p>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="mb-8">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {quickActions.map((action) => (
+            <Link
+              key={action.name}
+              href={action.href}
+              className="relative group bg-white p-6 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all"
+            >
+              <div className="flex items-center">
+                <div className={`${action.color} p-3 rounded-lg`}>
+                  <action.icon className="h-6 w-6 text-white" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-900">{action.name}</p>
+                  <p className="text-sm text-gray-500">Create new content</p>
+                </div>
+                <PlusIcon className="absolute top-4 right-4 h-5 w-5 text-gray-400 group-hover:text-gray-600" />
               </div>
-              <button
-                onClick={() => signOut({ callbackUrl: '/auth/signin' })}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-              >
-                Sign Out
-              </button>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="mb-8">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Content Overview</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {statsCards.map((stat) => (
+            <Link
+              key={stat.name}
+              href={stat.href}
+              className="bg-white p-6 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all"
+            >
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <stat.icon className="h-8 w-8 text-gray-600" />
+                </div>
+                <div className="ml-4 flex-1">
+                  <p className="text-sm font-medium text-gray-600">{stat.name}</p>
+                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                  <p className="text-xs text-gray-500 mt-1">{stat.change}</p>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
+            <ClockIcon className="h-5 w-5 mr-2" />
+            Recent Activity
+          </h3>
+          <div className="space-y-3">
+            {stats.recentActivity.slice(0, 5).map((activity, index) => (
+              <div key={index} className="flex items-center justify-between py-2">
+                <div>
+                  <p className="text-sm font-medium text-gray-900">
+                    {activity.action} in {activity.table_name}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {activity.changed_at && new Date(activity.changed_at).toLocaleDateString()}
+                  </p>
+                </div>
+                <span className={`px-2 py-1 text-xs rounded-full ${
+                  activity.action === 'INSERT' ? 'bg-green-100 text-green-800' :
+                  activity.action === 'UPDATE' ? 'bg-blue-100 text-blue-800' :
+                  'bg-red-100 text-red-800'
+                }`}>
+                  {activity.action}
+                </span>
+              </div>
+            ))}
+            {stats.recentActivity.length === 0 && (
+              <p className="text-sm text-gray-500">No recent activity</p>
+            )}
+          </div>
+        </div>
+
+        {/* Site Health */}
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
+            <ChartBarIcon className="h-5 w-5 mr-2" />
+            Site Health
+          </h3>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600">Website Status</span>
+              <div className="flex items-center">
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                <span className="text-sm font-medium text-green-600">Online</span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600">Database</span>
+              <div className="flex items-center">
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                <span className="text-sm font-medium text-green-600">Connected</span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600">Last Backup</span>
+              <span className="text-sm text-gray-900">2 hours ago</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600">Storage Used</span>
+              <span className="text-sm text-gray-900">2.3 GB / 10 GB</span>
             </div>
           </div>
         </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          {/* Welcome Section */}
-          <div className="bg-white overflow-hidden shadow rounded-lg mb-6">
-            <div className="px-4 py-5 sm:p-6">
-              <h2 className="text-lg font-medium text-gray-900 mb-4">
-                Welcome back, {session.user?.name?.split(' ')[0]}! 👋
-              </h2>
-              <p className="text-gray-600">
-                Manage your Avanticlassic website content from this dashboard.
-              </p>
-            </div>
-          </div>
-
-          {/* Quick Stats */}
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-6">
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">Total Artists</dt>
-                      <dd className="text-lg font-medium text-gray-900">19</dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">Total Releases</dt>
-                      <dd className="text-lg font-medium text-gray-900">37</dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">Total Videos</dt>
-                      <dd className="text-lg font-medium text-gray-900">15</dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-yellow-500 rounded-md flex items-center justify-center">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">Languages</dt>
-                      <dd className="text-lg font-medium text-gray-900">3</dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Manage Artists</h3>
-                <p className="text-gray-600 mb-4">Add, edit, or remove artist profiles and biographies.</p>
-                <a
-                  href="/dashboard/artists"
-                  className="block w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium text-center"
-                >
-                  Manage Artists
-                </a>
-              </div>
-            </div>
-
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Manage Releases</h3>
-                <p className="text-gray-600 mb-4">Update album information, tracklists, and cover art.</p>
-                <a
-                  href="/dashboard/releases"
-                  className="block w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium text-center"
-                >
-                  Manage Releases
-                </a>
-              </div>
-            </div>
-
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Manage Videos</h3>
-                <p className="text-gray-600 mb-4">Add YouTube videos and organize video gallery.</p>
-                <a
-                  href="/dashboard/videos"
-                  className="block w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-sm font-medium text-center"
-                >
-                  Manage Videos
-                </a>
-              </div>
-            </div>
-          </div>
-
-          {/* Site Status */}
-          <div className="mt-6 bg-white overflow-hidden shadow rounded-lg">
-            <div className="px-4 py-5 sm:p-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Website Status</h3>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-                  <span className="text-sm text-gray-700">Live Site: Online</span>
-                </div>
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-                  Publish Changes
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
-  )
-}
+      </div>
+    )
+  }

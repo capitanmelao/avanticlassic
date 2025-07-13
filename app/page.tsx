@@ -1,7 +1,10 @@
+"use client"
+
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { useState, useEffect } from "react"
 
 async function getFeaturedReleases() {
   try {
@@ -20,40 +23,77 @@ async function getFeaturedReleases() {
   }
 }
 
-export default async function HomePage() {
-  const { releases } = await getFeaturedReleases()
+export default function HomePage() {
+  const [showSoundButton, setShowSoundButton] = useState(false)
+  const [isMuted, setIsMuted] = useState(true)
+  const [releases, setReleases] = useState<any[]>([])
+  
+  useEffect(() => {
+    getFeaturedReleases().then(data => setReleases(data.releases))
+  }, [])
   
   return (
     <div className="flex flex-col">
-      {/* Hero Section */}
-      <section className="relative w-full h-[600px] md:h-[700px] lg:h-[800px] overflow-hidden">
-        <Image
-          src="/images/carousel1.jpg"
-          alt="Hero Background"
-          fill
-          className="object-cover z-0"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 flex flex-col items-center justify-center text-center text-white p-4">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-4 drop-shadow-lg">
-            Experience the Art of Sound
-          </h1>
-          <p className="text-lg md:text-xl lg:text-2xl max-w-3xl mb-8 drop-shadow-md">
-            Avanti Classic brings you timeless classical music with a contemporary vision.
-          </p>
-          <Button
-            asChild
-            className="px-8 py-3 text-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-          >
-            <Link href="/releases">Explore Releases</Link>
-          </Button>
+      {/* Hero Section with Video */}
+      <section className="pt-8 md:pt-12 lg:pt-16 pb-4 md:pb-6 lg:pb-8 px-4 md:px-6">
+        <div 
+          className="relative w-full max-w-[80%] mx-auto h-[400px] md:h-[450px] lg:h-[500px] overflow-hidden rounded-lg shadow-lg cursor-pointer"
+          onMouseEnter={() => setShowSoundButton(true)}
+          onMouseLeave={() => setShowSoundButton(false)}
+          onClick={() => {
+            const video = document.getElementById('hero-video') as HTMLVideoElement;
+            if (video) {
+              setIsMuted(!isMuted);
+              video.muted = !isMuted;
+            }
+          }}
+        >
+        <video
+          autoPlay
+          loop
+          muted={isMuted}
+          playsInline
+          preload="metadata"
+          controls={false}
+          className="absolute inset-0 w-full h-full object-cover"
+          id="hero-video"
+          onLoadStart={() => console.log('Video loading started')}
+          onLoadedData={() => console.log('Video data loaded')}
+          onError={(e) => console.error('Video error:', e)}
+        >
+          <source src="/intro.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        
+        {/* Sound indicator overlay */}
+        <div className={`absolute inset-0 bg-black/20 transition-all duration-300 z-10 flex items-center justify-center ${showSoundButton ? 'opacity-100' : 'opacity-0'}`}>
+          <div className="bg-black/70 rounded-full p-4 text-white text-2xl">
+            {isMuted ? '🔇' : '🔊'}
+          </div>
+        </div>
+        
+        {/* Small sound toggle button in corner */}
+        <button
+          className={`absolute top-4 right-4 p-2 rounded-full bg-black/60 text-white hover:bg-black/80 transition-all duration-300 z-20 text-sm ${showSoundButton ? 'opacity-100' : 'opacity-0'}`}
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent triggering the video click
+            const video = document.getElementById('hero-video') as HTMLVideoElement;
+            if (video) {
+              setIsMuted(!isMuted);
+              video.muted = !isMuted;
+            }
+          }}
+          title={isMuted ? "Unmute video" : "Mute video"}
+        >
+          {isMuted ? '🔇' : '🔊'}
+        </button>
         </div>
       </section>
 
       {/* Featured Releases Section */}
-      <section className="py-16 md:py-24 bg-gray-50 dark:bg-gray-900">
+      <section className="pt-8 md:pt-12 pb-16 md:pb-24 bg-gray-50 dark:bg-gray-900">
         <div className="container px-4 md:px-6">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900 dark:text-gray-50">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900 dark:text-gray-50 font-playfair">
             Featured Releases
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">

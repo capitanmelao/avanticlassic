@@ -474,7 +474,7 @@ export default function ReleasesPage() {
       />
       <section className="py-8">
         {currentReleases.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {currentReleases.map((release) => (
               <ReleaseCard key={release.id} release={release} />
             ))}
@@ -503,17 +503,17 @@ function ReleaseCard({ release }: { release: Release }) {
         <CardContent className="p-0">
           <Image
             src={release.imageUrl || "/placeholder.svg"}
-            width={200}
-            height={200}
+            width={400}
+            height={400}
             alt={release.title}
             className="w-full h-auto object-cover aspect-square"
           />
-          <div className="p-3 text-center">
-            <h3 className="font-semibold text-sm line-clamp-2 min-h-[2.5em] text-gray-900 dark:text-gray-50 group-hover:text-primary transition-colors">
+          <div className="p-4 text-center">
+            <h3 className="font-semibold text-lg line-clamp-2 min-h-[2.5em] text-gray-900 dark:text-gray-50 group-hover:text-primary transition-colors">
               {release.title}
             </h3>
-            <p className="text-xs text-muted-foreground line-clamp-2 min-h-[2.5em]">{release.artists}</p>
-            <p className="text-xs text-muted-foreground mt-1">{release.format}</p>
+            <p className="text-sm text-muted-foreground line-clamp-2 min-h-[2.5em]">{release.artists}</p>
+            <p className="text-sm text-muted-foreground mt-1">{release.format}</p>
           </div>
         </CardContent>
       </Card>

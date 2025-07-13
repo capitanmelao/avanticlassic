@@ -214,7 +214,6 @@ export default function ArtistsPage() {
   const [artists, setArtists] = useState<Artist[]>([])
   const [filteredArtists, setFilteredArtists] = useState<Artist[]>([])
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedInstrument, setSelectedInstrument] = useState("all")
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(true)
   
@@ -224,16 +223,6 @@ export default function ArtistsPage() {
   const endIndex = startIndex + artistsPerPage
   const currentArtists = filteredArtists.slice(startIndex, endIndex)
 
-  const filterOptions = [
-    { value: "all", label: "All Instruments" },
-    { value: "piano", label: "Piano" },
-    { value: "violin", label: "Violin" },
-    { value: "baritone", label: "Baritone" },
-    { value: "cello", label: "Cello" },
-    { value: "bandoneon", label: "Bandoneon" },
-    { value: "vocals", label: "Vocals" },
-    { value: "conductor", label: "Conductor" },
-  ]
 
   useEffect(() => {
     const fetchArtists = async () => {
@@ -257,32 +246,21 @@ export default function ArtistsPage() {
   useEffect(() => {
     let filtered = artists
 
-    // Filter by instrument
-    if (selectedInstrument && selectedInstrument !== "all") {
-      filtered = filtered.filter(artist =>
-        artist.instrument.toLowerCase().includes(selectedInstrument.toLowerCase())
-      )
-    }
-
     // Filter by search term
     if (searchTerm) {
       filtered = filtered.filter(artist =>
-        artist.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        artist.instrument.toLowerCase().includes(searchTerm.toLowerCase())
+        artist.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
     }
 
     setFilteredArtists(filtered)
     setCurrentPage(1) // Reset to first page when filters change
-  }, [artists, selectedInstrument, searchTerm])
+  }, [artists, searchTerm])
 
   const handleSearchChange = (search: string) => {
     setSearchTerm(search)
   }
 
-  const handleFilterChange = (filter: string) => {
-    setSelectedInstrument(filter)
-  }
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
@@ -302,16 +280,12 @@ export default function ArtistsPage() {
       <h1 className="text-4xl md:text-5xl font-bold text-center mb-8 text-gray-900 dark:text-gray-50">Our Artists</h1>
       <SearchFilter
         searchPlaceholder="Search artists..."
-        filterOptions={filterOptions}
-        filterPlaceholder="Filter by Instrument"
         onSearchChange={handleSearchChange}
-        onFilterChange={handleFilterChange}
         searchValue={searchTerm}
-        filterValue={selectedInstrument}
       />
       <section className="py-8">
         {currentArtists.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {currentArtists.map((artist) => (
               <ArtistCard key={artist.id} artist={artist} />
             ))}
@@ -340,14 +314,13 @@ function ArtistCard({ artist }: { artist: Artist }) {
         <CardContent className="p-0">
           <Image
             src={artist.imageUrl || "/placeholder.svg"}
-            width={200}
-            height={200}
+            width={400}
+            height={400}
             alt={artist.name}
             className="w-full h-auto object-cover aspect-square"
           />
-          <div className="p-3 text-center">
-            <h3 className="font-semibold text-base line-clamp-1 text-gray-900 dark:text-gray-50">{artist.name}</h3>
-            <p className="text-xs text-muted-foreground line-clamp-1">{artist.instrument}</p>
+          <div className="p-4 text-center">
+            <h3 className="font-semibold text-lg line-clamp-2 text-gray-900 dark:text-gray-50">{artist.name}</h3>
           </div>
         </CardContent>
       </Card>

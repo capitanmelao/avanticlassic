@@ -75,37 +75,37 @@ export default function NewHeader() {
         <nav className="hidden md:flex items-center space-x-8">
           <Link
             href="/releases"
-            className="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors"
+            className="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors font-playfair"
           >
             RELEASES
           </Link>
           <Link
             href="/artists"
-            className="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors"
+            className="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors font-playfair"
           >
             ARTISTS
           </Link>
           <Link
             href="/playlists"
-            className="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors"
+            className="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors font-playfair"
           >
             PLAYLISTS
           </Link>
           <Link
             href="#"
-            className="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors"
+            className="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors font-playfair"
           >
             SHOP
           </Link>
           <Link
             href="/news-and-more"
-            className="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors"
+            className="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors font-playfair"
           >
             VIDEOS & MORE
           </Link>
           <Link
             href="/about"
-            className="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors"
+            className="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors font-playfair"
           >
             ABOUT US
           </Link>
@@ -151,37 +151,37 @@ export default function NewHeader() {
               <div className="grid gap-6 py-6">
                 <Link
                   href="/releases"
-                  className="text-lg font-semibold text-gray-800 hover:text-primary dark:text-gray-200 dark:hover:text-primary"
+                  className="text-lg font-semibold text-gray-800 hover:text-primary dark:text-gray-200 dark:hover:text-primary font-playfair"
                 >
                   RELEASES
                 </Link>
                 <Link
                   href="/artists"
-                  className="text-lg font-semibold text-gray-800 hover:text-primary dark:text-gray-200 dark:hover:text-primary"
+                  className="text-lg font-semibold text-gray-800 hover:text-primary dark:text-gray-200 dark:hover:text-primary font-playfair"
                 >
                   ARTISTS
                 </Link>
                 <Link
                   href="/playlists"
-                  className="text-lg font-semibold text-gray-800 hover:text-primary dark:text-gray-200 dark:hover:text-primary"
+                  className="text-lg font-semibold text-gray-800 hover:text-primary dark:text-gray-200 dark:hover:text-primary font-playfair"
                 >
                   PLAYLISTS
                 </Link>
                 <Link
                   href="#"
-                  className="text-lg font-semibold text-gray-800 hover:text-primary dark:text-gray-200 dark:hover:text-primary"
+                  className="text-lg font-semibold text-gray-800 hover:text-primary dark:text-gray-200 dark:hover:text-primary font-playfair"
                 >
                   SHOP
                 </Link>
                 <Link
                   href="/news-and-more"
-                  className="text-lg font-semibold text-gray-800 hover:text-primary dark:text-gray-200 dark:hover:text-primary"
+                  className="text-lg font-semibold text-gray-800 hover:text-primary dark:text-gray-200 dark:hover:text-primary font-playfair"
                 >
                   VIDEOS & MORE
                 </Link>
                 <Link
                   href="/about"
-                  className="text-lg font-semibold text-gray-800 hover:text-primary dark:text-gray-200 dark:hover:text-primary"
+                  className="text-lg font-semibold text-gray-800 hover:text-primary dark:text-gray-200 dark:hover:text-primary font-playfair"
                 >
                   ABOUT US
                 </Link>

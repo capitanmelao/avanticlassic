@@ -6,21 +6,21 @@ import { Button } from "@/components/ui/button"
 import SearchFilter from "@/components/shared/search-filter"
 import PaginationControls from "@/components/shared/pagination-controls"
 
-// Legacy videos from old SSG site with real titles
+// Legacy videos from old SSG site with real titles from YouTube
 const legacyVideos = [
-  { id: "legacy-1", youtubeId: "aHsF6g6iHy4", title: "Haydn: Cello Concerto No. 1 in C major - Kevin Busse", artistName: "Kevin Busse" },
-  { id: "legacy-2", youtubeId: "iYSvHYKX4Ms", title: "Bach: Goldberg Variations - Polina Leschenko", artistName: "Polina Leschenko" },
-  { id: "legacy-3", youtubeId: "tjGkbx1JA6Q", title: "Mozart: Piano Sonata K.331 - Polina Leschenko", artistName: "Polina Leschenko" },
-  { id: "legacy-4", youtubeId: "RsJY-BIcLhg", title: "Schumann: Fantasiestücke - Dora Schwarzberg & Polina Leschenko", artistName: "Dora Schwarzberg" },
-  { id: "legacy-5", youtubeId: "rWXaVSD9mwE", title: "Liszt: Hungarian Rhapsody No. 2 - Polina Leschenko", artistName: "Polina Leschenko" },
-  { id: "legacy-6", youtubeId: "u_A7Tgg8zD4", title: "Chopin: Ballade No. 1 in G minor - Polina Leschenko", artistName: "Polina Leschenko" },
-  { id: "legacy-7", youtubeId: "pTBbGE5iBEE", title: "Brahms: Violin Sonata No. 1 - Dora Schwarzberg & Polina Leschenko", artistName: "Dora Schwarzberg" },
-  { id: "legacy-8", youtubeId: "M7D6tCB9AqA", title: "Schubert: Impromptu Op. 90 No. 4 - Polina Leschenko", artistName: "Polina Leschenko" },
-  { id: "legacy-9", youtubeId: "omuZF6oaCnw", title: "Rachmaninoff: Piano Concerto No. 2 - Highlights", artistName: "Various Artists" },
-  { id: "legacy-10", youtubeId: "wc7Lksz1aBM", title: "Beethoven: Moonlight Sonata - Complete Performance", artistName: "Various Artists" },
-  { id: "legacy-11", youtubeId: "9U3F7yP6Mxk", title: "Vivaldi: Four Seasons - Spring Movement", artistName: "Chamber Orchestra" },
-  { id: "legacy-12", youtubeId: "8_oIqWuSu5o", title: "Debussy: Clair de Lune - Piano Solo", artistName: "Piano Soloist" },
-  { id: "legacy-13", youtubeId: "-rV5CcK1hd4", title: "Avanti Classic - Artist Showcase", artistName: "Various Artists" }
+  { id: "legacy-1", youtubeId: "aHsF6g6iHy4", title: "Roby Lakatos Biréli Lagrène - Tribute to Stéphane & Django", artistName: "Avanticlassic" },
+  { id: "legacy-2", youtubeId: "iYSvHYKX4Ms", title: "HOMILIA - New Album! Manu Comté & B'Strings Quintet feat. Tomás Gubitsch", artistName: "Manu Comté" },
+  { id: "legacy-3", youtubeId: "tjGkbx1JA6Q", title: "ROBY LAKATOS plays « Du Schwarzer Zigeuner » from the new album 'LA PASSION'", artistName: "Avanticlassic" },
+  { id: "legacy-4", youtubeId: "RsJY-BIcLhg", title: "Trailer to the upcoming album of Duo Lechner Tiempo \"Tango Rhapsody\"", artistName: "Avanticlassic" },
+  { id: "legacy-5", youtubeId: "rWXaVSD9mwE", title: "Alexander Gurning on Bach's Goldberg Variations", artistName: "Avanticlassic" },
+  { id: "legacy-6", youtubeId: "u_A7Tgg8zD4", title: "Duo Lechner Tiempo: La Muerte del Ángel by Ástor Piazzolla", artistName: "Avanticlassic" },
+  { id: "legacy-7", youtubeId: "pTBbGE5iBEE", title: "Philippe Quint plays Bruch, Mendelssohn and Beethoven", artistName: "Avanticlassic" },
+  { id: "legacy-8", youtubeId: "M7D6tCB9AqA", title: "Roby Lakatos - Romania from the album Klezmer Karma", artistName: "Avanticlassic" },
+  { id: "legacy-9", youtubeId: "omuZF6oaCnw", title: "Duo Lechner Tiempo: Variations on a Theme by Paganini", artistName: "Avanticlassic" },
+  { id: "legacy-10", youtubeId: "wc7Lksz1aBM", title: "Duo Lechner Tiempo: \"Slavonic Dance, Op. 72, No. 2 in E minor\" by Antonin Dvořák", artistName: "Avanticlassic" },
+  { id: "legacy-11", youtubeId: "9U3F7yP6Mxk", title: "Roby Lakatos - Hejre Kati from the album Fire Dance", artistName: "Avanticlassic" },
+  { id: "legacy-12", youtubeId: "8_oIqWuSu5o", title: "WUNDERHORN", artistName: "Avanticlassic" },
+  { id: "legacy-13", youtubeId: "-rV5CcK1hd4", title: "RENDEZ-VOUS WITH MARTHA ARGERICH volume 3", artistName: "Avanticlassic" }
 ]
 
 // Fetch videos from API

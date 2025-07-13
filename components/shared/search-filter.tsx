@@ -8,8 +8,8 @@ import { Button } from "@/components/ui/button"
 
 interface SearchFilterProps {
   searchPlaceholder: string
-  filterOptions: { value: string; label: string }[]
-  filterPlaceholder: string
+  filterOptions?: { value: string; label: string }[]
+  filterPlaceholder?: string
   onSearchChange?: (search: string) => void
   onFilterChange?: (filter: string) => void
   searchValue?: string
@@ -89,18 +89,20 @@ export default function SearchFilter({
 
   return (
     <div className="flex flex-col md:flex-row items-center justify-center gap-4 py-8 px-4 md:px-6">
-      <Select value={filterValue} onValueChange={onFilterChange}>
-        <SelectTrigger className="w-full md:w-[180px] bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300">
-          <SelectValue placeholder={filterPlaceholder} />
-        </SelectTrigger>
-        <SelectContent className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300">
-          {filterOptions.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      {filterOptions && filterOptions.length > 0 && (
+        <Select value={filterValue} onValueChange={onFilterChange}>
+          <SelectTrigger className="w-full md:w-[180px] bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300">
+            <SelectValue placeholder={filterPlaceholder} />
+          </SelectTrigger>
+          <SelectContent className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300">
+            {filterOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
       
       <div className="relative w-full md:max-w-md" ref={searchRef}>
         <Input

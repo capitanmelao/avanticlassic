@@ -575,7 +575,7 @@ const artistReleases: Record<string, Release[]> = {
       url: "Sonatas-Op.-120-Four-Serious-Songs-Op.-121-Alexander-Kniazev-Kasparas-Uinskas"
     }
   ],
-  "Dietrich-Henschel": [
+  "Baritone-Dietrich-Henschel": [
     {
       id: "33",
       title: "Wunderhorn",
