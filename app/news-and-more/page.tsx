@@ -3,17 +3,39 @@ import { Button } from "@/components/ui/button"
 import { ArrowRight, Play } from "lucide-react"
 import { ReviewItem } from "@/components/news-and-more/review-item"
 
+// Legacy videos from old SSG site
+const legacyVideos = [
+  { id: "legacy-1", youtubeId: "aHsF6g6iHy4", title: "Performance 1" },
+  { id: "legacy-2", youtubeId: "iYSvHYKX4Ms", title: "Performance 2" },
+  { id: "legacy-3", youtubeId: "tjGkbx1JA6Q", title: "Performance 3" },
+  { id: "legacy-4", youtubeId: "RsJY-BIcLhg", title: "Performance 4" },
+  { id: "legacy-5", youtubeId: "rWXaVSD9mwE", title: "Performance 5" },
+  { id: "legacy-6", youtubeId: "u_A7Tgg8zD4", title: "Performance 6" },
+  { id: "legacy-7", youtubeId: "pTBbGE5iBEE", title: "Performance 7" },
+  { id: "legacy-8", youtubeId: "M7D6tCB9AqA", title: "Performance 8" },
+  { id: "legacy-9", youtubeId: "omuZF6oaCnw", title: "Performance 9" },
+  { id: "legacy-10", youtubeId: "wc7Lksz1aBM", title: "Performance 10" },
+  { id: "legacy-11", youtubeId: "9U3F7yP6Mxk", title: "Performance 11" },
+  { id: "legacy-12", youtubeId: "8_oIqWuSu5o", title: "Performance 12" },
+  { id: "legacy-13", youtubeId: "-rV5CcK1hd4", title: "Performance 13" }
+]
+
 // Fetch videos from API
 async function getVideos() {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/videos?limit=6`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/videos?limit=12`, {
       next: { revalidate: 3600 } // Revalidate every hour
     })
     if (!response.ok) throw new Error('Failed to fetch videos')
-    return await response.json()
+    const apiVideos = await response.json()
+    
+    // Combine API videos with legacy videos, limit total to 15 for display
+    const allVideos = [...apiVideos, ...legacyVideos].slice(0, 15)
+    return allVideos
   } catch (error) {
     console.error('Error fetching videos:', error)
-    return []
+    // Return just legacy videos if API fails
+    return legacyVideos.slice(0, 12)
   }
 }
 
@@ -95,12 +117,26 @@ export default async function VideosAndMorePage() {
               </Link>
             </Button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {videos.length > 0 ? (
               videos.map((video: any) => (
-                <Link key={video.id} href={`/videos/${video.id}`}>
-                  <VideoCard video={video} />
-                </Link>
+                <div key={video.id}>
+                  {video.id.toString().startsWith('legacy-') ? (
+                    // For legacy videos, use direct YouTube link
+                    <a
+                      href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <VideoCard video={video} />
+                    </a>
+                  ) : (
+                    // For API videos, use internal link
+                    <Link href={`/videos/${video.id}`}>
+                      <VideoCard video={video} />
+                    </Link>
+                  )}
+                </div>
               ))
             ) : (
               <div className="col-span-full text-center py-12">
@@ -111,47 +147,6 @@ export default async function VideosAndMorePage() {
         </div>
       </section>
 
-      {/* About Videos Section */}
-      <section className="py-16 md:py-24 bg-gray-50 dark:bg-gray-900">
-        <div className="container px-4 md:px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-50 mb-8">
-            DISCOVER OUR PERFORMANCES
-          </h2>
-          <p className="text-lg text-gray-700 dark:text-gray-300 max-w-4xl mx-auto mb-8">
-            Immerse yourself in the world of classical music through our carefully curated collection of performances. 
-            From intimate chamber music to grand orchestral works, experience the artistry and passion of our talented artists.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Play className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="font-semibold text-xl mb-2 text-gray-900 dark:text-gray-50">Live Performances</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Experience the energy and emotion of live classical music performances
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <ArrowRight className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="font-semibold text-xl mb-2 text-gray-900 dark:text-gray-50">Artist Insights</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Get to know our artists through interviews and behind-the-scenes content
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Play className="w-8 h-8 text-primary" fill="currentColor" />
-              </div>
-              <h3 className="font-semibold text-xl mb-2 text-gray-900 dark:text-gray-50">High Quality</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                All videos are recorded and produced with the highest quality standards
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Reviews Section */}
       <section className="py-16 md:py-24 bg-white dark:bg-gray-950">

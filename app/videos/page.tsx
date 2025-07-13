@@ -1,3 +1,4 @@
+import Link from "next/link"
 import Image from "next/image"
 import { Play } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
@@ -5,65 +6,45 @@ import { Button } from "@/components/ui/button"
 import SearchFilter from "@/components/shared/search-filter"
 import PaginationControls from "@/components/shared/pagination-controls"
 
-interface Video {
-  id: string
-  title: string
-  artist: string
-  thumbnailUrl: string
-}
-
-const dummyVideos: Video[] = [
-  {
-    id: "1",
-    title: "WUNDERHORN - Album Trailer",
-    artist: "Dietrich Henschel",
-    thumbnailUrl: "/placeholder.svg?height=200&width=300&text=Video+Thumbnail+1",
-  },
-  {
-    id: "2",
-    title: "ROBY LAKATOS plays Duo",
-    artist: "Roby Lakatos",
-    thumbnailUrl: "/placeholder.svg?height=200&width=300&text=Video+Thumbnail+2",
-  },
-  {
-    id: "3",
-    title: "Philippe Quint plays Bach",
-    artist: "Philippe Quint",
-    thumbnailUrl: "/placeholder.svg?height=200&width=300&text=Video+Thumbnail+3",
-  },
-  {
-    id: "4",
-    title: "HOMILIA - New Album",
-    artist: "Artist Name",
-    thumbnailUrl: "/placeholder.svg?height=200&width=300&text=Video+Thumbnail+4",
-  },
-  {
-    id: "5",
-    title: "Trailer to the upcoming album",
-    artist: "Artist Name",
-    thumbnailUrl: "/placeholder.svg?height=200&width=300&text=Video+Thumbnail+5",
-  },
-  {
-    id: "6",
-    title: "Duo Lehner Tiempo",
-    artist: "Duo Lehner Tiempo",
-    thumbnailUrl: "/placeholder.svg?height=200&width=300&text=Video+Thumbnail+6",
-  },
-  {
-    id: "7",
-    title: "Alexander Gurning on Bach",
-    artist: "Alexander Gurning",
-    thumbnailUrl: "/placeholder.svg?height=200&width=300&text=Video+Thumbnail+7",
-  },
-  {
-    id: "8",
-    title: "World Tangos Odyssey - Live",
-    artist: "Roby Lakatos & Gang Tango",
-    thumbnailUrl: "/placeholder.svg?height=200&width=300&text=Video+Thumbnail+8",
-  },
+// Legacy videos from old SSG site
+const legacyVideos = [
+  { id: "legacy-1", youtubeId: "aHsF6g6iHy4", title: "Performance 1" },
+  { id: "legacy-2", youtubeId: "iYSvHYKX4Ms", title: "Performance 2" },
+  { id: "legacy-3", youtubeId: "tjGkbx1JA6Q", title: "Performance 3" },
+  { id: "legacy-4", youtubeId: "RsJY-BIcLhg", title: "Performance 4" },
+  { id: "legacy-5", youtubeId: "rWXaVSD9mwE", title: "Performance 5" },
+  { id: "legacy-6", youtubeId: "u_A7Tgg8zD4", title: "Performance 6" },
+  { id: "legacy-7", youtubeId: "pTBbGE5iBEE", title: "Performance 7" },
+  { id: "legacy-8", youtubeId: "M7D6tCB9AqA", title: "Performance 8" },
+  { id: "legacy-9", youtubeId: "omuZF6oaCnw", title: "Performance 9" },
+  { id: "legacy-10", youtubeId: "wc7Lksz1aBM", title: "Performance 10" },
+  { id: "legacy-11", youtubeId: "9U3F7yP6Mxk", title: "Performance 11" },
+  { id: "legacy-12", youtubeId: "8_oIqWuSu5o", title: "Performance 12" },
+  { id: "legacy-13", youtubeId: "-rV5CcK1hd4", title: "Performance 13" }
 ]
 
-export default function VideosPage() {
+// Fetch videos from API
+async function getVideos() {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/videos`, {
+      next: { revalidate: 3600 } // Revalidate every hour
+    })
+    if (!response.ok) throw new Error('Failed to fetch videos')
+    const apiVideos = await response.json()
+    
+    // Combine API videos with legacy videos
+    const allVideos = [...apiVideos, ...legacyVideos]
+    return allVideos
+  } catch (error) {
+    console.error('Error fetching videos:', error)
+    // Return just legacy videos if API fails
+    return legacyVideos
+  }
+}
+
+export default async function VideosPage() {
+  const videos = await getVideos()
+  
   const filterOptions = [
     { value: "all", label: "All Categories" },
     { value: "performances", label: "Performances" },
@@ -80,9 +61,25 @@ export default function VideosPage() {
         filterPlaceholder="Filter by Category"
       />
       <section className="py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {dummyVideos.map((video) => (
-            <VideoCard key={video.id} video={video} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {videos.map((video: any) => (
+            <div key={video.id}>
+              {video.id.toString().startsWith('legacy-') ? (
+                // For legacy videos, use direct YouTube link
+                <a
+                  href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <VideoCard video={video} />
+                </a>
+              ) : (
+                // For API videos, use internal link
+                <Link href={`/videos/${video.id}`}>
+                  <VideoCard video={video} />
+                </Link>
+              )}
+            </div>
           ))}
         </div>
       </section>
@@ -91,12 +88,20 @@ export default function VideosPage() {
   )
 }
 
-function VideoCard({ video }: { video: Video }) {
+function VideoCard({ video }: { video: any }) {
+  const getThumbnail = (youtubeId: string) => {
+    return `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`
+  }
+
+  const thumbnailUrl = video.youtubeId 
+    ? getThumbnail(video.youtubeId) 
+    : video.thumbnailUrl || "/placeholder.svg"
+
   return (
     <Card className="group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 bg-white dark:bg-gray-800">
       <CardContent className="p-0 relative">
         <Image
-          src={video.thumbnailUrl || "/placeholder.svg"}
+          src={thumbnailUrl}
           width={400}
           height={225} // 16:9 aspect ratio for videos
           alt={video.title}
@@ -116,7 +121,9 @@ function VideoCard({ video }: { video: Video }) {
           <h3 className="font-semibold text-lg line-clamp-2 min-h-[2.5em] text-gray-900 dark:text-gray-50">
             {video.title}
           </h3>
-          <p className="text-sm text-muted-foreground line-clamp-1">{video.artist}</p>
+          <p className="text-sm text-muted-foreground line-clamp-1">
+            {video.artistName || video.artist || 'Avanti Classic'}
+          </p>
         </div>
       </CardContent>
     </Card>
