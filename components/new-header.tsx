@@ -101,7 +101,7 @@ export default function NewHeader() {
             href="/news-and-more"
             className="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors"
           >
-            NEWS & MORE
+            VIDEOS & MORE
           </Link>
           <Link
             href="/about"
@@ -177,7 +177,7 @@ export default function NewHeader() {
                   href="/news-and-more"
                   className="text-lg font-semibold text-gray-800 hover:text-primary dark:text-gray-200 dark:hover:text-primary"
                 >
-                  NEWS & MORE
+                  VIDEOS & MORE
                 </Link>
                 <Link
                   href="/about"
