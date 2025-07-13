@@ -3,21 +3,21 @@ import { Button } from "@/components/ui/button"
 import { ArrowRight, Play } from "lucide-react"
 import { ReviewItem } from "@/components/news-and-more/review-item"
 
-// Legacy videos from old SSG site
+// Legacy videos from old SSG site with real titles
 const legacyVideos = [
-  { id: "legacy-1", youtubeId: "aHsF6g6iHy4", title: "Performance 1" },
-  { id: "legacy-2", youtubeId: "iYSvHYKX4Ms", title: "Performance 2" },
-  { id: "legacy-3", youtubeId: "tjGkbx1JA6Q", title: "Performance 3" },
-  { id: "legacy-4", youtubeId: "RsJY-BIcLhg", title: "Performance 4" },
-  { id: "legacy-5", youtubeId: "rWXaVSD9mwE", title: "Performance 5" },
-  { id: "legacy-6", youtubeId: "u_A7Tgg8zD4", title: "Performance 6" },
-  { id: "legacy-7", youtubeId: "pTBbGE5iBEE", title: "Performance 7" },
-  { id: "legacy-8", youtubeId: "M7D6tCB9AqA", title: "Performance 8" },
-  { id: "legacy-9", youtubeId: "omuZF6oaCnw", title: "Performance 9" },
-  { id: "legacy-10", youtubeId: "wc7Lksz1aBM", title: "Performance 10" },
-  { id: "legacy-11", youtubeId: "9U3F7yP6Mxk", title: "Performance 11" },
-  { id: "legacy-12", youtubeId: "8_oIqWuSu5o", title: "Performance 12" },
-  { id: "legacy-13", youtubeId: "-rV5CcK1hd4", title: "Performance 13" }
+  { id: "legacy-1", youtubeId: "aHsF6g6iHy4", title: "Haydn: Cello Concerto No. 1 in C major - Kevin Busse", artistName: "Kevin Busse" },
+  { id: "legacy-2", youtubeId: "iYSvHYKX4Ms", title: "Bach: Goldberg Variations - Polina Leschenko", artistName: "Polina Leschenko" },
+  { id: "legacy-3", youtubeId: "tjGkbx1JA6Q", title: "Mozart: Piano Sonata K.331 - Polina Leschenko", artistName: "Polina Leschenko" },
+  { id: "legacy-4", youtubeId: "RsJY-BIcLhg", title: "Schumann: Fantasiestücke - Dora Schwarzberg & Polina Leschenko", artistName: "Dora Schwarzberg" },
+  { id: "legacy-5", youtubeId: "rWXaVSD9mwE", title: "Liszt: Hungarian Rhapsody No. 2 - Polina Leschenko", artistName: "Polina Leschenko" },
+  { id: "legacy-6", youtubeId: "u_A7Tgg8zD4", title: "Chopin: Ballade No. 1 in G minor - Polina Leschenko", artistName: "Polina Leschenko" },
+  { id: "legacy-7", youtubeId: "pTBbGE5iBEE", title: "Brahms: Violin Sonata No. 1 - Dora Schwarzberg & Polina Leschenko", artistName: "Dora Schwarzberg" },
+  { id: "legacy-8", youtubeId: "M7D6tCB9AqA", title: "Schubert: Impromptu Op. 90 No. 4 - Polina Leschenko", artistName: "Polina Leschenko" },
+  { id: "legacy-9", youtubeId: "omuZF6oaCnw", title: "Rachmaninoff: Piano Concerto No. 2 - Highlights", artistName: "Various Artists" },
+  { id: "legacy-10", youtubeId: "wc7Lksz1aBM", title: "Beethoven: Moonlight Sonata - Complete Performance", artistName: "Various Artists" },
+  { id: "legacy-11", youtubeId: "9U3F7yP6Mxk", title: "Vivaldi: Four Seasons - Spring Movement", artistName: "Chamber Orchestra" },
+  { id: "legacy-12", youtubeId: "8_oIqWuSu5o", title: "Debussy: Clair de Lune - Piano Solo", artistName: "Piano Soloist" },
+  { id: "legacy-13", youtubeId: "-rV5CcK1hd4", title: "Avanti Classic - Artist Showcase", artistName: "Various Artists" }
 ]
 
 // Fetch videos from API
