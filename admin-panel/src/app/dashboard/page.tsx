@@ -177,9 +177,12 @@ export default function Dashboard() {
               <div className="p-5">
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Manage Releases</h3>
                 <p className="text-gray-600 mb-4">Update album information, tracklists, and cover art.</p>
-                <button className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                <a
+                  href="/dashboard/releases"
+                  className="block w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium text-center"
+                >
                   Manage Releases
-                </button>
+                </a>
               </div>
             </div>
 
@@ -187,9 +190,12 @@ export default function Dashboard() {
               <div className="p-5">
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Manage Videos</h3>
                 <p className="text-gray-600 mb-4">Add YouTube videos and organize video gallery.</p>
-                <button className="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                <a
+                  href="/dashboard/videos"
+                  className="block w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-sm font-medium text-center"
+                >
                   Manage Videos
-                </button>
+                </a>
               </div>
             </div>
           </div>

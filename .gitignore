@@ -1,10 +1,12 @@
 # build output
 dist/
+.next/
 # generated types
 .astro/
 
 # dependencies
 node_modules/
+node_modules 2/
 
 # logs
 npm-debug.log*
@@ -23,3 +25,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+old-astro-site/ssg-eta/
+public 2/
+avanti-classic-template/

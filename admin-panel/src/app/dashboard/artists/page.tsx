@@ -74,6 +74,15 @@ export default function ArtistsPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mb-6">
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700"
+        >
+          ← Back to Admin Dashboard
+        </Link>
+      </div>
+
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="text-2xl font-semibold text-gray-900">Artists</h1>
@@ -97,76 +106,126 @@ export default function ArtistsPage() {
         </div>
       )}
 
-      <div className="mt-8 flex flex-col">
-        <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-            <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-              <table className="min-w-full divide-y divide-gray-300">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      URL Slug
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Facebook
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Updated
-                    </th>
-                    <th scope="col" className="relative px-6 py-3">
-                      <span className="sr-only">Actions</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {artists.map((artist) => (
-                    <tr key={artist.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {artist.name}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {artist.url}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {artist.facebook ? (
-                          <a
-                            href={artist.facebook}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:text-blue-900"
-                          >
-                            Facebook
-                          </a>
-                        ) : (
-                          '—'
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {artist.updated_at ? new Date(artist.updated_at).toLocaleDateString() : '—'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <Link
-                          href={`/dashboard/artists/${artist.id}/edit`}
-                          className="text-blue-600 hover:text-blue-900 mr-4"
+      {/* Desktop Table View */}
+      <div className="mt-8 hidden lg:block">
+        <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+          <table className="min-w-full divide-y divide-gray-300">
+            <thead className="bg-gray-50">
+              <tr>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Name
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  URL Slug
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Facebook
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Updated
+                </th>
+                <th scope="col" className="relative px-6 py-3">
+                  <span className="sr-only">Actions</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {artists.map((artist) => (
+                <tr key={artist.id}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {artist.name}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {artist.url}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {artist.facebook ? (
+                      <a
+                        href={artist.facebook}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-900"
+                      >
+                        Facebook
+                      </a>
+                    ) : (
+                      '—'
+                    )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {artist.updated_at ? new Date(artist.updated_at).toLocaleDateString() : '—'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <Link
+                      href={`/dashboard/artists/${artist.id}/edit`}
+                      className="text-blue-600 hover:text-blue-900 mr-4"
+                    >
+                      Edit
+                    </Link>
+                    <button
+                      onClick={() => deleteArtist(artist.id)}
+                      className="text-red-600 hover:text-red-900"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="mt-8 lg:hidden">
+        <div className="space-y-4">
+          {artists.map((artist) => (
+            <div key={artist.id} className="bg-white shadow rounded-lg border border-gray-200">
+              <div className="p-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="text-sm font-medium text-gray-900">
+                      {artist.name}
+                    </h3>
+                    <p className="text-xs text-gray-500 mt-1">
+                      URL: {artist.url}
+                    </p>
+                    <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                      {artist.facebook && (
+                        <a
+                          href={artist.facebook}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-blue-100 text-blue-800 px-2 py-1 rounded hover:bg-blue-200"
                         >
-                          Edit
-                        </Link>
-                        <button
-                          onClick={() => deleteArtist(artist.id)}
-                          className="text-red-600 hover:text-red-900"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                          Facebook
+                        </a>
+                      )}
+                      {artist.updated_at && (
+                        <span className="bg-gray-100 px-2 py-1 rounded">
+                          Updated: {new Date(artist.updated_at).toLocaleDateString()}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-3 flex space-x-2">
+                  <Link
+                    href={`/dashboard/artists/${artist.id}/edit`}
+                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200"
+                  >
+                    Edit
+                  </Link>
+                  <button
+                    onClick={() => deleteArtist(artist.id)}
+                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-red-700 bg-red-100 hover:bg-red-200"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
 

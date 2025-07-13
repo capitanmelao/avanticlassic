@@ -13,10 +13,15 @@ This is a multilingual (English/French/German) classical music website for Avant
 
 ## Development Commands
 
-### Astro Application (astro-site/)
-- **Development server**: `cd astro-site && npm run dev` - Serves at http://localhost:4321
-- **Build**: `cd astro-site && npm run build` - Production build with optimizations
-- **Preview**: `cd astro-site && npm run preview` - Preview production build locally
+### Astro Site (Main Website)
+- **Development server**: `npm run dev` - Serves at http://localhost:4321
+- **Build**: `npm run build` - Production build with optimizations
+- **Preview**: `npm run preview` - Preview production build locally
+
+### Admin Panel (admin-panel/)
+- **Development server**: `cd admin-panel && npm run dev` - Serves at http://localhost:3001/avantiadmin
+- **Build**: `cd admin-panel && npm run build` - Production build for Vercel
+- **OAuth Testing**: Visit http://localhost:3001/avantiadmin for Google authentication
 
 ### Static Site Generator (ssg-eta/) - Legacy
 - **Build SSG**: `deno run --allow-read --allow-write --allow-env main.ts` - Generates static site in `_site/`
