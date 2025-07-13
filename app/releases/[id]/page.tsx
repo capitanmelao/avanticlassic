@@ -23,7 +23,7 @@ async function getRelease(id: string) {
     const baseUrl = process.env.NODE_ENV === 'production' 
       ? process.env.NEXT_PUBLIC_SITE_URL 
       : '';
-    const res = await fetch(`${baseUrl}/api/releases/${id}`, {
+    const res = await fetch(`${baseUrl}/api/releases/${encodeURIComponent(id)}`, {
       cache: 'no-store'
     })
     if (!res.ok) return null
@@ -441,7 +441,7 @@ Goldberg-Variationen - Goldberg Variations – Variations Goldberg BWV. 988
     artists: "Sergio Tiempo",
     format: "1 Hybrid SACD",
     imageUrl: "/images/releases/13.jpeg",
-    url: "Liszt-Totentanz-Tchaikovsky-Piano-Concerto-Sergio-Tiempo",
+    url: "Liszt Totentanz-Tchaikovsky-Piano-Concerto-Sergio-Tiempo",
     description: "Powerful interpretations of Romantic piano concertos, featuring Sergio Tiempo's passionate and virtuosic playing.",
     tracklist: `Franz Liszt (1811-1886)
 Totentanz: Paraphrase über Dies irae S.126
@@ -472,7 +472,7 @@ Concerto pour piano n. 1 en si bémol mineur, op. 23
     artists: "Sergio Tiempo, Karin Lechner",
     format: "1 Hybrid SACD + Bonus DVD",
     imageUrl: "/images/releases/14.jpeg",
-    url: "Tango-Rhapsody-Sergio-Tiempo-Karin-Lechner",
+    url: "Tango Rhapsody-Sergio-Tiempo-Karin-Lechner",
     description: "A passionate exploration of tango rhythms and melodies for two pianos, with bonus DVD featuring live performances.",
     tracklist: `1. Astor Piazzolla (1921 – 1992) - Michelangelo '70 (arr. Féderico Jusid) - 03:10
 2. Astor Piazzolla - Revirado (arr. Pablo Ziegler) - 03:27
@@ -642,7 +642,7 @@ CD 2
     artists: "Philippe Quint, Lily Maisky",
     format: "1 Hybrid SACD",
     imageUrl: "/images/releases/19.jpeg",
-    url: "Opera-Breve-Philippe-Quint-Lily-Maisky",
+    url: "Opera Breve-Philippe-Quint-Lily-Maisky",
     description: "Opera transcriptions for violin and piano, bringing the drama and beauty of opera to chamber music format.",
     tracklist: `1. Manuel de Falla (1876-1946) - Spanish Dance from la Vida Breve – Arr. Fritz Kreisler - 03:37
 2. Lensky's Aria from Eugen Onegin – Arr. Leopold Auer - 06:05
@@ -981,7 +981,13 @@ export default async function ReleaseDetailPage({ params }: { params: { id: stri
   
   // If API fails, try to find in fallback data by ID or URL
   if (!release) {
-    release = fallbackReleases.find((r) => r.id === params.id || r.url === params.id)
+    const decodedId = decodeURIComponent(params.id)
+    release = fallbackReleases.find((r) => 
+      r.id === params.id || 
+      r.url === params.id ||
+      r.id === decodedId || 
+      r.url === decodedId
+    )
   }
 
   if (!release) {

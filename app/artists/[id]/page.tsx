@@ -82,7 +82,7 @@ const fallbackArtists: Artist[] = [
     instrument: "Vocals",
     imageUrl: "/images/artists/5-800.jpeg",
     url: "Myriam-Fuks",
-    bio: "Myriam Fuks was born in Tel Aviv with Yiddish in her blood. Her mother, Franja Glasman, was an actress in one of Europe's leading Yiddish theatres: the Kaminsky theater of Warsaw. Her uncle was a Yiddish poet and journalist. At the age of 12, Myriam Fuks joined the Yiddish Ykult theatre in Brussels. In 1974, she returned to Israel and became famous thanks to a song contest which was broadcast on national television. By 1984, her fame had spread to New York. Her recordings are acclaimed throughout the world. Myriam sings her love for Yiddish both on television and in the concert halls of Europe. Music is her natural language, and Yiddish is for her the language of emotion, of expressing the joy, the sadness, and the story of the people from a time and place when music and songs were a part of everyday life.",
+    bio: "Myriam Fuks was born in Tel Aviv with Yiddish in her blood. Her mother, Franja Glasman, was an actress in one of Europe's leading Yiddish theatres: the Kaminsky theater of Warsaw. Her uncle was a Yiddish poet and journalist. At the age of 12, Myriam Fuks joined the Yiddish Ykult theatre in Brussels. In 1974, she returned to Israel and became famous thanks to a song contest which was broadcast on national television. By 1984, her fame had spread to New York. Her recordings are acclaimed throughout the world. Myriam sings her love for Yiddish both on television and in the concert halls of Europe. Music is her natural language, and Yiddish is for her the language of emotion, of expressing the joy, the sadness, and the story of the people from a time and place when music and songs were a part of everyday life. Myriam Fuks is also an actress and recently completed filming 'A Secret' directed by Claude Miller, starring the French actors Patrick Bruel, Cecile de France and Julie Depardieu.",
     facebook: "https://www.facebook.com/Myriam-Fuks-344297292180"
   },
   {
@@ -109,7 +109,7 @@ const fallbackArtists: Artist[] = [
     instrument: "Baritone",
     imageUrl: "/images/artists/8-800.jpeg",
     url: "Baritone-Dietrich-Henschel",
-    bio: "Baritone Dietrich Henschel captivates audiences as a regular guest at major opera houses, an esteemed interpreter of lieder and oratorios as well as with his multimedia projects. His repertoire stretches from Monteverdi to the avant-garde. Born in Berlin and having grown up in Nuremberg, he made his debut in 1990 at the Munich Biennale for New Music and first became known internationally from 1997, following a period as an ensemble member of the Opera Kiel.<br><br>The singer's major roles include Rossini's Figaro, Wolfram in Wagner's Tannhäuser, Monteverdi's Ulisse and Orfeo, Mozart's Don Giovanni, Beckmesser in Wagner's Die Meistersingervon Nürnberg, Alban Berg's Wozzeckand Dr. Schön in Lulu, Golaud in Debussy's Pelléas et Mélisande and Nick Shadow in Stravinsky's The Rake's Progress."
+    bio: "Baritone Dietrich Henschel is a towering figure, physically, intellectually, musically and theatrically. His prowess as an interpreter, by which I mean precisely his ability to get below the surface of a song and right into its soul, is extraordinary. Herald Scotland Baritone Dietrich Henschel captivates audiences as a regular guest at major opera houses, an esteemed interpreter of lieder and oratorios as well as with his multimedia projects. His repertoire stretches from Monteverdi to the avant-garde. Born in Berlin and having grown up in Nuremberg, he made his debut in 1990 at the Munich Biennale for New Music and first became known internationally from 1997, following a period as an ensemble member of the Opera Kiel. At the Deutsche Oper Berlin he took the title role in Hans Werner Henze's Prinz von Homburg, staged by Götz Friedrich, and he made an outstanding lead performance in Busoni's Doktor Faust at the Opéra de Lyon and the Théâtre du Châtelet in Paris, for which he was awarded a Grammy.<br><br>The singer's major roles include Rossini's Figaro, Wolfram in Wagner's Tannhäuser, Monteverdi's Ulisse and Orfeo, Mozart's Don Giovanni, Beckmesser in Wagner's Die Meistersingervon Nürnberg, Alban Berg's Wozzeckand Dr. Schön in Lulu, Golaud in Debussy's Pelléas et Mélisande and Nick Shadow in Stravinsky's The Rake's Progress, with which he makes regular appearances at the major European opera houses. Contemporary composers such as Péter Eötvös, Detlev Glanert, Manfred Trojahn, Unsuk Chin, Peter Ruzicka and José-Maria Sanchez-Verdu have all dedicated leading operatic roles in their operas to the baritone.<br><br>In addition to his operatic work, Dietrich Henschel is committed to the performance of lieder and concert works for voice. In orchestral concerts he has worked with conductors such as Riccardo Chailly, Kent Nagano, Sylvain Cambreling and Semyon Bychkov. His collaborations with John Eliot Gardiner, Philippe Herreweghe, Nikolaus Harnoncourt and Colin Davis is documented on numerous oratorio recordings. Dietrich Henschel has a particular focus on theatrical and multimedia presentations of vocal music. He has performed staged versions of Schubert lieder cycles at La Monnaie, Theater an der Wien, Den Norske Opera Oslo and the Komische Oper Berlin, among others. In the project IRRSAL – Triptychon einer verbotenen Liebe, featuring the orchestral songs of Hugo Wolf, he combined film and live concert; his project featuring songs by Gustav Mahler, WUNDERHORN, was also a collaboration with director Clara Pons, and was developed as a co-production between several European partners including De Doelen, La Monnaie and the BBC Symphony Orchestra London.<br><br>Last season, Dietrich Henschel presented a diverse repertoire, including a performance of Haydn's The Creation with the Tokyo Metropolitan Symphony Orchestra under Kazushi Ono, and a tour with the Orchestre des Champs-Élysées under Philippe Herreweghe with orchestral songs by Hugo Wolf and Gustav Mahler. At the opening concert of the Oxford Lieder Festival he performed Mahler's Lied von der Erde with the Orchestra of the Age of Enlightenment; he subsequently went on to perform at the opening concert of Wien Modern, where he took the part of Jean Charles in Hans Werner Henze's Floß der Medusa under the direction of Cornelius Meister. The new season begins at La Monnaie, where he will take the part of the Speaker in The Magic Flute staged by Romeo Castellucci. He will also reprise the title role in Peter Ruzicka's new opera Benjamin at the State Opera Hamburg. He received critical praise for the world premiere of the work in June 2018: \"Baritone Dietrich Henschel was a credible and direct Benjamin, both in terms of his acting and his immaculate vocal performance (…) a godsend for the production,\" wrote the Spiegel Online. In May 2019 he will play Martin Luther in the world premiere of Bo Holten's opera Schlagt sie tot! in Malmö. Concert engagements take him to the Suntory Hall Tokyo for a performance of Schoenberg's Gurrelieder with the Yomiuri Nippon Symphony Orchestra under Sylvain Cambreling, as well as to the Tonhalle Orchestra Zürich for the world premiere of a piece by Matthias Pintscher under Kent Nagano. At the Philharmonie Berlin he will perform Haydn's The Seasons with the Berlin Radio Symphony Orchestra and Vladimir Jurowski."
   },
   {
     id: "9",
@@ -117,7 +117,7 @@ const fallbackArtists: Artist[] = [
     instrument: "Cello",
     imageUrl: "/images/artists/9-800.jpeg",
     url: "Alexander-Kniazev",
-    bio: "One of the most powerful and enigmatic cellists, Alexander Kniazev was born in 1961 in Moscow. He started to study cello at the age of six with Alexander Fedorchenko and graduated from the Moscow Conservatoire in 1986.<br><br>He is a prize-winner of the National Competition (Vilnius, Lithuania), of the Cassado International Competition (Florence, Italy), of the Chamber Music International Competition, in the ensemble with Ekaterina Voskressenskaya (Trapani, Italy), of the Tchaikovsky International Competition (Moscow, Russia), and in the UNISA International Competition (Pretoria, South-Africa).<br><br>He has played with such world-famous conductors as Evgeny Svetlanov, Yuri Temirkanov, Kurt Masur, Mstislav Rostropovich, Vladimir Fedoseev, Mikhail Pletnev, Neeme Jarvi, Yuri Bashmet, Alexander Vedernikov, Pinchas Steinberg, Mark Gorenstein, Stéphane Denève and Charles Dutoit.",
+    bio: "One of the most powerful and enigmatic cellists, Alexander Kniazev was born in 1961 in Moscow. He started to study cello at the age of six with Alexander Fedorchenko and graduated from the Moscow Conservatoire in 1986.<br><br>He is a prize-winner of the National Competition (Vilnius, Lithuania), of the Cassado International Competition (Florence, Italy), of the Chamber Music International Competition, in the ensemble with Ekaterina Voskressenskaya (Trapani, Italy), of the Tchaikovsky International Competition (Moscow, Russia), and in the UNISA International Competition (Pretoria, South-Africa).<br><br>He has played with such world-famous conductors as Evgeny Svetlanov, Yuri Temirkanov, Kurt Masur, Mstislav Rostropovich, Vladimir Fedoseev, Mikhail Pletnev, Neeme Jarvi, Yuri Bashmet, Alexander Vedernikov, Pinchas Steinberg, Mark Gorenstein, Stéphane Denève and Charles Dutoit. He has performed with Orchestras such as the London Royal Philharmonic, the BBC Orchestra of London, the Bavarian Radio Symphony Orchestra, the Gothenburg Symphony Orchestra, the Baltimore Symphony Orchestra, the NHK Symphony Orchestra, the Tokyo Symphony, the Wiener Symphoniker, the Resident-Orchestra of the Hague, the Ensemble Orchestral de Paris, the Orchestre National de France, the Theatre Venice Orchestra, the Budapest Festival Orchestra, the State Academic Symphony Orchestra of Russia, the St. Petersburg Philharmonic Orchestra, the Tchaikovsky Symphony Orchestra, the Irish Symphony Orchestra, the Prague Symphony and the Praque Philharmonic Orchestra, the Luxembourg Symphony Orchestra, the Moscow Soloists Orchestra and many others.<br><br>His partners include pianists Evgeny Kissin, Nikolai Lugansky, Boris Berezovsky, Elisabeth Leonskaya, Denis Matsuev, Brigitte Engerer, Mikhail Voskressensky, Kasparas Uinskas, Valery Afanassiev, Plamena Mangova, Khatia Skanavi; violinists Viktor Tretyakov, Vadim Repin, Sergei Krylov, Vladimir Spivakov, Augustin Dumay, Dmitir Makhtin; violist Yuri Bashmet; organists Jean Guillou, Edward Oganessian, the Prazak Quartet, and many others.<br><br>In 1998, 2002 and 2015 Alexander Kniazev was a member of the Jury at the Tchaikovsky International Competition in Moscow.<br><br>Alexander Kniazev has performed in such world-famous halls as the Royal Festival Hall and Wigmore Hall (London), the Theatre des Champs-Elysees, the Louvre auditorium and the Salle Pleyel (Paris), the Musikverein and the Konzerthaus (Vienna), the Concertgebouw (Amsterdam), the Mozarteum of Salzburg, the Rudolfinum Hall in Prague, the Suntory Hall (Tokyo), the Auditorium di Milano (Italy) and Bozar in Brussels.<br><br>Alexander Kniazev regulary gives masterclasses in Oviedo, Seoul, Manila, Colmar, Bad-Kissingen, Belgrade and in many cites in Russia.<br><br>Among the last great events in his career, we find a triumphal debut at the Musikverein (Vienna) with the Russian Tchaikovsky Orchestra conducted by Vladimir Fedoseev. As an organist, in 1991 Alexander Kniazev graduated from the Nizhny Novgorod Conservatoire where he studied with the well-known Russian organist Professor Galina Kozlova. His organ's concert activity starting just afterwards. He played in such important halls as the Great Hall in Moscow, the Capella in St. Peterburg and many other organs in Russia. He was invited to play the famous organ in Saint Eustashe and Cathedrale Notre-Dame (France). In 2010 he played at the festival of Radio France in Montpellier (the complete Trio-sonates of J.S. Bach). In 2011, he made his debut in the Great Hall of St. Peterburg. His repertoire included many works by J.S. Bach, Mozart, Handel and Haydn, but also romantic music by Mendelssohn, Schumann, Brahms and Franck. In 2012 Alexander Kniazev was invited as president of the Russian Organ Competition in Kaliningrad.<br><br>He played in Germany, in Japan (Tokyo Casals-Hall), in the Republic of South Africa (Pretoria), in the Great Hall of Sofia Philarmonic, in Ukraine, in Estonia, in the organ of the Riga Cathedral of Latvia (Dom) where he recorded his first CD ('18 Leipzig Chorals' of J.S. Bach). His last recording is J.S. Bach's Goldberg Variations (transcribed by Jean Guillou).<br><br>The 21th century widened the touring scope of Alexander Kniazev. It started with a tour in Japan (both as a cellist and organist), concerts in Luxembourg, Norway and France and his first tours in Israel (with Y. Bashmet), Greece (Megaro Concert Hall in Athens), Australia, Sweden (Gothenburg Symphony Orchestra), Portugal and Ireland.<br><br>The musician's concerts with Evgeny Kissin in Monpellier (Radio France Festival-2004), Verbier (Swiss), at the Suntory Hall (Tokyo, 2011), at the Theatre des Champs-Elysees (Paris 2012), as well as performance of the Elgar cello concerto with Maestro Yuri Temirkanov in Venice received the highest appraisals.",
     facebook: "https://www.facebook.com/alexander.knyazev.125"
   },
   {
@@ -126,7 +126,7 @@ const fallbackArtists: Artist[] = [
     instrument: "Violin",
     imageUrl: "/images/artists/10-800.jpeg",
     url: "Roby-Lakatos",
-    bio: "Born into the legendary family of gypsy violinists descended from Janos Bihari, \"King of Gypsy Violinists\", Roby Lakatos was introduced to music as a child and at age nine he made his public debut as first violin in a gypsy band. His musicianship evolved not only within his own family but also at the Béla Bartók Conservatory of Budapest, where he won the first prize for classical violin in 1984.<br><br>Roby Lakatos is not only a scorching virtuoso, but a musician of extraordinary stylistic versatility. Equally comfortable performing classical music as he is playing jazz and his own Hungarian folk idiom, Lakatos is the rare musician who defies definition. He is referred to as a gypsy violinist or \"devil's fiddler\", a classical virtuoso, a jazz improviser, a composer and arranger, and a 19th-century throwback, and he is actually all of these things at once.",
+    bio: "Born into the legendary family of gypsy violinists descended from Janos Bihari, \"King of Gypsy Violinists\", Roby Lakatos was introduced to music as a child and at age nine he made his public debut as first violin in a gypsy band. His musicianship evolved not only within his own family but also at the Béla Bartók Conservatory of Budapest, where he won the first prize for classical violin in 1984. Between 1986 and 1996, he and his ensemble delighted audiences at \"Les Atéliers de la grande Ille\" in Brussels, their musical home throughout this period. He has collaborated with Vadim Repin and Stéphane Grappelli, and his playing was greatly admired by Sir Yehudi Menuhin, who always made a point of visiting the club in Brussels to hear Lakatos.<br><br>Roby Lakatos is not only a scorching virtuoso, but a musician of extraordinary stylistic versatility. Equally comfortable performing classical music as he is playing jazz and his own Hungarian folk idiom, Lakatos is the rare musician who defies definition. He is referred to as a gypsy violinist or \"devil's fiddler\", a classical virtuoso, a jazz improviser, a composer and arranger, and a 19th-century throwback, and he is actually all of these things at once. He is the kind of universal musician so rarely encountered in our time – a player whose strength as an interpreter derives from his activities as an improviser and composer. He has performed at the great halls and festivals of Europe, Asia and America.",
     facebook: "https://www.facebook.com/roby.lakatos.9"
   },
   {
@@ -135,7 +135,7 @@ const fallbackArtists: Artist[] = [
     instrument: "Piano",
     imageUrl: "/images/artists/11-800.jpeg",
     url: "Karin-Lechner",
-    bio: "Born in Buenos Aires, Argentina, Karin Lechner received her first music lessons from her mother Lyl Tiempo in Caracas, Venezuela. She made her public debut at the age of five and recorded her first album at thirteen. She continued her training with Maria Curcio and Pierre Sancan and also benefited from regular advice by Martha Argerich, Daniel Barenboim, Nelson Freire, Nikita Magaloff and Rafael Orozco.<br><br>Karin Lechner today performs at the world's most prestigious concert halls, in particular at the Royal Concertgebouw of Amsterdam, the Philharmonic Society of Berlin, the Téatro Colon of Buenos Aires, the Suntory Hall of Tokyo, and the Kennedy Center in Washington DC. She is also the guest at the greatest musical festivals, among them Salzburg, Schleswig-Holstein, Colmar, Menton, Verbier or Montpellier.",
+    bio: "Born in Buenos Aires, Argentina, Karin Lechner received her first music lessons from her mother Lyl Tiempo in Caracas, Venezuela. She made her public debut at the age of five and recorded her first album at thirteen. She continued her training with Maria Curcio and Pierre Sancan and also benefited from regular advice by Martha Argerich, Daniel Barenboim, Nelson Freire, Nikita Magaloff and Rafael Orozco.<br><br>Karin Lechner today performs at the world's most prestigious concert halls, in particular at the Royal Concertgebouw of Amsterdam, the Philharmonic Society of Berlin, the Téatro Colon of Buenos Aires, the Suntory Hall of Tokyo, and the Kennedy Center in Washington DC. She is also the guest at the greatest musical festivals, among them Salzburg, Schleswig-Holstein, Colmar, Menton, Verbier or Montpellier. Karin is also a regular guest at the Festival Martha Argerich and Friends in Lugano. She appears in concert with a great number of partners, among them with Barbara Hendricks, Viktoria Mullova and Mischa Maisky.",
     facebook: "https://www.facebook.com/karin.lechner.161"
   },
   {
@@ -144,7 +144,7 @@ const fallbackArtists: Artist[] = [
     instrument: "Piano", 
     imageUrl: "/images/artists/12-800.jpeg",
     url: "Polina-Leschenko",
-    bio: "Awarded a 'Choc' by French music magazine le Monde de la Musique, among others, for 'her extraordinarily powerful and virtuosic playing' and her 'unique sensibility', Russian pianist Polina Leschenko has worked with orchestras around the world including the Hallé, Russian National Orchestra, Bournemouth Symphony, Gulbenkian Orchestra, Bern Symphony, I Pomeriggi Musicali in Milan, Orquesta de Euskadi, Australian Chamber Orchestra, Camerata Salzburg, Lausanne Chamber Orchestra, Scottish Chamber Orchestra, London Mozart Players and Britten Sinfonia.<br><br>An accomplished and admired chamber musician, Polina Leschenko also performs frequently at many festivals such as Verbier, Salzburger Festspiele, Progetto Martha Argerich in Lugano, La Roque d'Anthéron, International Chamber Music Festival in Utrecht, Stavanger, Aldeburgh, Cheltenham, Oxford, Risor, Istanbul, Enescu Festival in Bucharest, Musiktage Mondsee, Schubertiade, Gstaad.",
+    bio: "Awarded a 'Choc' by French music magazine le Monde de la Musique, among others, for 'her extraordinarily powerful and virtuosic playing' and her 'unique sensibility', Russian pianist Polina Leschenko has worked with orchestras around the world including the Hallé, Russian National Orchestra, Bournemouth Symphony, Gulbenkian Orchestra, Bern Symphony, I Pomeriggi Musicali in Milan, Orquesta de Euskadi, Australian Chamber Orchestra, Camerata Salzburg, Lausanne Chamber Orchestra, Scottish Chamber Orchestra, London Mozart Players and Britten Sinfonia.<br><br>An accomplished and admired chamber musician, Polina Leschenko also performs frequently at many festivals such as Verbier, Salzburger Festspiele, Progetto Martha Argerich in Lugano, La Roque d'Anthéron, International Chamber Music Festival in Utrecht, Stavanger, Aldeburgh, Cheltenham, Oxford, Risor, Istanbul, Enescu Festival in Bucharest, Musiktage Mondsee, Schubertiade, Gstaad.<br><br>Regular chamber music partners include Martha Argerich, Patricia Kopatchinskaja, Ivry Gitlis, Julian Rachlin, Ilya Gringolts, Nathan Braude, Heinrich Schiff, Mischa Maisky and Torleif Thedéen…<br><br>Leschenko has performed in venues such as Vienna's Konzerthaus, Mozarteum Salzburg, Amsterdam's Concertgebouw, Lincoln Center, Carnegie Hall, Köln Philharmonie, Wigmore hall, Cité de la Musique, Palais des Beaux Arts in Brussels, Tonhalle in Zürich, Victoria Hall in Geneva, Auditorio Nacional de Musica in Madrid.<br><br>Polina Leschenko was born in St Petersburg into a family of musicians, and began playing the piano under her father's guidance at the age of six. Two years later she made her solo début with the Leningrad Symphony Orchestra in St Petersburg. She studied with Sergei Leschenko, Vitali Margulis, Pavel Gililov, Alexandre Rabinovitch-Barakovsky and Christopher Elton.<br><br>Currently Polina resides in Brussels with her husband Nathan Braude and her lovely daughter Alicia.",
     facebook: "https://www.facebook.com/Polina-Leschenko-340738827483/"
   },
   {
@@ -153,7 +153,7 @@ const fallbackArtists: Artist[] = [
     instrument: "Piano",
     imageUrl: "/images/artists/13-800.jpeg",
     url: "Lily-Maisky",
-    bio: "Lily Maisky was born in Paris, moving to Brussels soon after. She began playing the piano at the age of four, with Lyl Tiempo, also studying with Hagit Kerbel, Ilana Davids and Alan Weiss. Lily was a pupil at the 'Purcell School of Music' from 2001 to 2005 where she also studied jazz piano. She has received master classes and musical advice from renowned artists including Martha Argerich, Dmitri Bashkirov, Joseph Kalichstein, Pavel Gililov, Vitali Margulis, Oleg Maisenberg and Marielle Labeque to name just a few.<br><br>Concert appearances have taken her throughout Europe as well as the Far East, and she has been invited to many of the great festivals such as the Verbier Festival, Progetto Martha Argerich in Lugano, the Edinburgh Festival, Maggio Musicale Fiorentino, Bergamo-Brescia, the Franz Liszt festival in Austria, Julian Rachlin and Friends in Dubrovnik, Rencontres de Bel Air in France, the Schlesswig-Holstein Music Festival, the Berlin Festival, the Beijing Piano Festival as well as the English Chamber Orchestra Music Cruise.",
+    bio: "Lily Maisky was born in Paris, moving to Brussels soon after. She began playing the piano at the age of four, with Lyl Tiempo, also studying with Hagit Kerbel, Ilana Davids and Alan Weiss. Lily was a pupil at the 'Purcell School of Music' from 2001 to 2005 where she also studied jazz piano. She has received master classes and musical advice from renowned artists including Martha Argerich, Dmitri Bashkirov, Joseph Kalichstein, Pavel Gililov, Vitali Margulis, Oleg Maisenberg and Marielle Labeque to name just a few.<br><br>Concert appearances have taken her throughout Europe as well as the Far East, and she has been invited to many of the great festivals such as the Verbier Festival, Progetto Martha Argerich in Lugano, the Edinburgh Festival, Maggio Musicale Fiorentino, Bergamo-Brescia, the Franz Liszt festival in Austria, Julian Rachlin and Friends in Dubrovnik, Rencontres de Bel Air in France, the Schlesswig-Holstein Music Festival, the Berlin Festival, the Beijing Piano Festival as well as the English Chamber Orchestra Music Cruise. Lily has performed concertos under the batons of maestros Thomas Sanderling, Gerd Albrecht, Daniel Raiskin and Charles Olivieri Munroe, amongst others. She has also performed solo and ensemble works in such prestigious venues as the Royal Festival Hall in London, Vienna's Concerthaus, Munich's Prinzregentheatre, Hamburg's Leiszhalle, Venezia's La Fenice, Bonn's BeethovenHalle, Tokyo's Suntory Hall, Rome's Teatro Olimpico, Moscow Conservatory, Saint Petersburg Philarmonie, New York's Carnegie Hall, Seoul's Performing Arts Center, Athens Megaron and Buckingham Palace among many others.<br><br>Lily features on several Deutsche Grammophon and EMI releases, and has been frequently broadcast on European and Asian radio and television. She enjoys playing chamber music as well as solo piano and forms a regular duo for many years with Mischa Maisky, as well as the Maisky Trio where her brother Sascha joins them. She has also performed with such artists as Julian Rachlin, Janine Jansen, Dora Schwarzberg, Renaud Capuçon, Chantal Juillet, Sergey Krylov, Martha Argerich, Nicholas Angelich, Frank Braley, Gérard Caussé as well as Alissa Margulis, Hrachya Avanesyan, Geza Hosszu-Legocky, Alena Baeva, Isztvan Vardai, Orfeo Mandozzi, Boris Brovtsyn and Boris Andrianov.",
     facebook: "https://www.facebook.com/lilymaisky/"
   },
   {
@@ -191,7 +191,7 @@ const fallbackArtists: Artist[] = [
     instrument: "Conductor",
     imageUrl: "/images/artists/17-800.jpeg",
     url: "Steven-Sloane",
-    bio: "American-Israeli conductor Steven Sloane is a visionary whose creative concepts and outstanding artistic merits have garnered respect in both artistic circles and in the realm of cultural politics. A student of Eugene Ormandy, Franco Ferrara, and Gary Bertini, he quickly set off for an international career and served as music director of the Spoleto Festival USA, Opera North in Leeds, and the American Composers Orchestra, as principal conductor of the Stavanger Symphony Orchestra, as artistic director of \"Ruhr.2010\" Capital of Culture, and as principal guest conductor and artistic advisor of the Malmö Opera.<br><br>From 1994 to 2021, Steven Sloane has been general music director of the Bochum Symphony, which he transformed into one of Germany's leading orchestras. He was instrumental in the building and realisation of the orchestra's own music centre, the Anneliese Brost Musikforum Ruhr, inaugurating the hall in 2016 to international acclaim. Other extraordinary achievements of his work with the Bochum Symphony include the exceptional production of Zimmermann's Die Soldaten at the Ruhrtriennale (2006) and at the New York Lincoln Center Festival (2008), the celebrated Mahler/Ives cycle at the Philharmonie Essen, and numerous CD projects, including the complete recording of Joseph Marx's orchestral works. He will remain associated with the Bochum Symphony as honorary conductor."
+    bio: "American-Israeli conductor Steven Sloane is a visionary whose creative concepts and outstanding artistic merits have garnered respect in both artistic circles and in the realm of cultural politics. A student of Eugene Ormandy, Franco Ferrara, and Gary Bertini, he quickly set off for an international career and served as music director of the Spoleto Festival USA, Opera North in Leeds, and the American Composers Orchestra, as principal conductor of the Stavanger Symphony Orchestra, as artistic director of \"Ruhr.2010\" Capital of Culture, and as principal guest conductor and artistic advisor of the Malmö Opera.<br><br>From 1994 to 2021, Steven Sloane has been general music director of the Bochum Symphony, which he transformed into one of Germany's leading orchestras. He was instrumental in the building and realisation of the orchestra's own music centre, the Anneliese Brost Musikforum Ruhr, inaugurating the hall in 2016 to international acclaim. Other extraordinary achievements of his work with the Bochum Symphony include the exceptional production of Zimmermann's Die Soldaten at the Ruhrtriennale (2006) and at the New York Lincoln Center Festival (2008), the celebrated Mahler/Ives cycle at the Philharmonie Essen, and numerous CD projects, including the complete recording of Joseph Marx's orchestral works. He will remain associated with the Bochum Symphony as honorary conductor.<br><br>In September 2020, Steven Sloane took up his new post as music director of the Jerusalem Symphony Orchestra, introducing several new concert series and formats in his first season. Highlights in 2021 include a tour to Germany in June 2021 with concerts at the Elbphilharmonie Hamburg, Konzerthaus Berlin, and Klavier-Festival Ruhr, as well as a joint performance of Gustav Mahler's Symphony No. 2 with the Bochum Symphony Orchestra at the Jahrhunderthalle, and the world premiere of the new opera Kundry by Avner Dorman at the Regarding Festival in Tel Aviv in October.<br><br>Steven Sloane is a frequent guest with prestigious orchestras including the London Philharmonic Orchestra, San Francisco Symphony, Israel Philharmonic, Sydney Symphony, Tokyo Metropolitan, Deutsche Kammerphilharmonie Bremen, Deutsches Symphonie-Orchester Berlin, hr-Sinfonieorchester, Philharmonia Orchestra London, City of Birmingham Symphony Orchestra, Orchestre Philharmonique de Radio France, Orquestra Sinfônica do Estado de São Paulo, and the Chicago Symphony Orchestra.<br><br>As a sought after opera conductor, he has been welcomed at houses such as the Royal Opera House Covent Garden (Le Nozze di Figaro), Los Angeles Opera (Dido and Aeneas/Bluebeard's Castle), San Francisco Opera (Wallace: Bonesetter's Daughter), Royal Danish Opera (Madama Butterfly), Grand Théâtre de Genève (Britten: A Midsummer Night's Dream), Houston Grand Opera (Vec Makropulos, The Magic Flute), Welsh National Opera (Iphigénie en Tauride), Deutsche Oper Berlin (The Love for Three Oranges) and Stuttgart Opera (Macbeth) as well as at festivals in Hong Kong (Salome), Santa Fe (Káta Kabanová), Edinburgh (Genoveva), Salzburg (Feldman: Neither) and New York (Turnage's Anna Nicole at the NY City Opera). His most recent opera accomplishments include the Berlin premiere of Reimann's Medea at Komische Oper, Adriana Lecouvreur at Oper Frankfurt, Der Fliegende Holländer, Tosca and Falstaff in Malmö, and Salome at the Spoleto Festival USA.<br><br>Mentoring young musicians has always been important to Steven Sloane. He has regularly conducted youth orchestras such as Junge Deutsche Philharmonie, Bundesjugendorchester, and Young Israel Philharmonic, and since 2013 he has served as professor at the Universität der Künste Berlin, where he founded the International Conducting Academy Berlin."
   },
   {
     id: "18",
@@ -223,6 +223,46 @@ const artistReleases: Record<string, Release[]> = {
       format: "1 Hybrid SACD",
       imageUrl: "/images/releases/6.jpeg",
       url: "Recital-Franck-Debussy-Schumann-Dora-Schwarzberg-Martha-Argerich"
+    },
+    {
+      id: "28",
+      title: "Rendez-vous with Martha Argerich",
+      artists: "Martha Argerich",
+      format: "7CD",
+      imageUrl: "/images/releases/28.jpeg",
+      url: "Rendez-vous-with-Martha-Argerich-Martha-Argerich"
+    },
+    {
+      id: "31",
+      title: "Rendez-vous with Martha Argerich - Volume 2",
+      artists: "Martha Argerich",
+      format: "6 CD",
+      imageUrl: "/images/releases/31.jpeg",
+      url: "Rendez-vous-with-Martha-Argerich-Volume-2"
+    },
+    {
+      id: "34",
+      title: "Martha Argerich plays Beethoven & Ravel",
+      artists: "Martha Argerich",
+      format: "1 CD",
+      imageUrl: "/images/releases/34.jpeg",
+      url: "Martha-Argerich-plays-Beethoven&Ravel-IPO-Lahav-Shani"
+    },
+    {
+      id: "35",
+      title: "HOMMAGE",
+      artists: "Sergio Tiempo",
+      format: "1 CD",
+      imageUrl: "/images/releases/35.jpeg",
+      url: "HOMMAGE-Sergio-Tiempo"
+    },
+    {
+      id: "36",
+      title: "Rendez-vous with Martha Argerich - Volume 3",
+      artists: "Martha Argerich",
+      format: "7 CD",
+      imageUrl: "/images/releases/36.jpeg",
+      url: "Rendez-vous-with-Martha-Argerich-Volume-3"
     }
   ],
   "Roby-Lakatos": [
@@ -265,6 +305,40 @@ const artistReleases: Record<string, Release[]> = {
       format: "1 Hybrid SACD",
       imageUrl: "/images/releases/22.jpeg",
       url: "The-Four-Seasons-Roby-Lakatos"
+    },
+    {
+      id: "27",
+      title: "Tribute to Stephane & Django",
+      artists: "Roby Lakatos, Bireli Lagrene",
+      format: "1 Hybrid SACD",
+      imageUrl: "/images/releases/27.jpeg",
+      url: "Tribute-to-Stephane&Django-Roby-Lakatos&Bireli-Lagrene"
+    },
+    {
+      id: "30",
+      title: "Peacock",
+      artists: "Dr L. Subramaniam, Roby Lakatos",
+      format: "1 CD",
+      imageUrl: "/images/releases/30.jpeg",
+      url: "Peacock-Dr-L.-Subramaniam-Roby-Lakatos"
+    },
+    {
+      id: "37",
+      title: "World Tangos Odyssey",
+      artists: "Roby Lakatos",
+      format: "1 CD",
+      imageUrl: "/images/releases/37.jpeg",
+      url: "WORLD-TANGOS-ODYSSEY"
+    }
+  ],
+  "Evgeni-Bozhanov": [
+    {
+      id: "29",
+      title: "Morgen",
+      artists: "Evgeni Bozhanov",
+      format: "1 CD",
+      imageUrl: "/images/releases/29.jpeg",
+      url: "Morgen-Evgeni-Bozhanov"
     }
   ],
   "Polina-Leschenko": [
@@ -363,6 +437,14 @@ const artistReleases: Record<string, Release[]> = {
       format: "1 Hybrid SACD + Bonus DVD",
       imageUrl: "/images/releases/14.jpeg",
       url: "Tango-Rhapsody-Sergio-Tiempo-Karin-Lechner"
+    },
+    {
+      id: "26",
+      title: "Legacy",
+      artists: "Sergio Tiempo",
+      format: "1 Hybrid SACD",
+      imageUrl: "/images/releases/26.jpeg",
+      url: "Legacy-Sergio-Tiempo"
     }
   ],
   "Karin-Lechner": [
@@ -471,6 +553,56 @@ const artistReleases: Record<string, Release[]> = {
       format: "1 Hybrid SACD",
       imageUrl: "/images/releases/17.jpeg",
       url: "Recital-Haendel-Brahms-Bach-Liszt-Francesco-Piemontesi"
+    }
+  ],
+  "Alexander-Kniazev": [
+    {
+      id: "32",
+      title: "Sonatas Op. 120 - Four Serious Songs Op. 121",
+      artists: "Alexander Kniazev, Kasparas Uinskas",
+      format: "1 CD",
+      imageUrl: "/images/releases/32.jpeg",
+      url: "Sonatas-Op.-120-Four-Serious-Songs-Op.-121-Alexander-Kniazev-Kasparas-Uinskas"
+    }
+  ],
+  "Kasparas-Uinskas": [
+    {
+      id: "32",
+      title: "Sonatas Op. 120 - Four Serious Songs Op. 121",
+      artists: "Alexander Kniazev, Kasparas Uinskas",
+      format: "1 CD",
+      imageUrl: "/images/releases/32.jpeg",
+      url: "Sonatas-Op.-120-Four-Serious-Songs-Op.-121-Alexander-Kniazev-Kasparas-Uinskas"
+    }
+  ],
+  "Dietrich-Henschel": [
+    {
+      id: "33",
+      title: "Wunderhorn",
+      artists: "Dietrich Henschel, Bochumer Symphoniker, Steven Sloane",
+      format: "2 CD",
+      imageUrl: "/images/releases/33.jpeg",
+      url: "Wunderhorn-Dietrich-Henschel-Bochumer-Symphoniker-Steven-Sloane"
+    }
+  ],
+  "Steven-Sloane": [
+    {
+      id: "33",
+      title: "Wunderhorn",
+      artists: "Dietrich Henschel, Bochumer Symphoniker, Steven Sloane",
+      format: "2 CD",
+      imageUrl: "/images/releases/33.jpeg",
+      url: "Wunderhorn-Dietrich-Henschel-Bochumer-Symphoniker-Steven-Sloane"
+    }
+  ],
+  "Manu-Comté": [
+    {
+      id: "25",
+      title: "Homilia",
+      artists: "Manu Comté, B'Strings Quintet",
+      format: "1 Hybrid SACD",
+      imageUrl: "/images/releases/25.jpeg",
+      url: "Homilia-Manu-Comté-B'Strings-Quintet"
     }
   ]
 }
