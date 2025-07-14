@@ -10,8 +10,8 @@ export interface AuditLogEntry {
   action: string
   table_name: string
   record_id?: string
-  old_data?: Record<string, any>
-  new_data?: Record<string, any>
+  old_data?: Record<string, unknown>
+  new_data?: Record<string, unknown>
   ip_address?: string
   user_agent?: string
   created_at: string
@@ -21,8 +21,8 @@ export interface AuditLogCreateData {
   action: string
   table_name: string
   record_id?: string
-  old_data?: Record<string, any>
-  new_data?: Record<string, any>
+  old_data?: Record<string, unknown>
+  new_data?: Record<string, unknown>
 }
 
 // Audit action types
@@ -267,7 +267,7 @@ export async function getAuditStats(): Promise<{
 }
 
 // Audit logging wrapper for database operations
-export function withAudit<T extends Record<string, any>>(
+export function withAudit<T extends Record<string, unknown>>(
   operation: () => Promise<T>,
   auditData: AuditLogCreateData
 ): Promise<T> {

@@ -75,9 +75,9 @@ export default function DistributorsPage() {
 
   const filteredDistributors = distributors.filter(distributor => {
     const matchesSearch = 
-      distributor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      distributor.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       distributor.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      distributor.country_id?.toLowerCase().includes(searchTerm.toLowerCase())
+      (distributor.country_id && distributor.country_id.toLowerCase().includes(searchTerm.toLowerCase()))
     
     const matchesCountry = selectedCountry === 'all' || distributor.country_id === selectedCountry
     
@@ -157,7 +157,7 @@ export default function DistributorsPage() {
           <option value="all">All Countries</option>
           {countries.map((country) => (
             <option key={country} value={country}>
-              {getCountryFlag(country)} {country.toUpperCase()}
+              {getCountryFlag(country)} {country?.toUpperCase() || 'Unknown'}
             </option>
           ))}
         </select>
@@ -216,7 +216,7 @@ export default function DistributorsPage() {
                     {distributor.country_id && (
                       <div className="flex items-center text-sm text-gray-500">
                         <span className="mr-1">{getCountryFlag(distributor.country_id)}</span>
-                        {distributor.country_id.toUpperCase()}
+                        {distributor.country_id?.toUpperCase() || 'Unknown'}
                       </div>
                     )}
                   </div>

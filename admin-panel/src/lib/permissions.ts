@@ -12,7 +12,7 @@ export interface AdminUser {
   email: string
   name: string
   role: UserRole
-  permissions: Record<string, any>
+  permissions: Record<string, unknown>
   created_by?: string
   last_login?: string
   status: 'active' | 'inactive' | 'suspended'
@@ -172,11 +172,11 @@ export function getAvailableNavigation(userRole: UserRole) {
 
 // Permission-based component wrapper
 export function requirePermission(
-  component: React.ComponentType<any>,
+  component: React.ComponentType<Record<string, unknown>>,
   resource: string,
   action: 'read' | 'write' | 'delete'
 ) {
-  return function PermissionGuard(props: any) {
+  return function PermissionGuard(props: Record<string, unknown>) {
     const [hasAccess, setHasAccess] = React.useState(false)
     const [loading, setLoading] = React.useState(true)
     
