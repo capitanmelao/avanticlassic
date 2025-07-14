@@ -119,7 +119,7 @@ export default function Dashboard() {
       {/* Welcome Section */}
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          Welcome back, {session?.user?.name?.split(' ')[0]}! 👋
+          Welcome back, {session?.user?.name?.split(' ')[0]}!
         </h2>
         <p className="text-gray-600">
           Here's what's happening with your Avanti Classic website today.
