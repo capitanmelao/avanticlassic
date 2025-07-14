@@ -231,7 +231,7 @@ export default function ReleasesPage() {
     }
   }
 
-  const handleDragEnd = async (event: any) => {
+  const handleDragEnd = async (event: { active: { id: number }, over: { id: number } | null }) => {
     const { active, over } = event
 
     if (active.id !== over?.id) {

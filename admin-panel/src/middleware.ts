@@ -34,7 +34,7 @@ export default auth(async (req) => {
       // Try to get user role from database (optional for now)
       try {
         const supabase = createClient()
-        const { data: adminUser, error } = await supabase
+        const { data: adminUser } = await supabase
           .from('admin_users')
           .select('role, status')
           .eq('email', userEmail)
@@ -59,7 +59,7 @@ export default auth(async (req) => {
           }
         }
         // If admin_users table doesn't exist or user not found, allow access for authorized email
-      } catch (dbError) {
+      } catch {
         console.log('Database not available, allowing access for authorized email:', userEmail)
         // Allow access if database is not available but email is authorized
       }

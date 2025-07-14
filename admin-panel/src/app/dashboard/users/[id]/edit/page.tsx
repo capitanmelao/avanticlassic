@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase'
 import { usePermissions } from '@/lib/permissions'
 import { logAuditEvent } from '@/lib/audit'
@@ -43,9 +43,9 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
     if (userId) {
       fetchUser()
     }
-  }, [userId])
+  }, [userId, fetchUser])
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     if (!userId) return
 
     try {
@@ -71,7 +71,7 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
     } finally {
       setLoading(false)
     }
-  }
+  }, [userId, supabase])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

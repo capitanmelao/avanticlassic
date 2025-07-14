@@ -107,7 +107,7 @@ export async function getCurrentUser(): Promise<AdminUser | null> {
     
     // Try to get user from admin_users table
     try {
-      const { data: adminUser, error } = await supabase
+      const { data: adminUser } = await supabase
         .from('admin_users')
         .select('*')
         .eq('email', user.email)
@@ -116,7 +116,7 @@ export async function getCurrentUser(): Promise<AdminUser | null> {
       if (adminUser) {
         return adminUser as AdminUser
       }
-    } catch (dbError) {
+    } catch {
       console.log('admin_users table not available, creating fallback user')
     }
     
@@ -204,7 +204,7 @@ export function requirePermission(
       validatePermission(resource, action)
         .then(setHasAccess)
         .finally(() => setLoading(false))
-    }, [resource, action])
+    }, [])
     
     if (loading) {
       return React.createElement('div', { 

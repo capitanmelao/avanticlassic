@@ -210,7 +210,7 @@ export default function NewPlaylistPage() {
     if (formData.title && !formData.slug) {
       updateField('slug', generateSlug(formData.title))
     }
-  }, [formData.title, formData.slug]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [formData.title, formData.slug])
 
   return (
     <div className="p-6">

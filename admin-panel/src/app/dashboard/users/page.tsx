@@ -25,10 +25,6 @@ export default function UsersPage() {
   const { user: currentUser, isSuperAdmin } = usePermissions()
   const supabase = createClient()
 
-  useEffect(() => {
-    fetchUsers()
-  }, [])
-
   const fetchUsers = async () => {
     try {
       const { data, error } = await supabase
@@ -48,6 +44,10 @@ export default function UsersPage() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    fetchUsers()
+  }, [])
 
   const handleDeleteUser = async (userId: string, userEmail: string) => {
     if (!confirm(`Are you sure you want to delete the user "${userEmail}"?`)) {
