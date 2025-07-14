@@ -340,7 +340,7 @@ export default function NewVideoPage() {
                     <div className="mt-4">
                       <p className="text-sm font-medium text-gray-700 mb-2">Preview:</p>
                       <img
-                        src={getYouTubeThumbnail(formData.youtube_id)}
+                        src={getYouTubeThumbnail(formData.youtube_id) || ''}
                         alt="YouTube thumbnail"
                         className="h-32 w-56 object-cover rounded-lg border border-gray-200"
                       />
