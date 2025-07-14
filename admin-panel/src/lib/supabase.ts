@@ -232,7 +232,7 @@ export interface Playlist {
   slug: string
   title: string
   description?: string
-  category?: 'new_releases' | 'for_everyone' | 'moods' | 'themes' | 'kids' | 'seasonal'
+  category?: 'by_artist' | 'by_composer'
   image_url?: string
   spotify_url?: string
   apple_music_url?: string
