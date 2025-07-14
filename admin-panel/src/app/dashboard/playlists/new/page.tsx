@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase, type Release } from '@/lib/supabase'
-import { ChevronLeftIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 
 interface FormData {
   slug: string
@@ -210,7 +210,7 @@ export default function NewPlaylistPage() {
     if (formData.title && !formData.slug) {
       updateField('slug', generateSlug(formData.title))
     }
-  }, [formData.title])
+  }, [formData.title, formData.slug]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="p-6">
@@ -250,7 +250,7 @@ export default function NewPlaylistPage() {
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id as 'basic' | 'content' | 'tracks')
                 className={`py-2 px-1 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
                     ? 'border-black text-black'

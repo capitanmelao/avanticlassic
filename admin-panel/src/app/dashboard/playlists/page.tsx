@@ -18,7 +18,7 @@ interface PlaylistWithTracks extends Playlist {
 }
 
 export default function PlaylistsPage() {
-  const { data: session, status } = useSession()
+  const { status } = useSession()
   const router = useRouter()
   const [playlists, setPlaylists] = useState<PlaylistWithTracks[]>([])
   const [loading, setLoading] = useState(true)

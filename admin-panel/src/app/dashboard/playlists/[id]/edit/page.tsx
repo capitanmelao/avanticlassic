@@ -610,7 +610,7 @@ export default function EditPlaylistPage() {
             {formData.tracks.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 <p>No tracks in this playlist yet.</p>
-                <p className="text-sm">Click "Add Track" to get started.</p>
+                <p className="text-sm">Click &quot;Add Track&quot; to get started.</p>
               </div>
             ) : (
               <div className="space-y-2">
