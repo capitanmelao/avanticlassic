@@ -105,8 +105,9 @@ VERCEL_DEPLOY_HOOK=your-vercel-deploy-hook
 
 ## 🛠 Tech Stack
 
-- **Next.js 14** - React framework with App Router
-- **NextAuth.js** - Authentication
+- **Next.js 15** - React framework with App Router
+- **Auth.js v5** - Authentication with Google OAuth
 - **Tailwind CSS** - Styling
 - **Supabase** - Database and file storage
 - **TypeScript** - Type safety
+- **@dnd-kit** - Drag and drop functionality
