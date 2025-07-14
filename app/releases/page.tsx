@@ -21,13 +21,18 @@ async function getReleases() {
   try {
     // Use relative URL to avoid port issues
     const baseUrl = process.env.NODE_ENV === 'production' 
-      ? process.env.NEXT_PUBLIC_SITE_URL 
+      ? process.env.NEXT_PUBLIC_SITE_URL || ''
       : '';
-    const res = await fetch(`${baseUrl}/api/releases?limit=24`, {
+    const res = await fetch(`${baseUrl}/api/releases?limit=50`, {
       cache: 'no-store'
     })
-    if (!res.ok) return { releases: [] }
-    return await res.json()
+    if (!res.ok) {
+      console.error('API response not ok:', res.status, res.statusText)
+      return { releases: [] }
+    }
+    const data = await res.json()
+    console.log('API response:', data.releases?.length || 0, 'releases')
+    return data
   } catch (error) {
     console.error('Error fetching releases:', error)
     return { releases: [] }
