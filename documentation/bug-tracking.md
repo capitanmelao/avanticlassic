@@ -117,6 +117,76 @@ admin-panel/src/
 
 ## 🟢 **RESOLVED ISSUES**
 
+### **BUG-004: Release Ordering Display Issue [RESOLVED]**
+**Status**: ✅ Resolved - API Translation Layer Fixed  
+**Resolution Date**: July 14, 2025  
+**Priority**: P0 - Critical content ordering issue  
+
+#### **Issue Description:**
+Main site displayed releases in wrong order despite admin panel drag-and-drop configuration working correctly. The admin panel allowed manual ordering through drag-and-drop, but the public website continued showing releases in hardcoded fallback order.
+
+#### **Root Cause Analysis:**
+- **API Translation Requirement**: `/api/releases` route required `release_translations.language = 'en'` with inner join
+- **Missing Translation Data**: No English translation records existed in the database
+- **Empty API Response**: API returned empty array when no translations matched language filter
+- **Fallback Activation**: Frontend fell back to hardcoded `fallbackReleases` array (ID order 1-37)
+- **Order Mismatch**: Fallback array ignored `sort_order` field configured via admin drag-and-drop
+
+#### **Technical Root Cause:**
+```typescript
+// PROBLEM: Required inner join with non-existent translations
+.select(`
+  release_translations!inner(
+    language,
+    description,
+    tracklist
+  )
+`)
+.eq('release_translations.language', lang)
+
+// Empty result → Fallback to hardcoded array → Wrong order
+```
+
+#### **Resolution Implementation:**
+1. **Made Translations Optional**: Removed `!inner` from API query to use left join
+2. **Removed Language Filter**: Eliminated `.eq('release_translations.language', lang)` requirement
+3. **Preserved Ordering**: API now returns actual database releases with proper `sort_order`
+
+#### **Code Changes:**
+```typescript
+// FIXED: Optional translations with left join
+.select(`
+  release_translations(
+    language,
+    description,
+    tracklist
+  )
+`)
+// Removed language filter requirement
+.order('sort_order', { ascending: false })
+```
+
+#### **Files Modified:**
+- `app/api/releases/route.ts:31` - Removed `!inner` from translations query
+- `app/api/releases/route.ts:43` - Removed `.eq('release_translations.language', lang)` filter
+
+#### **Verification Results:**
+```json
+{
+  "releases": [
+    {"id": "37", "title": "World Tangos Odyssey"},
+    {"id": "36", "title": "Rendez-vous with Martha Argerich - Volume 3"}, 
+    {"id": "35", "title": "HOMMAGE - Sergio Tiempo"}
+  ]
+}
+```
+
+#### **Impact and Benefits:**
+- ✅ **Correct Ordering**: Main site now displays releases in exact admin-configured order
+- ✅ **Real Database Content**: API returns actual releases instead of fallback data
+- ✅ **Drag-and-Drop Sync**: Admin panel changes immediately reflected on public site
+- ✅ **Future-Proof**: Works regardless of translation data availability
+
 ### **BUG-003: NextAuth v4 + Next.js 15 Incompatibility [RESOLVED]**
 **Status**: ✅ Resolved - Auth.js v5 Migration Completed  
 **Resolution Date**: July 14, 2025  
@@ -251,9 +321,10 @@ Current image handling lacks automated optimization and multiple format generati
 ### **Current Status:**
 - 🔴 **Critical**: 0 (All critical issues resolved)
 - 🟡 **Medium**: 1 (BUG-001: Image Optimization)
-- 🟢 **Resolved**: 4 (Two-Tier Admin Architecture, Auth.js Migration, CMS Implementation, Astro Migration)
+- 🟢 **Resolved**: 5 (Release Ordering, Two-Tier Admin Architecture, Auth.js Migration, CMS Implementation, Astro Migration)
 
 ### **Critical Issue Timeline:**
+- **BUG-004**: ✅ Resolved within 1 day (release ordering API issue fixed)
 - **BUG-002**: ✅ Resolved within 1 day (security/architecture issue completed)
 
 ### **Impact Assessment:**

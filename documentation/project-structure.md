@@ -77,8 +77,8 @@ admin-panel/
 │   │       │       └── 📂 edit/
 │   │       │           └── 📄 page.tsx # Edit artist profile
 │   │       │
-│   │       ├── 📂 releases/        # ✅ Releases Management
-│   │       │   ├── 📄 page.tsx     # Releases catalog
+│   │       ├── 📂 releases/        # ✅ Releases Management + Drag-and-Drop
+│   │       │   ├── 📄 page.tsx     # Releases catalog with drag-and-drop ordering (@dnd-kit)
 │   │       │   ├── 📂 new/
 │   │       │   │   └── 📄 page.tsx # Create new release
 │   │       │   └── 📂 [id]/
@@ -206,7 +206,9 @@ app/
 │   ├── 📄 loading.tsx              # Loading state
 │   └── 📄 page.tsx                 # Playlists by artist and composer
 │
-└── 📂 api/                         # API Routes for detailed pages
+└── 📂 api/                         # API Routes for detailed pages  
+    ├── 📄 releases/
+    │   └── 📄 route.ts             # 🔧 FIXED: Release ordering API (translation layer)
     ├── 📂 artists/
     │   └── 📂 [id]/
     │       └── 📄 route.ts         # Artist detail API with URL encoding
@@ -227,8 +229,9 @@ app/
 - ✅ **No Performer Subtitles** - cleaned up artist presentations
 - ✅ **26 Distributors** - complete distributor list on About page
 - ✅ **Videos & More Page** - transformed from "News & More"
-- ✅ **Special Character Support** - URL encoding for release titles
+- ✅ **Special Character Support** - URL encoding for release titles  
 - ✅ **Multilingual Support** - EN/FR/DE routing (inherited from Astro)
+- ✅ **Release Ordering Sync** - Main site displays admin-configured order via fixed API
 
 ---
 
@@ -252,7 +255,7 @@ supabase/
 ### **Database Tables - PRODUCTION:**
 - ✅ **admin_users** - Authentication with Google OAuth
 - ✅ **artists** - Artist profiles with biography and images
-- ✅ **releases** - Album information with tracklists and metadata
+- ✅ **releases** - Album information with tracklists, metadata, and sort_order field
 - ✅ **videos** - Video gallery with YouTube integration
 - ✅ **playlists** - Curated playlists by artist/composer with external links
 - ✅ **reviews** - 5-star rating system with publication controls
@@ -374,4 +377,35 @@ avanti-classic-template/            # Original v0 template (reference only)
 - ✅ **Day 1**: Audit logging and comprehensive testing completed
 - ✅ **Day 1**: Security validation and production deployment successful
 
-**Current Status**: Comprehensive admin panel CMS with two-tier admin architecture successfully deployed and production-ready for multi-user management.
+## ✅ **LATEST UPDATES (July 14, 2025)**
+
+### **🎯 Drag-and-Drop Release Ordering - COMPLETED:**
+- ✅ **@dnd-kit Integration**: Core, sortable, and utilities libraries added
+- ✅ **Visual Interface**: Three-dot drag handles with real-time feedback  
+- ✅ **Database Sync**: Automatic `sort_order` field updates on drag completion
+- ✅ **Main Site Sync**: API translation layer fixed - public site shows admin order
+- ✅ **Error Handling**: Failed updates revert to original order with user notification
+
+### **🔧 Critical API Fix - RESOLVED:**
+- ✅ **Translation Layer Issue**: Removed `!inner` join requirement from releases API
+- ✅ **Empty Response Fix**: API now returns actual releases instead of fallback data
+- ✅ **Order Synchronization**: Main site immediately reflects admin drag-and-drop changes
+
+### **📦 New Dependencies Added:**
+```json
+{
+  "@dnd-kit/core": "^6.3.1",
+  "@dnd-kit/sortable": "^10.0.0", 
+  "@dnd-kit/utilities": "^3.2.2"
+}
+```
+
+### **🛠️ Key Files Modified:**
+- `admin-panel/src/app/dashboard/releases/page.tsx` - Complete drag-and-drop implementation
+- `app/api/releases/route.ts` - API translation layer fixes for proper ordering
+- `admin-panel/package.json` - Added @dnd-kit dependencies
+
+### **🎯 Session Handover Ready:**
+All systems operational with comprehensive documentation for seamless session continuation.
+
+**Current Status**: Comprehensive admin panel CMS with two-tier admin architecture, drag-and-drop ordering, and synchronized content display successfully deployed and production-ready for multi-user management.

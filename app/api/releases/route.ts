@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
         shop_url,
         spotify_url,
         apple_music_url,
-        release_translations!inner(
+        release_translations(
           language,
           description,
           tracklist
@@ -40,7 +40,6 @@ export async function GET(request: NextRequest) {
           )
         )
       `, { count: 'exact' })
-      .eq('release_translations.language', lang)
       .order('featured', { ascending: false })
       .order('sort_order', { ascending: false })
       .range(offset, offset + limit - 1)
@@ -109,7 +108,7 @@ export async function GET_RELEASE(request: NextRequest, { params }: { params: { 
       .from('releases')
       .select(`
         *,
-        release_translations!inner(
+        release_translations(
           language,
           description,
           tracklist

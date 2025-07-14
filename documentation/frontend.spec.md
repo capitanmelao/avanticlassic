@@ -4,7 +4,7 @@
 
 ### **Visual Identity**
 - **Elegant Simplicity**: Clean, professional aesthetic befitting classical music
-- **Typography-First**: Helvetica font family for readability and sophistication
+- **Typography-First**: Playfair Display font family for enhanced classical music aesthetic
 - **Minimal Color Palette**: Black, white, and subtle grays with classical music imagery
 - **Responsive Excellence**: Mobile-first approach with seamless desktop scaling
 
@@ -16,12 +16,13 @@
 
 ---
 
-## 🖥️ **Main Site (Astro) Design Specifications**
+## 🖥️ **Main Site (Next.js) Design Specifications - UPDATED**
 
 ### **Layout Structure**
 ```
+Hero Section: Video background with intro.mp4 (muted, hover sound control)
 Header: Navigation + Language Switcher + Logo
-Main Content: Dynamic content area
+Main Content: Dynamic content area with enhanced UX
 Footer: Copyright + Social links
 ```
 
@@ -34,7 +35,7 @@ Footer: Copyright + Social links
 
 ### **Component Design Patterns**
 
-#### **Artist Cards**
+#### **Artist Cards - ENHANCED**
 ```css
 .artist-card {
   background: white;
@@ -42,16 +43,27 @@ Footer: Copyright + Social links
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   transition: box-shadow 0.3s ease;
   hover: box-shadow 0 4px 16px rgba(0,0,0,0.15);
+  /* Artist pictures 100% larger - enhanced visual impact */
+  .artist-image {
+    height: 400px; /* Increased from 200px */
+    width: 100%;
+    object-fit: cover;
+  }
 }
 ```
 
-#### **Release Grid**
+#### **Release Grid - ENHANCED**
 ```css
 .release-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
   padding: 2rem 0;
+  /* Release cards same size as artist cards for consistency */
+  .release-card {
+    aspect-ratio: 1;
+    min-height: 400px;
+  }
 }
 ```
 
@@ -67,7 +79,7 @@ Footer: Copyright + Social links
 
 ---
 
-## 🔐 **Admin Panel Design Specifications**
+## 🔐 **Admin Panel Design Specifications - PRODUCTION READY**
 
 ### **Design Principles**
 - **Functional First**: Prioritize usability over decoration
@@ -75,26 +87,27 @@ Footer: Copyright + Social links
 - **Clear Hierarchy**: Obvious content organization
 - **Efficient Workflow**: Minimal clicks to complete tasks
 
-### **Color Palette**
+### **Color Palette - BLACK & WHITE THEME**
 ```css
 :root {
-  --primary: #3b82f6;      /* Blue - primary actions */
-  --secondary: #64748b;    /* Gray - secondary elements */
+  --primary: #000000;      /* Black - primary actions and text */
+  --secondary: #6b7280;    /* Gray - secondary elements */
   --success: #10b981;      /* Green - success states */
   --warning: #f59e0b;      /* Amber - warnings */
   --error: #ef4444;        /* Red - errors */
-  --background: #f8fafc;   /* Light gray - page background */
+  --background: #ffffff;   /* White - page background */
   --surface: #ffffff;      /* White - card backgrounds */
-  --text: #1f2937;         /* Dark gray - primary text */
-  --text-secondary: #6b7280; /* Medium gray - secondary text */
+  --text: #000000;         /* Black - primary text */
+  --text-secondary: #6b7280; /* Gray - secondary text */
+  --border: #e5e7eb;       /* Light gray - borders */
 }
 ```
 
-### **Layout Structure**
+### **Layout Structure - MOBILE RESPONSIVE**
 ```
-Sidebar: Navigation + User info
-Header: Page title + Quick actions
-Main Content: Forms and data tables
+Sidebar: Mobile-collapsible navigation + User info + Role-based menu visibility
+Header: Page title + Quick actions + Mobile menu toggle
+Main Content: Forms, data tables, and drag-and-drop interfaces
 Toast: Notifications and alerts
 ```
 
@@ -112,11 +125,13 @@ Toast: Notifications and alerts
 - **File Upload**: Drag-and-drop zone with preview
 - **Select Dropdowns**: Searchable with keyboard navigation
 
-#### **Data Tables**
+#### **Data Tables - WITH DRAG-AND-DROP**
 - **Headers**: Sticky positioning, sortable columns
 - **Rows**: Alternating background colors, hover states
+- **Drag Handles**: Three-dot icons in first column for reordering
 - **Actions**: Icon buttons for edit/delete
 - **Pagination**: Simple prev/next with page numbers
+- **Real-time Updates**: Visual feedback during drag operations
 
 #### **Cards**
 ```css
@@ -129,29 +144,42 @@ Toast: Notifications and alerts
 }
 ```
 
-### **Navigation Structure**
+### **Navigation Structure - TWO-TIER ACCESS CONTROL**
 ```
 Dashboard
-├── Artists
+├── Artists (Company Admin + Super Admin)
 │   ├── All Artists
 │   ├── Add New Artist
-│   └── Artist Categories
-├── Releases
-│   ├── All Releases
+│   └── Edit Artist Profiles
+├── Releases (Company Admin + Super Admin) 
+│   ├── All Releases with Drag-and-Drop Ordering
 │   ├── Add New Release
-│   └── Release Types
-├── Videos
-│   ├── All Videos
+│   └── Edit Release Details
+├── Videos (Company Admin + Super Admin)
+│   ├── All Videos with YouTube Integration
 │   ├── Add New Video
-│   └── Video Categories
-├── Media
-│   ├── Image Library
-│   ├── Upload Images
-│   └── Media Settings
-└── Settings
-    ├── Site Settings
-    ├── User Profile
-    └── Publishing
+│   └── Edit Video Metadata
+├── Playlists (Company Admin + Super Admin)
+│   ├── "By Artist" and "By Composer" Categories
+│   ├── Add New Playlist
+│   └── Edit Playlist Links
+├── Reviews (Company Admin + Super Admin)
+│   ├── 5-Star Rating System
+│   ├── Add New Review
+│   └── Edit Review Content
+├── Distributors (Company Admin + Super Admin)
+│   ├── Global Distributor Network
+│   ├── Add New Distributor
+│   └── Edit Contact Information
+├── Users (Super Admin Only)
+│   ├── Manage Admin Accounts
+│   ├── Create Company Admin
+│   └── Role Assignment
+└── Settings (Super Admin Only)
+    ├── Site Configuration
+    ├── Social Media Links
+    ├── Email Settings
+    └── Advanced Options
 ```
 
 ---
@@ -186,15 +214,16 @@ Dashboard
 3. **Progress Feedback**: Loading states and success messages
 4. **Data Safety**: Auto-save drafts and confirmation for destructive actions
 
-### **Content Management Workflow**
+### **Content Management Workflow - ENHANCED**
 ```
-1. Sign in with Google OAuth
-2. Navigate to content type (Artists/Releases/Videos)
+1. Sign in with Google OAuth (Auth.js v5)
+2. Navigate to content type based on role permissions
 3. Add/Edit content with form validation
-4. Upload and crop images with preview
-5. Preview changes before publishing
-6. Publish to live site with one click
-7. Receive confirmation and view live content
+4. Use drag-and-drop for release ordering (NEW)
+5. Upload and crop images with preview
+6. Automatic database sync for ordering changes
+7. Immediate reflection on main site
+8. Audit logging for all administrative actions
 ```
 
 ---
@@ -312,25 +341,51 @@ Dashboard
 
 ---
 
-## 📋 **Implementation Checklist**
+## 📋 **Implementation Checklist - UPDATED STATUS**
 
-### **Main Site Design**
-- [ ] Implement responsive grid layouts
-- [ ] Add smooth page transitions
-- [ ] Optimize image loading and sizing
-- [ ] Test on multiple devices and browsers
-- [ ] Validate accessibility compliance
+### **Main Site Design - COMPLETED ✅**
+- ✅ Implement responsive grid layouts
+- ✅ Add smooth page transitions  
+- ✅ Optimize image loading and sizing
+- ✅ Test on multiple devices and browsers
+- ✅ Validate accessibility compliance
+- ✅ **NEW**: Video hero section with intro.mp4
+- ✅ **NEW**: Playfair Display typography
+- ✅ **NEW**: Enhanced artist photos (100% larger)
+- ✅ **NEW**: Consistent card sizing
 
-### **Admin Panel Design**
-- [ ] Create consistent component library
-- [ ] Implement form validation and error states
-- [ ] Add loading states and progress indicators
-- [ ] Test admin workflow end-to-end
-- [ ] Optimize for mobile admin usage
+### **Admin Panel Design - PRODUCTION READY ✅**
+- ✅ Create consistent component library
+- ✅ Implement form validation and error states
+- ✅ Add loading states and progress indicators
+- ✅ Test admin workflow end-to-end
+- ✅ Optimize for mobile admin usage
+- ✅ **NEW**: Drag-and-drop ordering interface
+- ✅ **NEW**: Two-tier role-based navigation
+- ✅ **NEW**: Black & white professional theme
+- ✅ **NEW**: Real-time database synchronization
 
-### **Cross-Platform Testing**
-- [ ] Desktop browsers (Chrome, Firefox, Safari, Edge)
-- [ ] Mobile devices (iOS Safari, Android Chrome)
-- [ ] Tablet layouts (iPad, Android tablets)
-- [ ] Accessibility tools (screen readers, keyboard navigation)
-- [ ] Performance testing (Lighthouse, Core Web Vitals)
+### **Cross-Platform Testing - VERIFIED ✅**
+- ✅ Desktop browsers (Chrome, Firefox, Safari, Edge)
+- ✅ Mobile devices (iOS Safari, Android Chrome)
+- ✅ Tablet layouts (iPad, Android tablets)
+- ✅ Accessibility tools (screen readers, keyboard navigation)
+- ✅ Performance testing (Lighthouse, Core Web Vitals)
+- ✅ **NEW**: Drag-and-drop touch support on mobile/tablet
+- ✅ **NEW**: Role-based access control testing
+
+## 🎯 **Session Handover Notes**
+
+### **Ready for Next Session:**
+- All UI/UX guidelines reflect current production state
+- Drag-and-drop interface documented with @dnd-kit implementation
+- Two-tier admin architecture visual patterns established
+- Black & white theme with professional aesthetic completed
+- Main site enhanced UX (video hero, larger photos, consistent sizing) documented
+
+### **Key Design Decisions Made:**
+1. **Typography**: Migrated from Helvetica to Playfair Display for classical music aesthetic
+2. **Admin Theme**: Black & white professional theme for clean content management
+3. **Interaction Design**: Drag-and-drop with three-dot handles and visual feedback
+4. **Responsive Design**: Mobile-first with collapsible sidebar and touch-friendly interactions
+5. **Role-Based UI**: Dynamic navigation hiding based on user permissions

@@ -17,6 +17,7 @@
   - ✅ **Reviews management** with 5-star rating system
   - ✅ **Distributors management** with country flags
   - ✅ **Site settings** (General, Social, Email, Advanced tabs)
+  - ✅ **Drag-and-drop reordering** for releases with real-time database sync
 - **Design**: Black & white professional theme with mobile sidebar
 - **Database**: Supabase PostgreSQL integration verified and working
 - **Deployment**: Production-ready on Vercel with proper environment configuration
@@ -106,6 +107,8 @@
 - ✅ Reviews system with 5-star ratings implemented
 - ✅ Distributors CRUD with country flags and full contact info
 - ✅ Comprehensive settings management (General, Social, Email, Advanced)
+- ✅ **Drag-and-drop release ordering** with @dnd-kit libraries implementation
+- ✅ **Release ordering bug fix** - API translation layer corrected for proper content display
 
 ### Deployment Status:
 - ✅ **Main site**: https://avanticlassic.vercel.app
@@ -120,6 +123,112 @@
 - **Professional Design**: Black & white theme with mobile-responsive sidebar
 - **External Integrations**: YouTube oEmbed API for video metadata
 - **Database Relations**: Proper foreign keys and multilingual support
-- **Production Ready**: Deployed and fully functional admin system
+- **Drag-and-Drop Interface**: @dnd-kit powered release ordering with visual feedback
+- **Production Ready**: Deployed and fully functional admin system with manual content ordering
 
-**Current Status**: Comprehensive admin panel CMS with two-tier architecture successfully deployed and production-ready for multi-user management.
+## ✅ COMPLETED: Latest Features - July 14, 2025
+
+### ✅ Drag-and-Drop Release Ordering (COMPLETED)
+**Status**: Successfully implemented with real-time database synchronization
+
+#### Features Implemented:
+- ✅ **Visual Drag Interface**: Three-dot drag handles with @dnd-kit/core implementation
+- ✅ **Real-time Updates**: Database `sort_order` field updates automatically during drag operations
+- ✅ **Optimistic UI**: Immediate visual feedback with error handling and rollback
+- ✅ **Visual Feedback**: Shows current sort order values and saving status indicators
+- ✅ **Mobile Support**: Touch-friendly drag interactions for tablet and mobile admin access
+
+#### Technical Implementation:
+- ✅ **@dnd-kit Libraries**: Core, sortable, and utilities for smooth drag experience
+- ✅ **Database Integration**: Automatic recalculation of `sort_order` values (higher = first position)
+- ✅ **Error Handling**: Failed updates revert to original order with user notification
+- ✅ **Performance**: Minimal re-renders with efficient state management
+
+### ✅ Release Ordering Bug Fix (RESOLVED)
+**Status**: Critical API issue completely resolved
+
+#### Problem Resolved:
+- ✅ **API Translation Issue**: Fixed inner join requirement that was causing empty responses
+- ✅ **Fallback Data Problem**: Eliminated reliance on hardcoded release order
+- ✅ **Order Synchronization**: Main site now displays exact admin-configured order
+
+#### Technical Fix:
+```typescript
+// Before (causing empty results):
+release_translations!inner(...) 
+.eq('release_translations.language', lang)
+
+// After (working properly):
+release_translations(...) 
+// No language filter requirement
+```
+
+#### Impact:
+- ✅ **Main Site Sync**: Public website immediately reflects admin drag-and-drop changes
+- ✅ **Real Database Content**: API returns actual releases with proper sort_order
+- ✅ **Future-Proof**: Works regardless of translation data availability
+
+**Current Status**: Comprehensive admin panel CMS with two-tier architecture, drag-and-drop ordering, and synchronized content display successfully deployed and production-ready for multi-user management.
+
+## 🔄 New Session Handover - Quick Context
+
+### **For Claude Sessions Starting Fresh:**
+
+#### **🎯 Immediate Context (Last Session Completed):**
+- **Date**: July 14, 2025
+- **Major Achievement**: Release ordering system fully implemented and working
+- **Status**: All core CMS features completed and production-ready
+
+#### **⚡ Development Environment Status:**
+- **Admin Panel**: http://localhost:3000 (port may vary if 3000 busy)
+- **Main Site**: http://localhost:3001 (port may vary if 3001 busy)  
+- **Database**: Supabase production (always available)
+- **Authentication**: Google OAuth working (carloszamalloa@gmail.com)
+
+#### **🔧 Most Recent Technical Work:**
+1. **Drag-and-Drop Ordering**: Implemented with @dnd-kit libraries
+2. **API Translation Fix**: Resolved empty response issue in `/api/releases`
+3. **Order Synchronization**: Main site now reflects admin panel changes
+4. **Database Updates**: `sort_order` field working correctly
+
+#### **📂 Key Files Modified Recently:**
+```
+admin-panel/src/app/dashboard/releases/page.tsx  # Drag-and-drop implementation
+app/api/releases/route.ts                        # Translation layer fix
+admin-panel/package.json                         # Added @dnd-kit dependencies
+```
+
+#### **🚀 Start New Session Commands:**
+```bash
+# Terminal 1 - Main site
+npm run dev
+
+# Terminal 2 - Admin panel  
+cd admin-panel && npm run dev
+```
+
+#### **✅ What's Working:**
+- ✅ Admin can drag releases to reorder them
+- ✅ Changes save automatically to database
+- ✅ Main site shows the exact same order
+- ✅ All CRUD operations functional
+- ✅ Two-tier admin access control active
+
+#### **🎯 Ready For Next Steps:**
+- Additional content management features
+- Performance optimizations
+- User training and documentation
+- Advanced workflow enhancements
+
+#### **📋 If Issues Arise:**
+- Check both dev servers are running
+- Verify Supabase connection
+- Test drag-and-drop on /dashboard/releases
+- Confirm API response: `curl localhost:3001/api/releases?limit=3`
+
+### **📖 Full Context Available In:**
+- **CLAUDE.md**: Complete project instructions and development commands
+- **documentation/implementation-plan.md**: Roadmap and completed phases
+- **documentation/bug-tracking.md**: All resolved issues and solutions
+- **documentation/project-structure.md**: File organization details
+- **documentation/frontend.spec.md**: UI/UX guidelines and patterns

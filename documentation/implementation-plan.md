@@ -51,6 +51,7 @@
 - ✅ **Reviews Management**: 5-star rating system with publication controls
 - ✅ **Distributors Management**: Global network with country flags
 - ✅ **Site Settings**: General, Social, Email, Advanced configuration tabs
+- ✅ **Drag-and-Drop Ordering**: Manual release ordering with real-time database updates
 - ✅ **Production Deployment**: Fully functional at https://avanticlassic-admin-qp2uem9ho-carlos-2227s-projects.vercel.app
 
 ### ✅ **Phase 4: Two-Tier Admin Architecture (COMPLETED)**
@@ -216,6 +217,8 @@
 - ✅ **NEW**: Reviews system with 5-star ratings
 - ✅ **NEW**: Distributors management with country flags
 - ✅ **NEW**: Comprehensive site settings interface
+- ✅ **NEW**: Drag-and-drop release ordering with database sync
+- ✅ **NEW**: API translation layer fixes for proper content ordering
 
 ### **Current Status - All Critical Objectives Completed:**
 - ✅ **RESOLVED**: Two-tier admin architecture implementation
