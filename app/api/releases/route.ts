@@ -42,7 +42,6 @@ export async function GET(request: NextRequest) {
       `, { count: 'exact' })
       .eq('release_translations.language', lang)
       .order('featured', { ascending: false })
-      .order('release_date', { ascending: false, nullsLast: true })
       .order('sort_order', { ascending: false })
       .range(offset, offset + limit - 1)
 
@@ -142,7 +141,6 @@ export async function GET_RELEASE(request: NextRequest, { params }: { params: { 
           )
         )
       `)
-      .eq('release_translations.language', lang)
       .eq('reviews.review_translations.language', lang)
       .eq(isNumeric ? 'id' : 'url', id)
       .single()
