@@ -12,6 +12,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragEndEvent,
 } from '@dnd-kit/core'
 import {
   arrayMove,
@@ -231,12 +232,12 @@ export default function ReleasesPage() {
     }
   }
 
-  const handleDragEnd = async (event: { active: { id: number }, over: { id: number } | null }) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event
 
     if (active.id !== over?.id && over) {
-      const oldIndex = releases.findIndex((item) => item.id === active.id)
-      const newIndex = releases.findIndex((item) => item.id === over.id)
+      const oldIndex = releases.findIndex((item) => item.id === Number(active.id))
+      const newIndex = releases.findIndex((item) => item.id === Number(over.id))
 
       const newReleases = arrayMove(releases, oldIndex, newIndex)
       
