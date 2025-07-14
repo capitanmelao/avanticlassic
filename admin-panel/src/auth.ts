@@ -11,9 +11,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async signIn({ user }) {
       const allowedEmail = process.env.ADMIN_EMAIL || 'carloszamalloa@gmail.com'
+      console.log('SignIn attempt:', { userEmail: user.email, allowedEmail })
       return user.email === allowedEmail
     },
     async session({ session }) {
+      console.log('Session callback:', session)
       return session
     },
   },

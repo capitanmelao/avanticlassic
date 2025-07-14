@@ -4,6 +4,7 @@
 
 import React from 'react'
 import { createClient } from './supabase'
+import { useSession } from 'next-auth/react'
 
 export type UserRole = 'company_admin' | 'super_admin'
 
@@ -104,18 +105,37 @@ export async function getCurrentUser(): Promise<AdminUser | null> {
       return null
     }
     
-    const { data: adminUser, error } = await supabase
-      .from('admin_users')
-      .select('*')
-      .eq('id', user.id)
-      .single()
-    
-    if (error || !adminUser) {
-      console.error('Error fetching admin user:', error)
-      return null
+    // Try to get user from admin_users table
+    try {
+      const { data: adminUser, error } = await supabase
+        .from('admin_users')
+        .select('*')
+        .eq('email', user.email)
+        .single()
+      
+      if (adminUser) {
+        return adminUser as AdminUser
+      }
+    } catch (dbError) {
+      console.log('admin_users table not available, creating fallback user')
     }
     
-    return adminUser as AdminUser
+    // Fallback: create a temporary user object for authorized emails
+    const allowedEmail = 'carloszamalloa@gmail.com'
+    if (user.email === allowedEmail) {
+      return {
+        id: user.id,
+        email: user.email || '',
+        name: user.user_metadata?.full_name || user.email || '',
+        role: 'super_admin' as UserRole,
+        permissions: { all: true },
+        status: 'active' as const,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }
+    }
+    
+    return null
   } catch (error) {
     console.error('Error getting current user:', error)
     return null
@@ -230,14 +250,36 @@ export function requirePermission(
 
 // Permission hook for components
 export function usePermissions() {
+  const { data: session, status } = useSession()
   const [user, setUser] = React.useState<AdminUser | null>(null)
   const [loading, setLoading] = React.useState(true)
   
   React.useEffect(() => {
-    getCurrentUser()
-      .then(setUser)
-      .finally(() => setLoading(false))
-  }, [])
+    if (status === 'authenticated' && session?.user?.email) {
+      // Create fallback user for authorized email
+      const allowedEmail = 'carloszamalloa@gmail.com'
+      if (session.user.email === allowedEmail) {
+        const fallbackUser: AdminUser = {
+          id: session.user.email, // Use email as ID for fallback
+          email: session.user.email,
+          name: session.user.name || session.user.email,
+          role: 'super_admin' as UserRole,
+          permissions: { all: true },
+          status: 'active' as const,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+        setUser(fallbackUser)
+      } else {
+        setUser(null)
+      }
+      setLoading(false)
+    } else if (status === 'unauthenticated') {
+      setUser(null)
+      setLoading(false)
+    }
+    // Keep loading while status is 'loading'
+  }, [session, status])
   
   return {
     user,
