@@ -1,19 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { usePermissions } from '@/lib/permissions'
 import { 
   HomeIcon,
   UserGroupIcon,
   MusicalNoteIcon,
   VideoCameraIcon,
   ListBulletIcon,
-  ShoppingBagIcon,
   StarIcon,
-  NewspaperIcon,
   InformationCircleIcon,
   Cog6ToothIcon,
+  UsersIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   Bars3Icon,
@@ -25,19 +25,19 @@ interface NavItem {
   href: string
   icon: React.ComponentType<{ className?: string }>
   count?: number
+  restrictedTo?: 'super_admin' | 'company_admin'
 }
 
-const navigation: NavItem[] = [
+const allNavigation: NavItem[] = [
   { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
   { name: 'Artists', href: '/dashboard/artists', icon: UserGroupIcon, count: 19 },
   { name: 'Releases', href: '/dashboard/releases', icon: MusicalNoteIcon, count: 37 },
   { name: 'Videos', href: '/dashboard/videos', icon: VideoCameraIcon, count: 15 },
   { name: 'Playlists', href: '/dashboard/playlists', icon: ListBulletIcon, count: 8 },
-  { name: 'Shop', href: '/dashboard/shop', icon: ShoppingBagIcon, count: 12 },
   { name: 'Reviews', href: '/dashboard/reviews', icon: StarIcon, count: 24 },
-  { name: 'News', href: '/dashboard/news', icon: NewspaperIcon, count: 6 },
   { name: 'Distributors', href: '/dashboard/distributors', icon: InformationCircleIcon, count: 26 },
-  { name: 'Settings', href: '/dashboard/settings', icon: Cog6ToothIcon },
+  { name: 'Users', href: '/dashboard/users', icon: UsersIcon, restrictedTo: 'super_admin' },
+  { name: 'Settings', href: '/dashboard/settings', icon: Cog6ToothIcon, restrictedTo: 'super_admin' },
 ]
 
 interface AdminSidebarProps {
@@ -47,7 +47,22 @@ interface AdminSidebarProps {
 export default function AdminSidebar({ children }: AdminSidebarProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(false)
+  const [navigation, setNavigation] = useState<NavItem[]>([])
   const pathname = usePathname()
+  const { user, loading } = usePermissions()
+
+  useEffect(() => {
+    if (!loading && user) {
+      // Filter navigation based on user role
+      const filteredNavigation = allNavigation.filter(item => {
+        if (!item.restrictedTo) {
+          return true // Show unrestricted items to all users
+        }
+        return user.role === item.restrictedTo
+      })
+      setNavigation(filteredNavigation)
+    }
+  }, [user, loading])
 
   return (
     <div className="flex h-screen bg-white">

@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 
 // Environment variables with fallback and validation
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -17,17 +17,22 @@ if (!supabaseAnonKey) {
 }
 
 // Client for browser-side operations
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = createSupabaseClient(supabaseUrl, supabaseAnonKey)
 
 // Admin client for server-side operations (only if service key exists)
 export const supabaseAdmin = supabaseServiceRoleKey 
-  ? createClient(supabaseUrl, supabaseServiceRoleKey, {
+  ? createSupabaseClient(supabaseUrl, supabaseServiceRoleKey, {
       auth: {
         autoRefreshToken: false,
         persistSession: false
       }
     })
   : null
+
+// Wrapper function to create client (for compatibility with new code)
+export function createClient() {
+  return supabase
+}
 
 // Database types
 export interface Artist {

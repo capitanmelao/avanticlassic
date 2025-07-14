@@ -244,7 +244,7 @@ export default function ReviewsPage() {
                       </div>
 
                       <div className="mt-2">
-                        {renderStars(review.rating)}
+                        {renderStars(review.rating || 0)}
                       </div>
 
                       <div className="mt-3">

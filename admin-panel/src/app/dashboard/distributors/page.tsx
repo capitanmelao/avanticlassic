@@ -84,7 +84,7 @@ export default function DistributorsPage() {
     return matchesSearch && matchesCountry
   })
 
-  const countries = Array.from(new Set(distributors.map(d => d.country_id).filter(Boolean))).sort()
+  const countries = Array.from(new Set(distributors.map(d => d.country_id).filter(Boolean))).sort() as string[]
 
   const getCountryFlag = (countryCode: string | null) => {
     if (!countryCode) return '🌍'
@@ -157,7 +157,7 @@ export default function DistributorsPage() {
           <option value="all">All Countries</option>
           {countries.map((country) => (
             <option key={country} value={country}>
-              {getCountryFlag(country)} {country?.toUpperCase()}
+              {getCountryFlag(country)} {country.toUpperCase()}
             </option>
           ))}
         </select>
