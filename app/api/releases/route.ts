@@ -42,8 +42,7 @@ export async function GET(request: NextRequest) {
       `, { count: 'exact' })
       .eq('release_translations.language', lang)
       .order('featured', { ascending: false })
-      .order('release_date', { ascending: false })
-      .order('sort_order')
+      .order('sort_order', { ascending: false })
       .range(offset, offset + limit - 1)
 
     // Apply filters
