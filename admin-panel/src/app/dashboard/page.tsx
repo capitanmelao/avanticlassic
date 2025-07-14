@@ -9,13 +9,10 @@ import {
   MusicalNoteIcon,
   VideoCameraIcon,
   ListBulletIcon,
-  ShoppingBagIcon,
   StarIcon,
   NewspaperIcon,
-  InformationCircleIcon,
   ChartBarIcon,
   ClockIcon,
-  TrendingUpIcon,
   PlusIcon
 } from '@heroicons/react/24/outline'
 
@@ -27,7 +24,7 @@ interface DashboardStats {
   reviews: number
   news: number
   distributors: number
-  recentActivity: any[]
+  recentActivity: Array<{action: string; table_name: string; changed_at?: string}>
 }
 
 export default function Dashboard() {
@@ -122,7 +119,7 @@ export default function Dashboard() {
           Welcome back, {session?.user?.name?.split(' ')[0]}!
         </h2>
         <p className="text-gray-600">
-          Here's what's happening with your Avanti Classic website today.
+          Here&apos;s what&apos;s happening with your Avanti Classic website today.
         </p>
       </div>
 

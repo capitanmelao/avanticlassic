@@ -299,7 +299,7 @@ export interface ReleaseComposer {
 export interface SiteSetting {
   id: number
   key: string
-  value: any // JSONB in database
+  value: unknown // JSONB in database
   description?: string
   created_at?: string
   updated_at?: string
@@ -334,7 +334,7 @@ export interface SearchIndex {
   entity_type: 'artist' | 'release' | 'video' | 'news' | 'composer' | 'playlist'
   entity_id: number
   language: 'en' | 'fr' | 'de'
-  searchable_text?: any // tsvector in database
+  searchable_text?: unknown // tsvector in database
   title?: string
   description?: string
   url?: string

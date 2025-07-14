@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
-import { supabase, type Release, type ReleaseTranslation, type Artist, type ReleaseArtist } from '@/lib/supabase'
-import { ChevronLeftIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { supabase, type Artist } from '@/lib/supabase'
+import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 
 interface FormData {
   url: string
@@ -75,7 +75,7 @@ export default function EditReleasePage() {
 
   useEffect(() => {
     loadData()
-  }, [releaseId])
+  }, [releaseId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadData = async () => {
     try {
@@ -111,7 +111,7 @@ export default function EditReleasePage() {
           de: { tracklist: '', description: '' }
         }
 
-        release.release_translations?.forEach((trans: any) => {
+        release.release_translations?.forEach((trans: {language: string; tracklist?: string; description?: string}) => {
           if (translations[trans.language as keyof typeof translations]) {
             translations[trans.language as keyof typeof translations] = {
               tracklist: trans.tracklist || '',
@@ -121,7 +121,7 @@ export default function EditReleasePage() {
         })
 
         // Get artist IDs
-        const artistIds = release.release_artists?.map((ra: any) => ra.artist_id) || []
+        const artistIds = release.release_artists?.map((ra: {artist_id: number}) => ra.artist_id) || []
 
         setFormData({
           url: release.url || '',
@@ -226,7 +226,7 @@ export default function EditReleasePage() {
     }
   }
 
-  const updateField = (field: keyof FormData, value: any) => {
+  const updateField = (field: keyof FormData, value: string | number | boolean | number[]) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
@@ -299,7 +299,7 @@ export default function EditReleasePage() {
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id as 'basic' | 'content' | 'streaming' | 'seo')}
                 className={`py-2 px-1 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
                     ? 'border-black text-black'
