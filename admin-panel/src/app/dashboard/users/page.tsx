@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase'
 import { usePermissions } from '@/lib/permissions'
 import { logAuditEvent } from '@/lib/audit'
@@ -25,7 +25,7 @@ export default function UsersPage() {
   const { user: currentUser, isSuperAdmin } = usePermissions()
   const supabase = createClient()
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('admin_users')
@@ -43,11 +43,11 @@ export default function UsersPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [supabase])
 
   useEffect(() => {
     fetchUsers()
-  }, [])
+  }, [fetchUsers])
 
   const handleDeleteUser = async (userId: string, userEmail: string) => {
     if (!confirm(`Are you sure you want to delete the user "${userEmail}"?`)) {

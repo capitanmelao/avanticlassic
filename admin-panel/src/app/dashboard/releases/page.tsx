@@ -234,7 +234,7 @@ export default function ReleasesPage() {
   const handleDragEnd = async (event: { active: { id: number }, over: { id: number } | null }) => {
     const { active, over } = event
 
-    if (active.id !== over?.id) {
+    if (active.id !== over?.id && over) {
       const oldIndex = releases.findIndex((item) => item.id === active.id)
       const newIndex = releases.findIndex((item) => item.id === over.id)
 
