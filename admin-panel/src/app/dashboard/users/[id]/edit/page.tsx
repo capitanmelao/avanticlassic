@@ -39,12 +39,6 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
     params.then(p => setUserId(p.id))
   }, [params])
 
-  useEffect(() => {
-    if (userId) {
-      fetchUser()
-    }
-  }, [userId, fetchUser])
-
   const fetchUser = useCallback(async () => {
     if (!userId) return
 
@@ -72,6 +66,12 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
       setLoading(false)
     }
   }, [userId, supabase])
+
+  useEffect(() => {
+    if (userId) {
+      fetchUser()
+    }
+  }, [userId, fetchUser])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
