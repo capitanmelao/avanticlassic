@@ -140,7 +140,7 @@ export interface Distributor {
   website?: string
   email?: string
   phone?: string
-  country_id?: string
+  country_id?: string | number
   address?: string
   logo?: string
   sort_order: number

@@ -77,16 +77,16 @@ export default function DistributorsPage() {
     const matchesSearch = 
       distributor.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       distributor.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (distributor.country_id && distributor.country_id.toLowerCase().includes(searchTerm.toLowerCase()))
+      (distributor.country_id && distributor.country_id.toString().toLowerCase().includes(searchTerm.toLowerCase()))
     
     const matchesCountry = selectedCountry === 'all' || distributor.country_id === selectedCountry
     
     return matchesSearch && matchesCountry
   })
 
-  const countries = Array.from(new Set(distributors.map(d => d.country_id).filter(Boolean))).sort() as string[]
+  const countries = Array.from(new Set(distributors.map(d => d.country_id).filter(Boolean))).sort() as (string | number)[]
 
-  const getCountryFlag = (countryCode: string | null) => {
+  const getCountryFlag = (countryCode: string | number | null) => {
     if (!countryCode) return '🌍'
     
     const flags: { [key: string]: string } = {
@@ -98,7 +98,7 @@ export default function DistributorsPage() {
       'ee': '🇪🇪', 'lv': '🇱🇻', 'lt': '🇱🇹', 'ie': '🇮🇪', 'pt': '🇵🇹', 'gr': '🇬🇷'
     }
     
-    return flags[countryCode.toLowerCase()] || '🌍'
+    return flags[countryCode.toString().toLowerCase()] || '🌍'
   }
 
   if (status === 'loading' || loading) {
@@ -157,7 +157,7 @@ export default function DistributorsPage() {
           <option value="all">All Countries</option>
           {countries.map((country) => (
             <option key={country} value={country}>
-              {getCountryFlag(country)} {country?.toUpperCase() || 'Unknown'}
+              {getCountryFlag(country)} {country?.toString().toUpperCase() || 'Unknown'}
             </option>
           ))}
         </select>
@@ -216,7 +216,7 @@ export default function DistributorsPage() {
                     {distributor.country_id && (
                       <div className="flex items-center text-sm text-gray-500">
                         <span className="mr-1">{getCountryFlag(distributor.country_id)}</span>
-                        {distributor.country_id?.toUpperCase() || 'Unknown'}
+                        {distributor.country_id?.toString().toUpperCase() || 'Unknown'}
                       </div>
                     )}
                   </div>
