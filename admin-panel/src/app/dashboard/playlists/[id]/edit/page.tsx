@@ -60,7 +60,7 @@ export default function EditPlaylistPage() {
 
   useEffect(() => {
     loadData()
-  }, [playlistId])
+  }, [playlistId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadData = async () => {
     try {
@@ -95,7 +95,7 @@ export default function EditPlaylistPage() {
           de: { title: '', description: '' }
         }
 
-        playlist.playlist_translations?.forEach((trans: any) => {
+        playlist.playlist_translations?.forEach((trans: {language: string; title?: string; description?: string}) => {
           if (translations[trans.language as keyof typeof translations]) {
             translations[trans.language as keyof typeof translations] = {
               title: trans.title || '',
@@ -116,7 +116,7 @@ export default function EditPlaylistPage() {
           featured: playlist.featured || false,
           sort_order: playlist.sort_order || 0,
           translations,
-          tracks: playlist.playlist_tracks?.sort((a: any, b: any) => a.sort_order - b.sort_order) || []
+          tracks: playlist.playlist_tracks?.sort((a: {sort_order: number}, b: {sort_order: number}) => a.sort_order - b.sort_order) || []
         })
       }
 
@@ -200,7 +200,7 @@ export default function EditPlaylistPage() {
     }
   }
 
-  const updateField = (field: keyof FormData, value: string | number | boolean | any[]) => {
+  const updateField = (field: keyof FormData, value: string | number | boolean | Array<PlaylistTrack & { release?: Release }>) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
@@ -348,7 +348,7 @@ export default function EditPlaylistPage() {
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id as 'basic' | 'content' | 'tracks')}
                 className={`py-2 px-1 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
                     ? 'border-black text-black'

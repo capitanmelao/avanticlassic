@@ -54,7 +54,7 @@ export default function EditReviewPage() {
 
   useEffect(() => {
     loadData()
-  }, [reviewId])
+  }, [reviewId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadData = async () => {
     try {
@@ -88,7 +88,7 @@ export default function EditReviewPage() {
           de: { review_text: '' }
         }
 
-        review.review_translations?.forEach((trans: any) => {
+        review.review_translations?.forEach((trans: {language: string; review_text?: string}) => {
           if (translations[trans.language as keyof typeof translations]) {
             translations[trans.language as keyof typeof translations] = {
               review_text: trans.review_text || ''
@@ -262,7 +262,7 @@ export default function EditReviewPage() {
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id as 'basic' | 'content')}
                 className={`py-2 px-1 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
                     ? 'border-black text-black'

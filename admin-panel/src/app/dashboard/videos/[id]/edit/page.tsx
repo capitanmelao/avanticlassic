@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
-import { supabase, type Video } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
 import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 
 interface FormData {
@@ -87,7 +87,7 @@ export default function EditVideoPage() {
 
   useEffect(() => {
     loadVideo()
-  }, [videoId])
+  }, [videoId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadVideo = async () => {
     try {

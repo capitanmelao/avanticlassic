@@ -16,7 +16,7 @@ import {
 } from '@heroicons/react/24/outline'
 
 export default function DistributorsPage() {
-  const { data: session, status } = useSession()
+  const { status } = useSession()
   const router = useRouter()
   const [distributors, setDistributors] = useState<Distributor[]>([])
   const [loading, setLoading] = useState(true)
