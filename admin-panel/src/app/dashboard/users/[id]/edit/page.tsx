@@ -89,7 +89,7 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
       }
 
       // Prevent user from changing their own role
-      if (user.id === currentUser?.id && formData.role !== user.role) {
+      if (user.email === currentUser?.email && formData.role !== user.role) {
         throw new Error('You cannot change your own role')
       }
 
