@@ -1,5 +1,42 @@
 # Frontend UI/UX Guidelines - Avanticlassic Project
 
+## 🔐 **Authentication System Design - UPDATED July 15, 2025**
+
+### **Simple Login Interface**
+```tsx
+// admin-panel/src/app/auth/signin/page.tsx
+interface LoginFormProps {
+  credentials: {
+    email: string      // leinso@gmail.com
+    password: string   // Naviondo123.1
+  }
+}
+
+// Design Pattern: Clean, minimal login form
+.login-form {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 2rem;
+  max-width: 400px;
+  margin: 0 auto;
+}
+```
+
+### **Authentication Flow**
+1. **Login Page**: Simple username/password form
+2. **Session Management**: HTTP-only cookies with 24-hour expiration
+3. **Role-Based Access**: Super admin role with full system access
+4. **Secure Password**: bcrypt hashing with 12 salt rounds
+
+### **Authentication Components**
+- **Login Form**: `/auth/signin` - Simple username/password input
+- **Session Hook**: Custom `useSession()` hook for authentication state
+- **Protected Routes**: Middleware-based authentication checking
+- **Error Handling**: Clear error messages for failed authentication
+
+---
+
 ## 🎨 **Design Philosophy**
 
 ### **Visual Identity**
