@@ -1,25 +1,50 @@
 'use client'
 
-import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import AdminSidebar from '@/components/admin-sidebar'
+import { AuthUser } from '@/lib/auth'
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const { data: session, status } = useSession()
+  const [user, setUser] = useState<AuthUser | null>(null)
+  const [loading, setLoading] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth/me')
+        if (response.ok) {
+          const data = await response.json()
+          setUser(data.user)
+        } else {
+          router.push('/auth/signin')
+        }
+      } catch (error) {
+        router.push('/auth/signin')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    checkAuth()
+  }, [router])
+
+  const handleSignOut = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+      router.push('/auth/signin')
+    } catch (error) {
+      // Force redirect even if logout fails
       router.push('/auth/signin')
     }
-  }, [status, router])
+  }
 
-  if (status === 'loading') {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="flex flex-col items-center">
@@ -30,7 +55,7 @@ export default function DashboardLayout({
     )
   }
 
-  if (!session) {
+  if (!user) {
     return null
   }
 
@@ -46,18 +71,18 @@ export default function DashboardLayout({
           
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-3">
-              <img 
-                src={session.user?.image || ''} 
-                alt={session.user?.name || ''} 
-                className="h-8 w-8 rounded-full"
-              />
+              <div className="h-8 w-8 bg-black rounded-full flex items-center justify-center">
+                <span className="text-white text-sm font-medium">
+                  {user.name.charAt(0).toUpperCase()}
+                </span>
+              </div>
               <div className="hidden md:block">
-                <p className="text-sm font-medium text-gray-700">{session.user?.name}</p>
-                <p className="text-xs text-gray-500">{session.user?.email}</p>
+                <p className="text-sm font-medium text-gray-700">{user.name}</p>
+                <p className="text-xs text-gray-500">{user.email}</p>
               </div>
             </div>
             <button
-              onClick={() => signOut({ callbackUrl: '/auth/signin' })}
+              onClick={handleSignOut}
               className="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
             >
               Sign Out

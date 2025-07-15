@@ -1,28 +1,36 @@
 'use client'
 
-import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function Home() {
-  const { data: session, status } = useSession()
+  const [loading, setLoading] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
-    if (status === 'loading') return // Still loading
-
-    if (session) {
-      router.push('/dashboard')
-    } else {
-      router.push('/auth/signin')
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth/me')
+        if (response.ok) {
+          router.push('/dashboard')
+        } else {
+          router.push('/auth/signin')
+        }
+      } catch (error) {
+        router.push('/auth/signin')
+      } finally {
+        setLoading(false)
+      }
     }
-  }, [session, status, router])
+
+    checkAuth()
+  }, [router])
 
   // Show loading while redirecting
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
         <p className="text-gray-600">Loading...</p>
       </div>
     </div>

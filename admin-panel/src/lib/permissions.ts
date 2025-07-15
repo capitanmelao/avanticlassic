@@ -1,10 +1,9 @@
 // Role-based permissions system
 // Two-tier admin architecture implementation
-// Created: July 14, 2025
+// Updated: July 15, 2025 - Simple authentication
 
 import React from 'react'
-import { createClient } from './supabase'
-import { useSession } from 'next-auth/react'
+import { AuthUser } from './auth'
 
 export type UserRole = 'company_admin' | 'super_admin'
 
@@ -94,47 +93,14 @@ export function canAccessRoute(userRole: UserRole, route: string): boolean {
   return false
 }
 
-// Get user's role and permissions from database
-export async function getCurrentUser(): Promise<AdminUser | null> {
-  const supabase = createClient()
-  
+// Get user's role and permissions from session
+export async function getCurrentUser(): Promise<AuthUser | null> {
   try {
-    const { data: { user } } = await supabase.auth.getUser()
-    
-    if (!user) {
-      return null
+    const response = await fetch('/api/auth/me')
+    if (response.ok) {
+      const data = await response.json()
+      return data.user
     }
-    
-    // Try to get user from admin_users table
-    try {
-      const { data: adminUser } = await supabase
-        .from('admin_users')
-        .select('*')
-        .eq('email', user.email)
-        .single()
-      
-      if (adminUser) {
-        return adminUser as AdminUser
-      }
-    } catch {
-      console.log('admin_users table not available, creating fallback user')
-    }
-    
-    // Fallback: create a temporary user object for authorized emails
-    const allowedEmail = 'carloszamalloa@gmail.com'
-    if (user.email === allowedEmail) {
-      return {
-        id: user.id,
-        email: user.email || '',
-        name: user.user_metadata?.full_name || user.email || '',
-        role: 'super_admin' as UserRole,
-        permissions: { all: true },
-        status: 'active' as const,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }
-    }
-    
     return null
   } catch (error) {
     console.error('Error getting current user:', error)
@@ -161,11 +127,11 @@ export async function validatePermission(
 ): Promise<boolean> {
   const user = await getCurrentUser()
   
-  if (!user || user.status !== 'active') {
+  if (!user) {
     return false
   }
   
-  return hasPermission(user.role, resource, action)
+  return hasPermission(user.role as UserRole, resource, action)
 }
 
 // Get available navigation items for user role
@@ -208,7 +174,7 @@ export function requirePermission(
     
     if (loading) {
       return React.createElement('div', { 
-        className: 'animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600' 
+        className: 'animate-spin rounded-full h-8 w-8 border-b-2 border-black' 
       })
     }
     
@@ -250,44 +216,36 @@ export function requirePermission(
 
 // Permission hook for components
 export function usePermissions() {
-  const { data: session, status } = useSession()
-  const [user, setUser] = React.useState<AdminUser | null>(null)
+  const [user, setUser] = React.useState<AuthUser | null>(null)
   const [loading, setLoading] = React.useState(true)
   
   React.useEffect(() => {
-    if (status === 'authenticated' && session?.user?.email) {
-      // Create fallback user for authorized email
-      const allowedEmail = 'carloszamalloa@gmail.com'
-      if (session.user.email === allowedEmail) {
-        const fallbackUser: AdminUser = {
-          id: session.user.email, // Use email as ID for fallback
-          email: session.user.email,
-          name: session.user.name || session.user.email,
-          role: 'super_admin' as UserRole,
-          permissions: { all: true },
-          status: 'active' as const,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth/me')
+        if (response.ok) {
+          const data = await response.json()
+          setUser(data.user)
+        } else {
+          setUser(null)
         }
-        setUser(fallbackUser)
-      } else {
+      } catch (error) {
         setUser(null)
+      } finally {
+        setLoading(false)
       }
-      setLoading(false)
-    } else if (status === 'unauthenticated') {
-      setUser(null)
-      setLoading(false)
     }
-    // Keep loading while status is 'loading'
-  }, [session, status])
+
+    checkAuth()
+  }, [])
   
   return {
     user,
     loading,
     hasPermission: (resource: string, action: 'read' | 'write' | 'delete') => 
-      user ? hasPermission(user.role, resource, action) : false,
+      user ? hasPermission(user.role as UserRole, resource, action) : false,
     canAccessRoute: (route: string) => 
-      user ? canAccessRoute(user.role, route) : false,
+      user ? canAccessRoute(user.role as UserRole, route) : false,
     isSuperAdmin: user?.role === 'super_admin',
     isCompanyAdmin: user?.role === 'company_admin'
   }

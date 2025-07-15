@@ -1,6 +1,6 @@
 'use client'
 
-import { useSession } from 'next-auth/react'
+import { useSession } from '@/lib/use-session'
 import { useRouter, useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { supabase, type Artist } from '@/lib/supabase'
