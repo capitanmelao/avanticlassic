@@ -286,7 +286,7 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
               name="role"
               value={formData.role}
               onChange={handleInputChange}
-              disabled={user.id === currentUser?.id}
+              disabled={user.email === currentUser?.email}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-500"
             >
               <option value="company_admin">Company Admin</option>
@@ -295,7 +295,7 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
             <div className="mt-2 text-sm text-gray-500">
               <p><strong>Company Admin:</strong> Can manage content but cannot access system settings or user management.</p>
               <p><strong>Super Admin:</strong> Full access to all features including system settings and user management.</p>
-              {user.id === currentUser?.id && (
+              {user.email === currentUser?.email && (
                 <p className="text-yellow-600 mt-1">You cannot change your own role.</p>
               )}
             </div>
@@ -311,7 +311,7 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
               name="status"
               value={formData.status}
               onChange={handleInputChange}
-              disabled={user.id === currentUser?.id}
+              disabled={user.email === currentUser?.email}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-500"
             >
               <option value="active">Active</option>
@@ -322,7 +322,7 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
               <p><strong>Active:</strong> User can sign in and use the system.</p>
               <p><strong>Inactive:</strong> User account is disabled.</p>
               <p><strong>Suspended:</strong> User account is temporarily suspended.</p>
-              {user.id === currentUser?.id && (
+              {user.email === currentUser?.email && (
                 <p className="text-yellow-600 mt-1">You cannot change your own status.</p>
               )}
             </div>
