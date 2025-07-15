@@ -242,14 +242,14 @@ export default function UsersPage() {
                         ? 'border-yellow-300 text-yellow-700 bg-yellow-50 hover:bg-yellow-100'
                         : 'border-green-300 text-green-700 bg-green-50 hover:bg-green-100'
                     }`}
-                    disabled={user.id === currentUser?.id}
+                    disabled={user.email === currentUser?.email}
                   >
                     {user.status === 'active' ? 'Suspend' : 'Activate'}
                   </button>
                   <button
                     onClick={() => handleDeleteUser(user.id, user.email)}
                     className="inline-flex items-center px-3 py-1 border border-red-300 shadow-sm text-sm leading-4 font-medium rounded-md text-red-700 bg-red-50 hover:bg-red-100"
-                    disabled={user.id === currentUser?.id}
+                    disabled={user.email === currentUser?.email}
                   >
                     <TrashIcon className="h-4 w-4 mr-1" />
                     Delete
