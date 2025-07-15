@@ -41,8 +41,13 @@ export async function authenticateUser(email: string, password: string): Promise
 }
 
 export function isValidUser(user: unknown): user is AuthUser {
-  return user && 
-         typeof user.email === 'string' && 
-         typeof user.role === 'string' && 
-         typeof user.name === 'string';
+  return user !== null && 
+         typeof user === 'object' &&
+         user !== undefined &&
+         'email' in user &&
+         'role' in user &&
+         'name' in user &&
+         typeof (user as Record<string, unknown>).email === 'string' && 
+         typeof (user as Record<string, unknown>).role === 'string' && 
+         typeof (user as Record<string, unknown>).name === 'string';
 }
