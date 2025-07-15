@@ -40,7 +40,7 @@ export async function authenticateUser(email: string, password: string): Promise
   };
 }
 
-export function isValidUser(user: any): user is AuthUser {
+export function isValidUser(user: unknown): user is AuthUser {
   return user && 
          typeof user.email === 'string' && 
          typeof user.role === 'string' && 

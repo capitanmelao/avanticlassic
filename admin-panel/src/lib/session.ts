@@ -2,7 +2,8 @@ import { cookies } from 'next/headers';
 import { AuthUser } from './auth';
 
 const SESSION_COOKIE_NAME = 'admin-session';
-const SESSION_SECRET = process.env.SESSION_SECRET || 'default-secret-key-change-in-production';
+// Session secret for potential future use
+// const SESSION_SECRET = process.env.SESSION_SECRET || 'default-secret-key-change-in-production';
 
 export interface SessionData {
   user: AuthUser;

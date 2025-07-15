@@ -27,7 +27,7 @@ export function useSession(): UseSessionReturn {
           setUser(null)
           setStatus('unauthenticated')
         }
-      } catch (error) {
+      } catch {
         setUser(null)
         setStatus('unauthenticated')
       }
@@ -51,7 +51,7 @@ export async function signOut(options?: { callbackUrl?: string }) {
     } else {
       window.location.href = '/auth/signin'
     }
-  } catch (error) {
+  } catch {
     // Force redirect even if logout fails
     window.location.href = '/auth/signin'
   }

@@ -24,7 +24,7 @@ export default function DashboardLayout({
         } else {
           router.push('/auth/signin')
         }
-      } catch (error) {
+      } catch {
         router.push('/auth/signin')
       } finally {
         setLoading(false)
@@ -38,7 +38,7 @@ export default function DashboardLayout({
     try {
       await fetch('/api/auth/logout', { method: 'POST' })
       router.push('/auth/signin')
-    } catch (error) {
+    } catch {
       // Force redirect even if logout fails
       router.push('/auth/signin')
     }

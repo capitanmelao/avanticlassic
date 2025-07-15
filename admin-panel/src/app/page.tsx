@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 export default function Home() {
-  const [loading, setLoading] = useState(true)
+  const [, setLoading] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
@@ -16,7 +16,7 @@ export default function Home() {
         } else {
           router.push('/auth/signin')
         }
-      } catch (error) {
+      } catch {
         router.push('/auth/signin')
       } finally {
         setLoading(false)
