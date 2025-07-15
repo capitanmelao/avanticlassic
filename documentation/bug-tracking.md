@@ -1,5 +1,86 @@
 # Bug Tracking - Avanticlassic CMS Project
 
+## 🔴 **ACTIVE CRITICAL ISSUES**
+
+### **BUG-006: Auth.js v5 Vercel Deployment 500 Server Configuration Error [ACTIVE]**
+**Status**: 🔴 Critical - Deployment Blocker  
+**Discovered**: July 15, 2025  
+**Priority**: P0 - Authentication System Down  
+
+#### **Issue Description:**
+Admin panel experiencing persistent 500 server configuration errors during Auth.js v5 authentication flow on Vercel deployment. Error message: "There was a problem with the server configuration. Check the server logs for more information."
+
+#### **🔍 Technical Analysis:**
+- **Framework**: Auth.js v5 (NextAuth v5 beta) with Google OAuth
+- **Environment**: Vercel serverless functions
+- **Error Type**: 500 Internal Server Error on `/api/auth/session` endpoint
+- **Browser Error**: `AuthError: There was a problem with the server configuration`
+
+#### **🚨 Business Impact:**
+- **Admin Panel Inaccessible**: No authentication possible
+- **Content Management Blocked**: Cannot manage website content
+- **Production Deployment Stalled**: Admin features unavailable
+
+#### **📋 Debugging Steps Completed:**
+1. ✅ **Environment Variable Validation**: Added comprehensive logging to auth.ts
+2. ✅ **Error Handling**: Implemented try-catch blocks in auth callbacks
+3. ✅ **Debug Mode**: Enabled Auth.js v5 debug logging
+4. ✅ **Code Commits**: Applied debugging improvements
+
+#### **🔧 Current Implementation:**
+**File**: `admin-panel/src/auth.ts`
+- ✅ Environment variable validation with detailed logging
+- ✅ Error handling in signIn and session callbacks
+- ✅ Debug mode enabled for development
+- ✅ Comprehensive console logging for troubleshooting
+
+#### **⚠️ Next Steps Required:**
+1. **Check Vercel Function Logs**: Access deployment logs to identify missing environment variables
+2. **Verify Environment Variables**: Ensure all required variables are set in Vercel project settings
+3. **Google OAuth Configuration**: Verify redirect URIs match deployment URL
+4. **Test Authentication Flow**: Validate complete sign-in process after fixes
+
+#### **🎯 Required Environment Variables:**
+```bash
+NEXTAUTH_URL=https://avanticlassic-admin.vercel.app
+NEXTAUTH_SECRET=[SECURE_SECRET_KEY]
+GOOGLE_CLIENT_ID=[GOOGLE_OAUTH_CLIENT_ID]
+GOOGLE_CLIENT_SECRET=[GOOGLE_OAUTH_CLIENT_SECRET]
+NEXT_PUBLIC_SUPABASE_URL=[SUPABASE_PROJECT_URL]
+NEXT_PUBLIC_SUPABASE_ANON_KEY=[SUPABASE_ANON_KEY]
+SUPABASE_SERVICE_ROLE_KEY=[SUPABASE_SERVICE_ROLE_KEY]
+ADMIN_EMAIL=carloszamalloa@gmail.com
+```
+
+#### **📊 Debugging Log Format:**
+Expected log output in Vercel Functions:
+```
+🔍 Auth.js v5 Environment Check:
+NEXTAUTH_URL: ✅ Set / ❌ Missing
+NEXTAUTH_SECRET: ✅ Set / ❌ Missing
+GOOGLE_CLIENT_ID: ✅ Set / ❌ Missing
+GOOGLE_CLIENT_SECRET: ✅ Set / ❌ Missing
+```
+
+#### **🔄 Resolution Timeline:**
+- **Day 1**: Environment variable validation and debugging implemented
+- **Day 2**: [PENDING] Vercel logs analysis and environment variable verification
+- **Day 3**: [PENDING] Google OAuth configuration validation
+- **Day 4**: [PENDING] Complete authentication flow testing
+
+#### **📋 Related Files:**
+- `admin-panel/src/auth.ts` - Main Auth.js v5 configuration
+- `admin-panel/src/app/api/auth/[...nextauth]/route.ts` - API route handlers
+- `admin-panel/src/middleware.ts` - Route protection middleware
+
+#### **🎯 Success Criteria:**
+- ✅ Admin panel accessible at https://avanticlassic-admin.vercel.app
+- ✅ Google OAuth sign-in working without errors
+- ✅ Session management functional
+- ✅ Role-based access control operational
+
+---
+
 ## 🟢 **ALL CRITICAL ISSUES RESOLVED**
 
 ### **BUG-005: TypeScript Compilation Errors [RESOLVED]**
