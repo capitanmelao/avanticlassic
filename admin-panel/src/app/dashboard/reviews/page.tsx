@@ -1,7 +1,7 @@
 'use client'
 
 import { useSession } from '@/lib/use-session'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { supabase, type Review, type Release } from '@/lib/supabase'
 import Link from 'next/link'
@@ -20,11 +20,14 @@ interface ReviewWithRelease extends Review {
 export default function ReviewsPage() {
   const { status } = useSession()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [reviews, setReviews] = useState<ReviewWithRelease[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedPublication, setSelectedPublication] = useState<string>('all')
+  const [releaseFilter, setReleaseFilter] = useState<string | null>(null)
+  const [releaseTitle, setReleaseTitle] = useState<string | null>(null)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -33,13 +36,20 @@ export default function ReviewsPage() {
   }, [status, router])
 
   useEffect(() => {
+    const release = searchParams.get('release')
+    setReleaseFilter(release)
+  }, [searchParams])
+
+  useEffect(() => {
     loadReviews()
-  }, [])
+  }, [releaseFilter])
 
   const loadReviews = async () => {
     try {
       setLoading(true)
-      const { data, error } = await supabase
+      
+      // Build query with optional release filter
+      let query = supabase
         .from('reviews')
         .select(`
           *,
@@ -47,11 +57,34 @@ export default function ReviewsPage() {
         `)
         .order('review_date', { ascending: false })
 
+      if (releaseFilter) {
+        query = query.eq('release_id', releaseFilter)
+      }
+
+      const { data, error } = await query
+
       if (error) {
         throw error
       }
 
       setReviews(data || [])
+
+      // Get release title if filtering
+      if (releaseFilter && data && data.length > 0) {
+        const releaseTitle = data[0]?.releases?.title
+        setReleaseTitle(releaseTitle || null)
+      } else if (releaseFilter) {
+        // If filtering but no reviews found, get release title directly
+        const { data: releaseData } = await supabase
+          .from('releases')
+          .select('title')
+          .eq('id', releaseFilter)
+          .single()
+        
+        setReleaseTitle(releaseData?.title || null)
+      } else {
+        setReleaseTitle(null)
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load reviews')
     } finally {
@@ -146,6 +179,19 @@ export default function ReviewsPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Reviews</h1>
           <p className="text-gray-600">Manage press reviews and critiques</p>
+          {releaseFilter && releaseTitle && (
+            <div className="mt-3 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+              <span className="mr-2">Filtered by release:</span>
+              <span className="font-semibold">{releaseTitle}</span>
+              <Link
+                href="/dashboard/reviews"
+                className="ml-2 text-yellow-600 hover:text-yellow-800"
+                title="Clear filter"
+              >
+                ×
+              </Link>
+            </div>
+          )}
         </div>
         <Link
           href="/dashboard/reviews/new"

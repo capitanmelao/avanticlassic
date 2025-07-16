@@ -1,7 +1,7 @@
 'use client'
 
 import { useSession } from '@/lib/use-session'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { supabase, type Video } from '@/lib/supabase'
 import Link from 'next/link'
@@ -9,9 +9,12 @@ import Link from 'next/link'
 export default function VideosPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [videos, setVideos] = useState<Video[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [releaseFilter, setReleaseFilter] = useState<string | null>(null)
+  const [releaseTitle, setReleaseTitle] = useState<string | null>(null)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -20,22 +23,52 @@ export default function VideosPage() {
   }, [status, router])
 
   useEffect(() => {
+    const release = searchParams.get('release')
+    setReleaseFilter(release)
+  }, [searchParams])
+
+  useEffect(() => {
     loadVideos()
-  }, [])
+  }, [releaseFilter])
 
   const loadVideos = async () => {
     try {
       setLoading(true)
-      const { data, error } = await supabase
+      
+      // Build query with optional release filter
+      let query = supabase
         .from('videos')
-        .select('*')
+        .select('*, releases(title)')
         .order('created_at', { ascending: false })
+
+      if (releaseFilter) {
+        query = query.eq('release_id', releaseFilter)
+      }
+
+      const { data, error } = await query
 
       if (error) {
         throw error
       }
 
       setVideos(data || [])
+
+      // Get release title if filtering
+      if (releaseFilter && data && data.length > 0) {
+        const releaseTitle = data[0]?.releases?.title
+        setReleaseTitle(releaseTitle || null)
+      } else if (releaseFilter) {
+        // If filtering but no videos found, get release title directly
+        const { data: releaseData } = await supabase
+          .from('releases')
+          .select('title')
+          .eq('id', releaseFilter)
+          .single()
+        
+        setReleaseTitle(releaseData?.title || null)
+      } else {
+        setReleaseTitle(null)
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load videos')
     } finally {
@@ -97,6 +130,19 @@ export default function VideosPage() {
           <p className="mt-2 text-sm text-gray-700">
             Manage YouTube videos and video gallery content.
           </p>
+          {releaseFilter && releaseTitle && (
+            <div className="mt-3 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+              <span className="mr-2">Filtered by release:</span>
+              <span className="font-semibold">{releaseTitle}</span>
+              <Link
+                href="/dashboard/videos"
+                className="ml-2 text-blue-600 hover:text-blue-800"
+                title="Clear filter"
+              >
+                ×
+              </Link>
+            </div>
+          )}
         </div>
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
           <Link

@@ -38,6 +38,8 @@ interface Release {
   sort_order: number
   created_at?: string
   updated_at?: string
+  video_count?: number
+  review_count?: number
 }
 
 interface SortableItemProps {
@@ -118,6 +120,34 @@ function SortableItem({ id, release, onDelete }: SortableItemProps) {
           </span>
         )}
       </td>
+      <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+        {release.video_count && release.video_count > 0 ? (
+          <Link
+            href={`/dashboard/videos?release=${release.id}`}
+            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 hover:bg-blue-200"
+          >
+            {release.video_count} video{release.video_count !== 1 ? 's' : ''}
+          </Link>
+        ) : (
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">
+            No videos
+          </span>
+        )}
+      </td>
+      <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+        {release.review_count && release.review_count > 0 ? (
+          <Link
+            href={`/dashboard/reviews?release=${release.id}`}
+            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
+          >
+            {release.review_count} review{release.review_count !== 1 ? 's' : ''}
+          </Link>
+        ) : (
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">
+            No reviews
+          </span>
+        )}
+      </td>
       <td className="px-4 py-4 whitespace-nowrap text-left text-sm font-medium">
         <div className="flex space-x-2">
           <Link
@@ -166,16 +196,29 @@ export default function ReleasesPage() {
   const loadReleases = async () => {
     try {
       setLoading(true)
+      
+      // Get releases with video and review counts
       const { data, error } = await supabase
         .from('releases')
-        .select('*')
+        .select(`
+          *,
+          videos:videos(count),
+          reviews:reviews(count)
+        `)
         .order('sort_order', { ascending: false })
 
       if (error) {
         throw error
       }
 
-      setReleases(data || [])
+      // Transform the data to include counts
+      const releasesWithCounts = (data || []).map(release => ({
+        ...release,
+        video_count: release.videos?.[0]?.count || 0,
+        review_count: release.reviews?.[0]?.count || 0
+      }))
+
+      setReleases(releasesWithCounts)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load releases')
     } finally {
@@ -330,6 +373,12 @@ export default function ReleasesPage() {
                   </th>
                   <th scope="col" className="w-1/6 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Featured
+                  </th>
+                  <th scope="col" className="w-1/6 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Videos
+                  </th>
+                  <th scope="col" className="w-1/6 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Reviews
                   </th>
                   <th scope="col" className="w-1/6 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
