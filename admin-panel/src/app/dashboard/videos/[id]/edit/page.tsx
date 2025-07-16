@@ -41,7 +41,7 @@ export default function EditVideoPage() {
     sort_order: 0
   })
 
-  const [,] = useState<Release[]>([])
+  const [releases, setReleases] = useState<Release[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -90,6 +90,7 @@ export default function EditVideoPage() {
 
   useEffect(() => {
     loadVideo()
+    loadReleases()
   }, [videoId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadVideo = async () => {
@@ -127,6 +128,20 @@ export default function EditVideoPage() {
     }
   }
 
+  const loadReleases = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('releases')
+        .select('*')
+        .order('title')
+
+      if (error) throw error
+      setReleases(data || [])
+    } catch (err) {
+      console.error('Failed to load releases:', err)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -147,6 +162,7 @@ export default function EditVideoPage() {
           duration: formData.duration || null,
           view_count: formData.view_count || null,
           published_date: formData.published_date || null,
+          release_id: formData.release_id ? parseInt(formData.release_id) : null,
           featured: formData.featured,
           sort_order: formData.sort_order,
         })
@@ -331,6 +347,25 @@ export default function EditVideoPage() {
                 onChange={(e) => updateField('published_date', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
               />
+            </div>
+
+            {/* Associated Release */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Associated Release
+              </label>
+              <select
+                value={formData.release_id}
+                onChange={(e) => updateField('release_id', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+              >
+                <option value="">None</option>
+                {releases.map((release) => (
+                  <option key={release.id} value={release.id}>
+                    {release.title} {release.catalog_number ? `(${release.catalog_number})` : ''}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Sort Order */}
