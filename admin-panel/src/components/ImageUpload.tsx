@@ -3,6 +3,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { PhotoIcon, XMarkIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline'
 import { uploadFile, validateImageFile, resizeImage, type StorageBucket } from '@/lib/supabase-storage'
+import { isValidImageUrl } from '@/lib/image-upload'
 
 interface ImageUploadProps {
   bucket: StorageBucket
@@ -39,7 +40,12 @@ export default function ImageUpload({
 
   // Update preview URL when currentImageUrl changes
   useEffect(() => {
-    setPreviewUrl(currentImageUrl || null)
+    // Only show preview for valid image URLs, not legacy relative paths
+    if (currentImageUrl && isValidImageUrl(currentImageUrl)) {
+      setPreviewUrl(currentImageUrl)
+    } else {
+      setPreviewUrl(null)
+    }
   }, [currentImageUrl])
 
   const handleFileSelect = useCallback(async (file: File) => {
@@ -142,6 +148,21 @@ export default function ImageUpload({
       </label>
       
       <div className="relative">
+        {/* Legacy image warning */}
+        {currentImageUrl && !isValidImageUrl(currentImageUrl) && (
+          <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+            <div className="flex items-center">
+              <PhotoIcon className="h-5 w-5 text-yellow-500 mr-2" />
+              <div>
+                <p className="text-sm font-medium text-yellow-800">Legacy image detected</p>
+                <p className="text-xs text-yellow-700 mt-1">
+                  This item has an old image path. Upload a new image to replace it.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {previewUrl ? (
           // Image preview with controls
           <div className="relative group">

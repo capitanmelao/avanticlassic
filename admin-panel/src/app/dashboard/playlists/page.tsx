@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { supabase, type Playlist } from '@/lib/supabase'
 import Link from 'next/link'
+import LegacyImageDisplay from '@/components/LegacyImageDisplay'
 import { 
   PlusIcon,
   PencilIcon,
@@ -221,19 +222,13 @@ export default function PlaylistsPage() {
             >
               {/* Playlist Image */}
               <div className="aspect-square bg-gray-100 rounded-t-lg overflow-hidden">
-                {playlist.image_url ? (
-                  <img
-                    src={playlist.image_url}
-                    alt={playlist.title}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <svg className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 19V6l12-3v13M9 19c0 1.105-.895 2-2 2s-2-.895-2-2 .895-2 2-2 2 .895 2 2zm12-3c0 1.105-.895 2-2 2s-2-.895-2-2 .895-2 2-2 2 .895 2 2z" />
-                    </svg>
-                  </div>
-                )}
+                <LegacyImageDisplay
+                  src={playlist.image_url}
+                  alt={playlist.title}
+                  className="w-full h-full object-cover"
+                  fallbackClassName="w-full h-full flex items-center justify-center"
+                  showLegacyPath={false}
+                />
               </div>
 
               {/* Content */}

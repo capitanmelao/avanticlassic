@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase, type Release, type PlaylistTrack } from '@/lib/supabase'
 import { ChevronLeftIcon, TrashIcon } from '@heroicons/react/24/outline'
+import LegacyImageDisplay from '@/components/LegacyImageDisplay'
 
 interface FormData {
   slug: string
@@ -515,10 +516,12 @@ export default function EditPlaylistPage() {
               {formData.image_url && (
                 <div className="mt-4">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Preview:</label>
-                  <img
+                  <LegacyImageDisplay
                     src={formData.image_url}
                     alt="Playlist cover"
                     className="h-32 w-32 object-cover rounded-lg border border-gray-200"
+                    fallbackClassName="h-32 w-32 flex items-center justify-center rounded-lg border border-gray-200"
+                    showLegacyPath={true}
                   />
                 </div>
               )}
