@@ -83,16 +83,22 @@ export function isStorageUrl(url: string): boolean {
  */
 export function isValidImageUrl(url: string): boolean {
   if (!url) return false
+  // Valid URLs: Supabase storage, HTTP/HTTPS, or data URLs
   return url.includes('supabase.co/storage/v1/object/public/') || 
          url.startsWith('http://') || 
-         url.startsWith('https://') && !url.startsWith('/')
+         url.startsWith('https://') ||
+         url.startsWith('data:image/') ||
+         // Allow absolute paths that aren't legacy relative paths
+         (url.startsWith('/') && !url.match(/^\/images\/[^\/]+\/\d+-\d+\.jpeg$/))
 }
 
 /**
  * Check if an image URL is a legacy relative path
  */
 export function isLegacyImageUrl(url: string): boolean {
-  return Boolean(url && url.startsWith('/') && !url.startsWith('http'))
+  if (!url) return false
+  // Only mark as legacy if it matches the specific old pattern
+  return url.match(/^\/images\/[^\/]+\/\d+-\d+\.jpeg$/) !== null
 }
 
 /**

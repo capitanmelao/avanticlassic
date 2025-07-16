@@ -40,12 +40,7 @@ export default function ImageUpload({
 
   // Update preview URL when currentImageUrl changes
   useEffect(() => {
-    // Only show preview for valid image URLs, not legacy relative paths
-    if (currentImageUrl && isValidImageUrl(currentImageUrl)) {
-      setPreviewUrl(currentImageUrl)
-    } else {
-      setPreviewUrl(null)
-    }
+    setPreviewUrl(currentImageUrl || null)
   }, [currentImageUrl])
 
   const handleFileSelect = useCallback(async (file: File) => {
@@ -148,8 +143,8 @@ export default function ImageUpload({
       </label>
       
       <div className="relative">
-        {/* Legacy image warning */}
-        {currentImageUrl && !isValidImageUrl(currentImageUrl) && (
+        {/* Legacy image warning - only show for truly legacy paths */}
+        {currentImageUrl && isLegacyImageUrl(currentImageUrl) && (
           <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
             <div className="flex items-center">
               <PhotoIcon className="h-5 w-5 text-yellow-500 mr-2" />
