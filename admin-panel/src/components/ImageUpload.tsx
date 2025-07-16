@@ -3,7 +3,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { PhotoIcon, XMarkIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline'
 import { uploadFile, validateImageFile, resizeImage, type StorageBucket } from '@/lib/supabase-storage'
-import { isValidImageUrl } from '@/lib/image-upload'
+import { isLegacyImageUrl } from '@/lib/image-upload'
 
 interface ImageUploadProps {
   bucket: StorageBucket
