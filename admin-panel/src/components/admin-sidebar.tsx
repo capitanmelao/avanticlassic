@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { usePermissions } from '@/lib/permissions'
+import { useNavCounts } from '@/hooks/use-nav-counts'
 import { 
   HomeIcon,
   UserGroupIcon,
@@ -24,19 +25,19 @@ interface NavItem {
   name: string
   href: string
   icon: React.ComponentType<{ className?: string }>
-  count?: number
+  countKey?: keyof ReturnType<typeof useNavCounts>['counts']
   restrictedTo?: 'super_admin' | 'company_admin'
 }
 
 const allNavigation: NavItem[] = [
   { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
-  { name: 'Artists', href: '/dashboard/artists', icon: UserGroupIcon, count: 19 },
-  { name: 'Releases', href: '/dashboard/releases', icon: MusicalNoteIcon, count: 37 },
-  { name: 'Videos', href: '/dashboard/videos', icon: VideoCameraIcon, count: 15 },
-  { name: 'Playlists', href: '/dashboard/playlists', icon: ListBulletIcon, count: 8 },
-  { name: 'Reviews', href: '/dashboard/reviews', icon: StarIcon, count: 24 },
-  { name: 'Distributors', href: '/dashboard/distributors', icon: InformationCircleIcon, count: 26 },
-  { name: 'Users', href: '/dashboard/users', icon: UsersIcon, restrictedTo: 'super_admin' },
+  { name: 'Artists', href: '/dashboard/artists', icon: UserGroupIcon, countKey: 'artists' },
+  { name: 'Releases', href: '/dashboard/releases', icon: MusicalNoteIcon, countKey: 'releases' },
+  { name: 'Videos', href: '/dashboard/videos', icon: VideoCameraIcon, countKey: 'videos' },
+  { name: 'Playlists', href: '/dashboard/playlists', icon: ListBulletIcon, countKey: 'playlists' },
+  { name: 'Reviews', href: '/dashboard/reviews', icon: StarIcon, countKey: 'reviews' },
+  { name: 'Distributors', href: '/dashboard/distributors', icon: InformationCircleIcon, countKey: 'distributors' },
+  { name: 'Users', href: '/dashboard/users', icon: UsersIcon, countKey: 'users', restrictedTo: 'super_admin' },
   { name: 'Settings', href: '/dashboard/settings', icon: Cog6ToothIcon, restrictedTo: 'super_admin' },
 ]
 
@@ -50,6 +51,7 @@ export default function AdminSidebar({ children }: AdminSidebarProps) {
   const [navigation, setNavigation] = useState<NavItem[]>([])
   const pathname = usePathname()
   const { user, loading } = usePermissions()
+  const { counts, loading: countsLoading } = useNavCounts()
 
   useEffect(() => {
     if (!loading && user) {
@@ -142,7 +144,7 @@ export default function AdminSidebar({ children }: AdminSidebarProps) {
                 {!collapsed && (
                   <>
                     <span className="truncate">{item.name}</span>
-                    {item.count && (
+                    {item.countKey && (
                       <span className={`
                         ml-auto inline-block py-0.5 px-2 text-xs rounded-full
                         ${isActive 
@@ -150,7 +152,7 @@ export default function AdminSidebar({ children }: AdminSidebarProps) {
                           : 'bg-gray-800 text-gray-300 group-hover:bg-gray-700'
                         }
                       `}>
-                        {item.count}
+                        {countsLoading ? '...' : counts[item.countKey]}
                       </span>
                     )}
                   </>
