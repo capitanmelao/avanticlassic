@@ -3,7 +3,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { PhotoIcon, XMarkIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline'
 import { uploadFile, validateImageFile, resizeImage, type StorageBucket } from '@/lib/supabase-storage'
-import { isLegacyImageUrl } from '@/lib/image-upload'
 
 interface ImageUploadProps {
   bucket: StorageBucket
@@ -143,20 +142,6 @@ export default function ImageUpload({
       </label>
       
       <div className="relative">
-        {/* Legacy image warning - only show for truly legacy paths */}
-        {currentImageUrl && isLegacyImageUrl(currentImageUrl) && (
-          <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-            <div className="flex items-center">
-              <PhotoIcon className="h-5 w-5 text-yellow-500 mr-2" />
-              <div>
-                <p className="text-sm font-medium text-yellow-800">Legacy image detected</p>
-                <p className="text-xs text-yellow-700 mt-1">
-                  This item has an old image path. Upload a new image to replace it.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
 
         {previewUrl ? (
           // Image preview with controls
@@ -165,6 +150,11 @@ export default function ImageUpload({
               src={previewUrl}
               alt="Preview"
               className="w-full h-48 object-cover rounded-lg border border-gray-300"
+              onError={(e) => {
+                console.error('Image failed to load:', previewUrl)
+                // If the image fails to load, remove the preview
+                setPreviewUrl(null)
+              }}
             />
             
             {/* Overlay controls */}

@@ -1,8 +1,7 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { PhotoIcon } from '@heroicons/react/24/outline'
-import { isValidImageUrl, isLegacyImageUrl } from '@/lib/image-upload'
 
 interface LegacyImageDisplayProps {
   src: string | null | undefined
@@ -19,6 +18,9 @@ export default function LegacyImageDisplay({
   fallbackClassName = 'bg-gray-100 flex items-center justify-center',
   showLegacyPath = false
 }: LegacyImageDisplayProps) {
+  const [imageError, setImageError] = useState(false)
+  const [imageLoading, setImageLoading] = useState(true)
+
   // Handle null/undefined/empty cases
   if (!src) {
     return (
@@ -28,24 +30,12 @@ export default function LegacyImageDisplay({
     )
   }
 
-  // Handle valid image URLs
-  if (isValidImageUrl(src)) {
-    return (
-      <img
-        src={src}
-        alt={alt}
-        className={className}
-      />
-    )
-  }
-
-  // Handle legacy image URLs
-  if (isLegacyImageUrl(src)) {
+  // If image failed to load, show fallback
+  if (imageError) {
     return (
       <div className={`${fallbackClassName} ${className}`}>
         <div className="text-center">
-          <PhotoIcon className="h-8 w-8 text-yellow-500 mx-auto mb-1" />
-          <p className="text-xs text-yellow-700 font-medium">Legacy Image</p>
+          <PhotoIcon className="h-8 w-8 text-gray-400 mx-auto" />
           {showLegacyPath && (
             <p className="text-xs text-gray-500 mt-1 truncate max-w-full">
               {src}
@@ -56,18 +46,26 @@ export default function LegacyImageDisplay({
     )
   }
 
-  // Fallback for any other cases
+  // Try to display the image regardless of URL format
   return (
-    <div className={`${fallbackClassName} ${className}`}>
-      <div className="text-center">
-        <PhotoIcon className="h-8 w-8 text-red-500 mx-auto mb-1" />
-        <p className="text-xs text-red-700 font-medium">Invalid Image</p>
-        {showLegacyPath && (
-          <p className="text-xs text-gray-500 mt-1 truncate max-w-full">
-            {src}
-          </p>
-        )}
-      </div>
-    </div>
+    <>
+      <img
+        src={src}
+        alt={alt}
+        className={`${className} ${imageLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+        onError={() => {
+          setImageError(true)
+          setImageLoading(false)
+        }}
+        onLoad={() => {
+          setImageLoading(false)
+        }}
+      />
+      {imageLoading && (
+        <div className={`${fallbackClassName} ${className} absolute inset-0`}>
+          <div className="animate-pulse bg-gray-300 w-full h-full rounded-md"></div>
+        </div>
+      )}
+    </>
   )
 }

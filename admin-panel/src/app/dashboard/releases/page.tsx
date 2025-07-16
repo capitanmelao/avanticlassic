@@ -82,7 +82,7 @@ function SortableItem({ id, release, onDelete }: SortableItemProps) {
       </td>
       <td className="px-4 py-4 whitespace-nowrap">
         <div className="flex items-center">
-          <div className="flex-shrink-0 h-12 w-12">
+          <div className="flex-shrink-0 h-12 w-12 relative">
             <LegacyImageDisplay
               src={release.image_url}
               alt={release.title}
