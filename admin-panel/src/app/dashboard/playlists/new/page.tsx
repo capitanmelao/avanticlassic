@@ -114,10 +114,13 @@ export default function NewPlaylistPage() {
       setSaving(true)
       setError(null)
 
-      // Create playlist
-      const { data: playlist, error: playlistError } = await supabase
-        .from('playlists')
-        .insert({
+      // Create playlist using API route to bypass RLS
+      const response = await fetch('/api/playlists', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           slug: formData.slug,
           title: formData.title,
           description: formData.description || null,
@@ -128,42 +131,14 @@ export default function NewPlaylistPage() {
           youtube_url: formData.youtube_url || null,
           featured: formData.featured,
           sort_order: formData.sort_order,
+          translations: formData.translations,
+          selectedReleases: formData.selectedReleases
         })
-        .select()
-        .single()
+      })
 
-      if (playlistError) throw playlistError
-
-      // Add translations
-      const translations = []
-      for (const [lang, content] of Object.entries(formData.translations)) {
-        if (content.title || content.description) {
-          translations.push({
-            playlist_id: playlist.id,
-            language: lang,
-            title: content.title || formData.title,
-            description: content.description || formData.description
-          })
-        }
-      }
-
-      if (translations.length > 0) {
-        await supabase
-          .from('playlist_translations')
-          .insert(translations)
-      }
-
-      // Add tracks
-      if (formData.selectedReleases.length > 0) {
-        const tracks = formData.selectedReleases.map((releaseId, index) => ({
-          playlist_id: playlist.id,
-          release_id: releaseId,
-          sort_order: index
-        }))
-
-        await supabase
-          .from('playlist_tracks')
-          .insert(tracks)
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to create playlist')
       }
 
       router.push('/dashboard/playlists')
