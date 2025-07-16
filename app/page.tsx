@@ -1,94 +1,75 @@
-"use client"
-
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { useState, useEffect } from "react"
+import { HeroVideoSection } from "@/components/hero-video-section"
+import { supabase } from "@/lib/supabase"
+
+// Revalidate the page every 5 minutes to pick up featured release changes
+export const revalidate = 300
 
 async function getFeaturedReleases() {
   try {
-    // Use relative URL to avoid port issues
-    const baseUrl = process.env.NODE_ENV === 'production' 
-      ? process.env.NEXT_PUBLIC_SITE_URL 
-      : '';
-    const res = await fetch(`${baseUrl}/api/releases?featured=true&limit=3`, {
-      cache: 'no-store'
-    })
-    if (!res.ok) return { releases: [] }
-    return await res.json()
+    const { data: releases, error } = await supabase
+      .from('releases')
+      .select(`
+        id,
+        url,
+        title,
+        format,
+        image_url,
+        release_date,
+        catalog_number,
+        featured,
+        shop_url,
+        spotify_url,
+        apple_music_url,
+        release_artists(
+          artist:artists(
+            id,
+            name
+          )
+        )
+      `)
+      .eq('featured', true)
+      .order('sort_order', { ascending: false })
+      .limit(3)
+
+    if (error) {
+      console.error('Error fetching featured releases:', error)
+      return []
+    }
+
+    console.log('Featured releases found:', releases?.length || 0)
+    if (releases?.length) {
+      console.log('Featured releases:', releases.map(r => ({ id: r.id, title: r.title, featured: r.featured })))
+    }
+
+    return releases?.map(release => ({
+      id: release.id.toString(),
+      url: release.url,
+      title: release.title,
+      artists: release.release_artists?.map((ra: any) => ra.artist?.name).join(', ') || 'Various Artists',
+      format: release.format || 'CD',
+      imageUrl: `/images/releases/${release.id}.jpeg`,
+      releaseDate: release.release_date,
+      catalogNumber: release.catalog_number,
+      shopUrl: release.shop_url,
+      spotifyUrl: release.spotify_url,
+      appleMusicUrl: release.apple_music_url
+    })) || []
   } catch (error) {
-    console.error('Error fetching releases:', error)
-    return { releases: [] }
+    console.error('Error fetching featured releases:', error)
+    return []
   }
 }
 
-export default function HomePage() {
-  const [showSoundButton, setShowSoundButton] = useState(false)
-  const [isMuted, setIsMuted] = useState(true)
-  const [releases, setReleases] = useState<any[]>([])
-  
-  useEffect(() => {
-    getFeaturedReleases().then(data => setReleases(data.releases))
-  }, [])
+export default async function HomePage() {
+  const featuredReleases = await getFeaturedReleases()
   
   return (
     <div className="flex flex-col">
-      {/* Hero Section with Video */}
-      <section className="pt-8 md:pt-12 lg:pt-16 pb-4 md:pb-6 lg:pb-8 px-4 md:px-6">
-        <div 
-          className="relative w-full max-w-[80%] mx-auto h-[400px] md:h-[450px] lg:h-[500px] overflow-hidden rounded-lg shadow-lg cursor-pointer"
-          onMouseEnter={() => setShowSoundButton(true)}
-          onMouseLeave={() => setShowSoundButton(false)}
-          onClick={() => {
-            const video = document.getElementById('hero-video') as HTMLVideoElement;
-            if (video) {
-              setIsMuted(!isMuted);
-              video.muted = !isMuted;
-            }
-          }}
-        >
-        <video
-          autoPlay
-          loop
-          muted={isMuted}
-          playsInline
-          preload="metadata"
-          controls={false}
-          className="absolute inset-0 w-full h-full object-cover"
-          id="hero-video"
-          onLoadStart={() => console.log('Video loading started')}
-          onLoadedData={() => console.log('Video data loaded')}
-          onError={(e) => console.error('Video error:', e)}
-        >
-          <source src="/intro.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        
-        {/* Sound indicator overlay */}
-        <div className={`absolute inset-0 bg-black/20 transition-all duration-300 z-10 flex items-center justify-center ${showSoundButton ? 'opacity-100' : 'opacity-0'}`}>
-          <div className="bg-black/70 rounded-full p-4 text-white text-2xl">
-            {isMuted ? '🔇' : '🔊'}
-          </div>
-        </div>
-        
-        {/* Small sound toggle button in corner */}
-        <button
-          className={`absolute top-4 right-4 p-2 rounded-full bg-black/60 text-white hover:bg-black/80 transition-all duration-300 z-20 text-sm ${showSoundButton ? 'opacity-100' : 'opacity-0'}`}
-          onClick={(e) => {
-            e.stopPropagation(); // Prevent triggering the video click
-            const video = document.getElementById('hero-video') as HTMLVideoElement;
-            if (video) {
-              setIsMuted(!isMuted);
-              video.muted = !isMuted;
-            }
-          }}
-          title={isMuted ? "Unmute video" : "Mute video"}
-        >
-          {isMuted ? '🔇' : '🔊'}
-        </button>
-        </div>
-      </section>
+      <HeroVideoSection />
 
       {/* Featured Releases Section */}
       <section className="pt-8 md:pt-12 pb-16 md:pb-24 bg-gray-50 dark:bg-gray-900">
@@ -97,8 +78,8 @@ export default function HomePage() {
             Featured Releases
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {releases.length > 0 ? (
-              releases.map((release: any) => (
+            {featuredReleases.length > 0 ? (
+              featuredReleases.map((release: any) => (
                 <Card key={release.id} className="overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white dark:bg-gray-800">
                   <Image
                     src={release.imageUrl}
