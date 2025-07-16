@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { PhotoIcon } from '@heroicons/react/24/outline'
 
 interface LegacyImageDisplayProps {
@@ -21,8 +21,34 @@ export default function LegacyImageDisplay({
   const [imageError, setImageError] = useState(false)
   const [imageLoading, setImageLoading] = useState(true)
 
+  // Convert relative paths to absolute URLs pointing to the main site
+  const getImageUrl = (imageSrc: string) => {
+    if (!imageSrc) return null
+    
+    // If it's already an absolute URL, use it as-is
+    if (imageSrc.startsWith('http://') || imageSrc.startsWith('https://')) {
+      return imageSrc
+    }
+    
+    // If it's a relative path starting with /, prepend the main site URL
+    if (imageSrc.startsWith('/')) {
+      return `https://avanticlassic.vercel.app${imageSrc}`
+    }
+    
+    // For any other format, return as-is
+    return imageSrc
+  }
+
+  const imageUrl = src ? getImageUrl(src) : null
+
+  // Debug logging
+  useEffect(() => {
+    console.log('LegacyImageDisplay - original src:', src)
+    console.log('LegacyImageDisplay - converted url:', imageUrl)
+  }, [src, imageUrl])
+
   // Handle null/undefined/empty cases
-  if (!src) {
+  if (!imageUrl) {
     return (
       <div className={`${fallbackClassName} ${className}`}>
         <PhotoIcon className="h-8 w-8 text-gray-400" />
@@ -50,10 +76,11 @@ export default function LegacyImageDisplay({
   return (
     <>
       <img
-        src={src}
+        src={imageUrl}
         alt={alt}
         className={`${className} ${imageLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
-        onError={() => {
+        onError={(e) => {
+          console.error('Image failed to load:', imageUrl, e)
           setImageError(true)
           setImageLoading(false)
         }}

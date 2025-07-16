@@ -33,13 +33,34 @@ export default function ImageUpload({
 }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false)
   const [isDragOver, setIsDragOver] = useState(false)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(currentImageUrl || null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [uploadProgress, setUploadProgress] = useState(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  // Convert relative paths to absolute URLs pointing to the main site
+  const getImageUrl = (imageSrc: string | undefined) => {
+    if (!imageSrc) return null
+    
+    // If it's already an absolute URL, use it as-is
+    if (imageSrc.startsWith('http://') || imageSrc.startsWith('https://')) {
+      return imageSrc
+    }
+    
+    // If it's a relative path starting with /, prepend the main site URL
+    if (imageSrc.startsWith('/')) {
+      return `https://avanticlassic.vercel.app${imageSrc}`
+    }
+    
+    // For any other format, return as-is
+    return imageSrc
+  }
+
   // Update preview URL when currentImageUrl changes
   useEffect(() => {
-    setPreviewUrl(currentImageUrl || null)
+    const convertedUrl = getImageUrl(currentImageUrl)
+    console.log('ImageUpload - original URL:', currentImageUrl)
+    console.log('ImageUpload - converted URL:', convertedUrl)
+    setPreviewUrl(convertedUrl)
   }, [currentImageUrl])
 
   const handleFileSelect = useCallback(async (file: File) => {
