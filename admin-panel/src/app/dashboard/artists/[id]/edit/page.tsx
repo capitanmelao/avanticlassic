@@ -5,6 +5,8 @@ import { useRouter, useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { supabase, type Artist } from '@/lib/supabase'
 import Link from 'next/link'
+import ImageUpload from '@/components/ImageUpload'
+import { extractStoragePath } from '@/lib/image-upload'
 
 export default function EditArtistPage() {
   const { data: session, status } = useSession()
@@ -23,6 +25,8 @@ export default function EditArtistPage() {
     image_url: '',
     featured: false
   })
+  
+  const [, setImagePath] = useState<string | null>(null)
   
   const [translations, setTranslations] = useState({
     en: '',
@@ -75,6 +79,12 @@ export default function EditArtistPage() {
         image_url: artistData.image_url || '',
         featured: artistData.featured || false
       })
+      
+      // Extract storage path from image URL
+      if (artistData.image_url) {
+        const path = extractStoragePath(artistData.image_url)
+        setImagePath(path)
+      }
 
       // Set translations
       const translationsMap = {
@@ -97,6 +107,16 @@ export default function EditArtistPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleImageUpload = (url: string, path: string) => {
+    setFormData(prev => ({ ...prev, image_url: url }))
+    setImagePath(path)
+  }
+
+  const handleImageRemove = () => {
+    setFormData(prev => ({ ...prev, image_url: '' }))
+    setImagePath(null)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -281,7 +301,7 @@ export default function EditArtistPage() {
                       Facebook URL
                     </label>
                     <input
-                      type="url"
+                      type="text"
                       name="facebook"
                       id="facebook"
                       value={formData.facebook}
@@ -291,18 +311,15 @@ export default function EditArtistPage() {
                     />
                   </div>
 
-                  <div className="col-span-6 sm:col-span-4">
-                    <label htmlFor="image_url" className="block text-sm font-medium text-gray-700">
-                      Profile Image URL
-                    </label>
-                    <input
-                      type="url"
-                      name="image_url"
-                      id="image_url"
-                      value={formData.image_url}
-                      onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                      className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                      placeholder="https://example.com/image.jpg"
+                  <div className="col-span-6">
+                    <ImageUpload
+                      bucket="artists"
+                      folder={`artist-${artistId}`}
+                      currentImageUrl={formData.image_url}
+                      onUploadSuccess={handleImageUpload}
+                      onUploadError={(error) => setError(error)}
+                      onRemove={handleImageRemove}
+                      label="Profile Image"
                     />
                   </div>
                 </div>

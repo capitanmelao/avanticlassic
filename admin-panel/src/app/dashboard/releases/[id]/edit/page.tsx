@@ -388,7 +388,7 @@ export default function EditReleasePage() {
                   Shop URL
                 </label>
                 <input
-                  type="url"
+                  type="text"
                   value={formData.shop_url}
                   onChange={(e) => updateField('shop_url', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
@@ -400,7 +400,7 @@ export default function EditReleasePage() {
                   Cover Image URL
                 </label>
                 <input
-                  type="url"
+                  type="text"
                   value={formData.image_url}
                   onChange={(e) => updateField('image_url', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
@@ -508,7 +508,7 @@ export default function EditReleasePage() {
                   Spotify URL
                 </label>
                 <input
-                  type="url"
+                  type="text"
                   value={formData.spotify_url}
                   onChange={(e) => updateField('spotify_url', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
@@ -520,7 +520,7 @@ export default function EditReleasePage() {
                   Apple Music URL
                 </label>
                 <input
-                  type="url"
+                  type="text"
                   value={formData.apple_music_url}
                   onChange={(e) => updateField('apple_music_url', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
@@ -532,7 +532,7 @@ export default function EditReleasePage() {
                   YouTube Music URL
                 </label>
                 <input
-                  type="url"
+                  type="text"
                   value={formData.youtube_music_url}
                   onChange={(e) => updateField('youtube_music_url', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
@@ -544,7 +544,7 @@ export default function EditReleasePage() {
                   Amazon Music URL
                 </label>
                 <input
-                  type="url"
+                  type="text"
                   value={formData.amazon_music_url}
                   onChange={(e) => updateField('amazon_music_url', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
@@ -556,7 +556,7 @@ export default function EditReleasePage() {
                   Bandcamp URL
                 </label>
                 <input
-                  type="url"
+                  type="text"
                   value={formData.bandcamp_url}
                   onChange={(e) => updateField('bandcamp_url', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
@@ -568,7 +568,7 @@ export default function EditReleasePage() {
                   SoundCloud URL
                 </label>
                 <input
-                  type="url"
+                  type="text"
                   value={formData.soundcloud_url}
                   onChange={(e) => updateField('soundcloud_url', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"

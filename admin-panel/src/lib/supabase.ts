@@ -118,6 +118,7 @@ export interface Video {
   duration?: number
   view_count?: number
   published_date?: string
+  release_id?: number
   featured: boolean
   sort_order: number
   created_at?: string

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
+import { supabase, type Release } from '@/lib/supabase'
 import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 
 interface FormData {
@@ -16,6 +16,7 @@ interface FormData {
   duration: number
   view_count: number
   published_date: string
+  release_id: string
   featured: boolean
   sort_order: number
 }
@@ -35,10 +36,12 @@ export default function EditVideoPage() {
     duration: 0,
     view_count: 0,
     published_date: '',
+    release_id: '',
     featured: false,
     sort_order: 0
   })
 
+  const [,] = useState<Release[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -112,6 +115,7 @@ export default function EditVideoPage() {
           duration: video.duration || 0,
           view_count: video.view_count || 0,
           published_date: video.published_date || '',
+          release_id: video.release_id ? video.release_id.toString() : '',
           featured: video.featured || false,
           sort_order: video.sort_order || 0
         })

@@ -14,7 +14,7 @@ import {
 } from '@heroicons/react/24/outline'
 
 interface ReviewWithRelease extends Review {
-  release?: Release
+  releases?: Release
 }
 
 export default function ReviewsPage() {
@@ -43,7 +43,7 @@ export default function ReviewsPage() {
         .from('reviews')
         .select(`
           *,
-          release:releases(*)
+          releases(*)
         `)
         .order('review_date', { ascending: false })
 
@@ -99,7 +99,7 @@ export default function ReviewsPage() {
 
   const filteredReviews = reviews.filter(review => {
     const matchesSearch = 
-      review.release?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      review.releases?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       review.publication.toLowerCase().includes(searchTerm.toLowerCase()) ||
       review.reviewer_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       review.review_text.toLowerCase().includes(searchTerm.toLowerCase())
@@ -226,7 +226,7 @@ export default function ReviewsPage() {
                     <div className="flex-1">
                       <div className="flex items-center space-x-3">
                         <h3 className="text-lg font-medium text-gray-900">
-                          {review.release?.title || 'Unknown Release'}
+                          {review.releases?.title || 'Unknown Release'}
                         </h3>
                         {review.featured && (
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">

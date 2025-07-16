@@ -3,7 +3,7 @@
 import { useSession } from '@/lib/use-session'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { supabase, type Release } from '@/lib/supabase'
 import Link from 'next/link'
 
 export default function NewVideoPage() {
@@ -18,8 +18,11 @@ export default function NewVideoPage() {
     title: '',
     url: '',
     artist_name: '',
-    youtube_id: ''
+    youtube_id: '',
+    release_id: ''
   })
+  
+  const [releases, setReleases] = useState<Release[]>([])
 
   const [translations, setTranslations] = useState({
     en: '',
@@ -32,6 +35,24 @@ export default function NewVideoPage() {
       router.push('/auth/signin')
     }
   }, [status, router])
+
+  useEffect(() => {
+    loadReleases()
+  }, [])
+
+  const loadReleases = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('releases')
+        .select('*')
+        .order('title')
+
+      if (error) throw error
+      setReleases(data || [])
+    } catch (err) {
+      console.error('Failed to load releases:', err)
+    }
+  }
 
   const generateUrlSlug = (title: string) => {
     return title
@@ -126,7 +147,8 @@ export default function NewVideoPage() {
         title: formData.title,
         url: formData.url,
         artist_name: formData.artist_name,
-        youtube_id: formData.youtube_id
+        youtube_id: formData.youtube_id,
+        release_id: formData.release_id ? parseInt(formData.release_id) : null
       }
       
       console.log('Creating video with payload:', videoPayload)
@@ -268,6 +290,28 @@ export default function NewVideoPage() {
                     className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
                     placeholder="e.g., Glenn Gould"
                   />
+                </div>
+
+                <div className="col-span-6">
+                  <label htmlFor="release_id" className="block text-sm font-medium text-gray-700">
+                    Associated Release (Optional)
+                  </label>
+                  <select
+                    id="release_id"
+                    value={formData.release_id}
+                    onChange={(e) => setFormData(prev => ({ ...prev, release_id: e.target.value }))}
+                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
+                  >
+                    <option value="">Select a release...</option>
+                    {releases.map((release) => (
+                      <option key={release.id} value={release.id}>
+                        {release.title} {release.catalog_number ? `(${release.catalog_number})` : ''}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="mt-2 text-sm text-gray-500">
+                    Link this video to a specific release if applicable.
+                  </p>
                 </div>
 
                 <div className="col-span-6">

@@ -360,7 +360,7 @@ export default function NewPlaylistPage() {
                     Spotify URL
                   </label>
                   <input
-                    type="url"
+                    type="text"
                     value={formData.spotify_url}
                     onChange={(e) => {
                       updateField('spotify_url', e.target.value)
@@ -376,7 +376,7 @@ export default function NewPlaylistPage() {
                     Apple Music URL
                   </label>
                   <input
-                    type="url"
+                    type="text"
                     value={formData.apple_music_url}
                     onChange={(e) => {
                       updateField('apple_music_url', e.target.value)
@@ -392,7 +392,7 @@ export default function NewPlaylistPage() {
                     YouTube URL
                   </label>
                   <input
-                    type="url"
+                    type="text"
                     value={formData.youtube_url}
                     onChange={(e) => updateField('youtube_url', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
@@ -405,7 +405,7 @@ export default function NewPlaylistPage() {
                     Cover Image URL
                   </label>
                   <input
-                    type="url"
+                    type="text"
                     value={formData.image_url}
                     onChange={(e) => updateField('image_url', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
