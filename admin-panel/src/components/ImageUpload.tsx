@@ -150,7 +150,7 @@ export default function ImageUpload({
               src={previewUrl}
               alt="Preview"
               className="w-full h-48 object-cover rounded-lg border border-gray-300"
-              onError={(e) => {
+              onError={() => {
                 console.error('Image failed to load:', previewUrl)
                 // If the image fails to load, remove the preview
                 setPreviewUrl(null)
