@@ -5,6 +5,8 @@ import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase, type Artist } from '@/lib/supabase'
 import { ChevronLeftIcon } from '@heroicons/react/24/outline'
+import ImageUpload from '@/components/ImageUpload'
+import { extractStoragePath } from '@/lib/image-upload'
 
 interface FormData {
   url: string
@@ -72,6 +74,7 @@ export default function EditReleasePage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'basic' | 'content' | 'streaming' | 'seo'>('basic')
+  const [, setImagePath] = useState<string | null>(null)
 
   useEffect(() => {
     loadData()
@@ -144,6 +147,12 @@ export default function EditReleasePage() {
           translations,
           artistIds
         })
+        
+        // Extract storage path from image URL
+        if (release.image_url) {
+          const path = extractStoragePath(release.image_url)
+          setImagePath(path)
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load release')
@@ -228,6 +237,16 @@ export default function EditReleasePage() {
 
   const updateField = (field: keyof FormData, value: string | number | boolean | number[]) => {
     setFormData(prev => ({ ...prev, [field]: value }))
+  }
+
+  const handleImageUpload = (url: string, path: string) => {
+    setFormData(prev => ({ ...prev, image_url: url }))
+    setImagePath(path)
+  }
+
+  const handleImageRemove = () => {
+    setFormData(prev => ({ ...prev, image_url: '' }))
+    setImagePath(null)
   }
 
   const updateTranslation = (lang: 'en' | 'fr' | 'de', field: 'tracklist' | 'description', value: string) => {
@@ -396,14 +415,14 @@ export default function EditReleasePage() {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Cover Image URL
-                </label>
-                <input
-                  type="text"
-                  value={formData.image_url}
-                  onChange={(e) => updateField('image_url', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                <ImageUpload
+                  bucket="releases"
+                  folder={`release-${releaseId}`}
+                  currentImageUrl={formData.image_url}
+                  onUploadSuccess={handleImageUpload}
+                  onUploadError={(error) => setError(error)}
+                  onRemove={handleImageRemove}
+                  label="Cover Image"
                 />
               </div>
 

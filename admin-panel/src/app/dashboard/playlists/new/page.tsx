@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase, type Release } from '@/lib/supabase'
 import { ChevronLeftIcon } from '@heroicons/react/24/outline'
+import ImageUpload from '@/components/ImageUpload'
 
 interface FormData {
   slug: string
@@ -53,6 +54,7 @@ export default function NewPlaylistPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'basic' | 'content' | 'tracks'>('basic')
+  const [, setImagePath] = useState<string | null>(null)
 
   useEffect(() => {
     loadReleases()
@@ -174,6 +176,16 @@ export default function NewPlaylistPage() {
 
   const updateField = (field: keyof FormData, value: string | number | boolean | number[]) => {
     setFormData(prev => ({ ...prev, [field]: value }))
+  }
+
+  const handleImageUpload = (url: string, path: string) => {
+    setFormData(prev => ({ ...prev, image_url: url }))
+    setImagePath(path)
+  }
+
+  const handleImageRemove = () => {
+    setFormData(prev => ({ ...prev, image_url: '' }))
+    setImagePath(null)
   }
 
   const updateTranslation = (lang: 'en' | 'fr' | 'de', field: 'title' | 'description', value: string) => {
@@ -401,29 +413,17 @@ export default function NewPlaylistPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Cover Image URL
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.image_url}
-                    onChange={(e) => updateField('image_url', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                  <ImageUpload
+                    bucket="playlists"
+                    folder="playlist-covers"
+                    currentImageUrl={formData.image_url}
+                    onUploadSuccess={handleImageUpload}
+                    onUploadError={(error) => setError(error)}
+                    onRemove={handleImageRemove}
+                    label="Cover Image"
                   />
                 </div>
               </div>
-
-              {/* Image Preview */}
-              {formData.image_url && (
-                <div className="mt-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Preview:</label>
-                  <img
-                    src={formData.image_url}
-                    alt="Playlist cover"
-                    className="h-32 w-32 object-cover rounded-lg border border-gray-200"
-                  />
-                </div>
-              )}
             </div>
 
             {/* Multilingual Content */}
