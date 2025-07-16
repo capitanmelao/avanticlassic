@@ -35,6 +35,7 @@ export default function ImageUpload({
   const [isDragOver, setIsDragOver] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [uploadProgress, setUploadProgress] = useState(0)
+  const [imageLoading, setImageLoading] = useState(true)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Convert relative paths to absolute URLs pointing to the main site
@@ -61,6 +62,7 @@ export default function ImageUpload({
     console.log('ImageUpload - original URL:', currentImageUrl)
     console.log('ImageUpload - converted URL:', convertedUrl)
     setPreviewUrl(convertedUrl)
+    setImageLoading(true) // Reset loading state when URL changes
   }, [currentImageUrl])
 
   const handleFileSelect = useCallback(async (file: File) => {
@@ -170,16 +172,23 @@ export default function ImageUpload({
             <img
               src={previewUrl}
               alt="Preview"
-              className="w-full h-48 object-cover rounded-lg border border-gray-300"
-              onError={() => {
+              className={`w-full h-48 object-cover rounded-lg border border-gray-300 ${imageLoading ? 'bg-gray-200' : ''}`}
+              style={{ position: 'relative', zIndex: 1 }}
+              onError={(e) => {
                 console.error('Image failed to load:', previewUrl)
+                console.error('Error event:', e)
                 // If the image fails to load, remove the preview
                 setPreviewUrl(null)
+                setImageLoading(false)
+              }}
+              onLoad={() => {
+                console.log('Image loaded successfully:', previewUrl)
+                setImageLoading(false)
               }}
             />
             
             {/* Overlay controls */}
-            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded-lg flex items-center justify-center">
+            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded-lg flex items-center justify-center pointer-events-none group-hover:pointer-events-auto" style={{ zIndex: 2 }}>
               <div className="opacity-0 group-hover:opacity-100 transition-all duration-200 flex space-x-2">
                 <button
                   type="button"
