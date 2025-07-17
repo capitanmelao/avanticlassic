@@ -1,226 +1,275 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import CategoryNavigation from "@/components/playlists/category-navigation"
-import PlaylistSection from "@/components/playlists/playlist-section"
-import ComposerSection from "@/components/playlists/composer-section" // New import
-import ForEveryoneSection from "@/components/playlists/for-everyone-section" // New import
+import { PlayIcon, ExternalLinkIcon } from "lucide-react"
+import { Suspense } from "react"
 
-// Dummy data for playlists (existing)
-const newReleasesPlaylists = [
-  {
-    id: "nr1",
-    title: "OH MUSIC: NEW RELEASES",
-    imageUrl: "/placeholder.svg?height=300&width=300&text=New+Releases+1",
-  },
-  {
-    id: "nr2",
-    title: "ALPHA: NEW RELEASES",
-    imageUrl: "/placeholder.svg?height=300&width=300&text=New+Releases+2",
-  },
-  {
-    id: "nr3",
-    title: "LINN: NEW RELEASES",
-    imageUrl: "/placeholder.svg?height=300&width=300&text=New+Releases+3",
-  },
-]
+interface Playlist {
+  id: number
+  slug: string
+  title: string
+  description?: string
+  category: 'by_artist' | 'by_composer'
+  image_url?: string
+  spotify_url?: string
+  apple_music_url?: string
+  youtube_url?: string
+  featured: boolean
+  track_count: number
+  tracks: Array<{
+    id: number
+    release_id: number
+    release_title?: string
+    release_image?: string
+  }>
+}
 
-const createdForYouPlaylists = [
-  {
-    id: "cfy1",
-    title: "ZEN INSPIRATION",
-    imageUrl: "/placeholder.svg?height=300&width=300&text=Zen+Inspiration",
-  },
-  {
-    id: "cfy2",
-    title: "QUIET WITH AVANTI",
-    imageUrl: "/placeholder.svg?height=300&width=300&text=Quiet+With+Avanti",
-  },
-  {
-    id: "cfy3",
-    title: "SWEET HOME OFFICE",
-    imageUrl: "/placeholder.svg?height=300&width=300&text=Sweet+Home+Office",
-  },
-  {
-    id: "cfy4",
-    title: "EPIC ORCHESTRAL",
-    imageUrl: "/placeholder.svg?height=300&width=300&text=Epic+Orchestral",
-  },
-  {
-    id: "cfy5",
-    title: "SOUNDS OF SPAIN",
-    imageUrl: "/placeholder.svg?height=300&width=300&text=Sounds+of+Spain",
-  },
-  {
-    id: "cfy6",
-    title: "PIANO DAY",
-    imageUrl: "/placeholder.svg?height=300&width=300&text=Piano+Day",
-  },
-  {
-    id: "cfy7",
-    title: "SPLENDEURS DE VERSAILLES",
-    imageUrl: "/placeholder.svg?height=300&width=300&text=Versailles",
-  },
-]
+async function getPlaylists(): Promise<{
+  byArtist: Playlist[]
+  byComposer: Playlist[]
+  featured: Playlist[]
+}> {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+    
+    // Fetch all playlists
+    const response = await fetch(`${baseUrl}/api/playlists?lang=en`, {
+      next: { revalidate: 3600 } // Cache for 1 hour
+    })
+    
+    if (!response.ok) {
+      console.error('Failed to fetch playlists:', response.status)
+      return { byArtist: [], byComposer: [], featured: [] }
+    }
+    
+    const playlists: Playlist[] = await response.json()
+    
+    return {
+      byArtist: playlists.filter(p => p.category === 'by_artist'),
+      byComposer: playlists.filter(p => p.category === 'by_composer'),
+      featured: playlists.filter(p => p.featured)
+    }
+  } catch (error) {
+    console.error('Error fetching playlists:', error)
+    return { byArtist: [], byComposer: [], featured: [] }
+  }
+}
 
-// New dummy data for composers
-const dummyComposers = [
-  {
-    id: "beethoven",
-    name: "Ludwig van Beethoven",
-    description:
-      "A German composer and pianist whose music ranks among the most performed of the classical music repertoire. He remains one of the most admired composers in the history of Western music.",
-    imageUrl: "/placeholder.svg?height=150&width=150&text=Beethoven",
-    spotifyLink: "https://open.spotify.com/artist/2wOqMjp9TyABvtHdOSFGHI",
-    appleMusicLink: "https://music.apple.com/us/artist/ludwig-van-beethoven/146000",
-  },
-  {
-    id: "mozart",
-    name: "Wolfgang Amadeus Mozart",
-    description:
-      "A prolific and influential composer of the Classical period. Mozart's works are among the most enduringly popular of the classical repertoire, and he is one of the greatest composers of all time.",
-    imageUrl: "/placeholder.svg?height=150&width=150&text=Mozart",
-    spotifyLink: "https://open.spotify.com/artist/4NJhFmfXMNi0GASFX0mSjY",
-    appleMusicLink: "https://music.apple.com/us/artist/wolfgang-amadeus-mozart/146001",
-  },
-  {
-    id: "chopin",
-    name: "Frédéric Chopin",
-    description:
-      "A Polish composer and virtuoso pianist of the Romantic era, who wrote primarily for the solo piano. He is widely regarded as one of the greatest masters of Romantic music.",
-    imageUrl: "/placeholder.svg?height=150&width=150&text=Chopin",
-    spotifyLink: "https://open.spotify.com/artist/7y97mc3bZRFXzT2szRM4L4",
-    appleMusicLink: "https://music.apple.com/us/artist/fr%C3%A9d%C3%A9ric-chopin/146002",
-  },
-  {
-    id: "schubert",
-    name: "Franz Schubert",
-    description:
-      "An Austrian composer of the late Classical and early Romantic eras. Despite his short life, Schubert left behind a vast oeuvre of over 600 secular vocal works, seven complete symphonies, sacred music, operas, and a large body of chamber and piano music.",
-    imageUrl: "/placeholder.svg?height=150&width=150&text=Schubert",
-    spotifyLink: "https://open.spotify.com/artist/2pIpQjfoFOkYyxdSFzGMMk",
-    appleMusicLink: "https://music.apple.com/us/artist/franz-schubert/146003",
-  },
-]
-
-// New dummy data for "For Everyone" curated selection
-const forEveryonePlaylists = [
-  {
-    id: "fe1",
-    title: "CLASSICAL FOCUS",
-    imageUrl: "/placeholder.svg?height=300&width=300&text=Classical+Focus",
-  },
-  {
-    id: "fe2",
-    title: "MORNING CLASSICS",
-    imageUrl: "/placeholder.svg?height=300&width=300&text=Morning+Classics",
-  },
-  {
-    id: "fe3",
-    title: "EVENING RELAXATION",
-    imageUrl: "/placeholder.svg?height=300&width=300&text=Evening+Relaxation",
-  },
-  {
-    id: "fe4",
-    title: "WORKOUT CLASSICS",
-    imageUrl: "/placeholder.svg?height=300&width=300&text=Workout+Classics",
-  },
-  {
-    id: "fe5",
-    title: "TRAVEL SOUNDTRACK",
-    imageUrl: "/placeholder.svg?height=300&width=300&text=Travel+Soundtrack",
-  },
-]
-
-export default function PlaylistsPage() {
-  const categories = [
-    { name: "NEW RELEASES", href: "#new-releases" },
-    { name: "FOR EVERYONE", href: "#for-everyone" }, // Updated category
-    { name: "COMPOSERS", href: "#composers" }, // New category
-    { name: "MOODS", href: "#created-for-you" },
-    { name: "THEMES", href: "#created-for-you" },
-    { name: "KIDS", href: "#created-for-you" },
-    { name: "SEASONAL", href: "#created-for-you" },
-  ]
-
-  const createdForYouFilters = [
-    { value: "moods", label: "MOODS" },
-    { value: "themes", label: "THEMES" },
-    { value: "kids", label: "KIDS" },
-    { value: "seasonal", label: "SEASONAL" },
-  ]
-
+function PlaylistCard({ playlist }: { playlist: Playlist }) {
   return (
-    <div className="flex flex-col">
-      {/* Hero Section for Playlists */}
-      <section className="w-full py-20 md:py-32 lg:py-40 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 text-center relative overflow-hidden">
-        {/* Decorative lines - purely visual, not functional */}
-        <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-          <svg className="absolute top-1/4 left-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <path
-              d="M0,70 C30,100 70,0 100,30"
-              fill="none"
-              stroke="hsl(var(--primary))"
-              strokeWidth="0.5"
-              opacity="0.2"
-            />
-          </svg>
-          <svg className="absolute bottom-0 right-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <path
-              d="M0,30 C30,0 70,100 100,70"
-              fill="none"
-              stroke="hsl(var(--primary))"
-              strokeWidth="0.5"
-              opacity="0.2"
-            />
-          </svg>
+    <div className="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+      {/* Image Container */}
+      <div className="relative aspect-square overflow-hidden">
+        {playlist.image_url ? (
+          <img
+            src={playlist.image_url}
+            alt={playlist.title}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+            <PlayIcon className="w-12 h-12 text-white" />
+          </div>
+        )}
+        
+        {/* Overlay with streaming links */}
+        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center">
+          <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+            {playlist.spotify_url && (
+              <a
+                href={playlist.spotify_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-full transition-colors"
+              >
+                <ExternalLinkIcon className="w-4 h-4" />
+              </a>
+            )}
+            {playlist.apple_music_url && (
+              <a
+                href={playlist.apple_music_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-gray-900 hover:bg-gray-800 text-white p-2 rounded-full transition-colors"
+              >
+                <ExternalLinkIcon className="w-4 h-4" />
+              </a>
+            )}
+            {playlist.youtube_url && (
+              <a
+                href={playlist.youtube_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transition-colors"
+              >
+                <ExternalLinkIcon className="w-4 h-4" />
+              </a>
+            )}
+          </div>
         </div>
-        <div className="container px-4 md:px-6 relative z-10">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 text-gray-900 dark:text-gray-50">
-            OUR PLAYLISTS,
-            <br />
-            YOUR MOMENT
-          </h1>
-          <p className="text-lg md:text-xl lg:text-2xl max-w-3xl mx-auto text-gray-700 dark:text-gray-300 leading-relaxed">
-            Thousands of artists, works and instruments ready to accompany you, wherever you go.
+        
+        {/* Featured Badge */}
+        {playlist.featured && (
+          <div className="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+            FEATURED
+          </div>
+        )}
+      </div>
+      
+      {/* Content */}
+      <div className="p-6">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 transition-colors">
+          {playlist.title}
+        </h3>
+        
+        {playlist.description && (
+          <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
+            {playlist.description}
           </p>
-          <Button
-            asChild
-            className="mt-10 px-8 py-3 text-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+        )}
+        
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-gray-500 dark:text-gray-400">
+            {playlist.track_count} tracks
+          </span>
+          
+          <Link 
+            href={`/playlists/${playlist.slug}`}
+            className="text-blue-600 dark:text-blue-400 hover:text-blue-700 font-medium text-sm hover:underline"
           >
-            <Link href="#explore-playlists">Explore Playlists</Link>
-          </Button>
+            View Details →
+          </Link>
         </div>
-      </section>
+      </div>
+    </div>
+  )
+}
 
-      {/* Category Navigation */}
-      <CategoryNavigation categories={categories} />
-
-      {/* New Releases Section */}
-      <PlaylistSection id="new-releases" title="NEW RELEASES" playlists={newReleasesPlaylists} />
-
-      {/* For Everyone Section */}
-      <ForEveryoneSection id="for-everyone" title="FOR EVERYONE" playlists={forEveryonePlaylists} />
-
-      {/* Composers Section */}
-      <section id="composers" className="py-16 md:py-24 bg-white dark:bg-gray-950">
+function PlaylistSection({ 
+  title, 
+  subtitle, 
+  playlists, 
+  gradientFrom, 
+  gradientTo 
+}: { 
+  title: string
+  subtitle: string
+  playlists: Playlist[]
+  gradientFrom: string
+  gradientTo: string
+}) {
+  if (playlists.length === 0) {
+    return (
+      <section className="py-20 bg-gray-50 dark:bg-gray-900">
         <div className="container px-4 md:px-6">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-50 mb-12">COMPOSERS</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {dummyComposers.map((composer) => (
-              <ComposerSection key={composer.id} composer={composer} />
-            ))}
+          <div className={`text-center p-12 rounded-2xl bg-gradient-to-r ${gradientFrom} ${gradientTo}`}>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">{title}</h2>
+            <p className="text-xl text-white opacity-90 mb-8">{subtitle}</p>
+            <p className="text-white opacity-80">Coming soon...</p>
           </div>
         </div>
       </section>
+    )
+  }
 
-      {/* Playlists Created Just For You Section (retained for other filters) */}
+  return (
+    <section className="py-20 bg-gray-50 dark:bg-gray-900">
+      <div className="container px-4 md:px-6">
+        {/* Section Header */}
+        <div className={`text-center p-12 rounded-2xl bg-gradient-to-r ${gradientFrom} ${gradientTo} mb-16`}>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">{title}</h2>
+          <p className="text-xl text-white opacity-90 max-w-2xl mx-auto">{subtitle}</p>
+        </div>
+        
+        {/* Playlists Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          {playlists.map((playlist) => (
+            <PlaylistCard key={playlist.id} playlist={playlist} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function FeaturedPlaylistsHero({ playlists }: { playlists: Playlist[] }) {
+  const featuredPlaylist = playlists[0]
+  
+  return (
+    <section className="relative py-20 md:py-32 lg:py-40 bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-pink-500 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
+      
+      <div className="container px-4 md:px-6 relative z-10">
+        <div className="text-center">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6">
+            DISCOVER
+            <br />
+            <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
+              CLASSICAL
+            </span>
+          </h1>
+          <p className="text-xl md:text-2xl max-w-3xl mx-auto mb-12 opacity-90">
+            Curated playlists by legendary artists and timeless composers. 
+            Experience classical music like never before.
+          </p>
+          
+          {featuredPlaylist && (
+            <div className="max-w-md mx-auto bg-white bg-opacity-10 backdrop-blur-md rounded-2xl p-6 border border-white border-opacity-20">
+              <div className="flex items-center space-x-4 mb-4">
+                {featuredPlaylist.image_url && (
+                  <img
+                    src={featuredPlaylist.image_url}
+                    alt={featuredPlaylist.title}
+                    className="w-16 h-16 rounded-lg object-cover"
+                  />
+                )}
+                <div className="text-left">
+                  <p className="text-sm opacity-70">Featured Playlist</p>
+                  <h3 className="text-lg font-bold">{featuredPlaylist.title}</h3>
+                  <p className="text-sm opacity-70">{featuredPlaylist.track_count} tracks</p>
+                </div>
+              </div>
+              <Link 
+                href={`/playlists/${featuredPlaylist.slug}`}
+                className="block w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105"
+              >
+                Listen Now
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+export default async function PlaylistsPage() {
+  const { byArtist, byComposer, featured } = await getPlaylists()
+  
+  return (
+    <div className="flex flex-col min-h-screen">
+      {/* Hero Section with Featured Playlist */}
+      <FeaturedPlaylistsHero playlists={featured} />
+      
+      {/* Playlists By Artist Section */}
       <PlaylistSection
-        id="created-for-you"
-        title="PLAYLISTS CREATED JUST FOR YOU"
-        playlists={createdForYouPlaylists}
-        filters={createdForYouFilters}
-        filterType="vertical"
-        viewAllLink="#"
+        title="PLAYLISTS BY ARTIST"
+        subtitle="Discover curated collections from the world's most celebrated classical musicians and performers"
+        playlists={byArtist}
+        gradientFrom="from-blue-600"
+        gradientTo="to-purple-600"
+      />
+      
+      {/* Playlists By Composer Section */}
+      <PlaylistSection
+        title="PLAYLISTS BY COMPOSER"
+        subtitle="Explore the timeless works of history's greatest composers, from Bach to Beethoven and beyond"
+        playlists={byComposer}
+        gradientFrom="from-purple-600"
+        gradientTo="to-pink-600"
       />
     </div>
   )
