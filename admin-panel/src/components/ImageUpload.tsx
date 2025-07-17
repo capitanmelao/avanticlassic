@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { PhotoIcon, XMarkIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline'
-import { uploadFile, validateImageFile, resizeImage, type StorageBucket } from '@/lib/supabase-storage'
+import { validateImageFile, resizeImage, type StorageBucket } from '@/lib/supabase-storage'
 
 interface ImageUploadProps {
   bucket: StorageBucket
@@ -85,17 +85,22 @@ export default function ImageUpload({
       const resizedFile = await resizeImage(file, maxWidth, maxHeight, 0.8)
       setUploadProgress(50)
 
-      // Upload file
-      const result = await uploadFile(resizedFile, {
-        bucket,
-        folder,
-        filename: undefined // Let the system generate a unique filename
+      // Upload file via server-side API
+      const formData = new FormData()
+      formData.append('file', resizedFile)
+      formData.append('bucket', bucket)
+      if (folder) formData.append('folder', folder)
+
+      const uploadResponse = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
       })
 
+      const result = await uploadResponse.json()
       setUploadProgress(100)
 
-      if (result.error) {
-        onUploadError?.(result.error)
+      if (!uploadResponse.ok || result.error) {
+        onUploadError?.(result.error || 'Upload failed')
         setPreviewUrl(currentImageUrl || null)
       } else {
         onUploadSuccess(result.url, result.path)
