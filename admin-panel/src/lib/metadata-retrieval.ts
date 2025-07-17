@@ -41,7 +41,7 @@ async function getSpotifyMetadata(url: string): Promise<MetadataResult> {
     const html = await response.text();
     
     // Extract metadata from HTML
-    const titleMatch = html.match(/<title>([^<]+)</title>/);
+    const titleMatch = html.match(/<title>([^<]+)<\/title>/);
     const descriptionMatch = html.match(/<meta property="og:description" content="([^"]+)"/);
     const imageMatch = html.match(/<meta property="og:image" content="([^"]+)"/);
     
@@ -86,7 +86,7 @@ async function getAppleMusicMetadata(url: string): Promise<MetadataResult> {
     const html = await response.text();
     
     // Extract metadata from HTML
-    const titleMatch = html.match(/<title>([^<]+)</title>/);
+    const titleMatch = html.match(/<title>([^<]+)<\/title>/);
     const descriptionMatch = html.match(/<meta property="og:description" content="([^"]+)"/);
     const imageMatch = html.match(/<meta property="og:image" content="([^"]+)"/);
     
