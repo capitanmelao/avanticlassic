@@ -8,6 +8,7 @@ import { useLanguage } from "@/contexts/language-context"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { CartDropdown, CartButton } from "@/components/shop/cart-dropdown"
 
 export default function NewHeader() {
   const { language, setLanguage } = useLanguage()
@@ -92,7 +93,7 @@ export default function NewHeader() {
             PLAYLISTS
           </Link>
           <Link
-            href="#"
+            href="/shop"
             className="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors font-playfair"
           >
             SHOP
@@ -127,25 +128,20 @@ export default function NewHeader() {
             <User className="h-5 w-5" />
             <span className="sr-only">My Account</span>
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="hidden md:inline-flex text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
-          >
-            <ShoppingCart className="h-5 w-5" />
-            <span className="sr-only">Cart</span>
-            <span className="ml-1 text-xs">(0)</span>
-          </Button>
+          <CartDropdown />
           <Sheet>
             <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
-              >
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Toggle navigation menu</span>
-              </Button>
+              <div className="flex items-center gap-2">
+                <CartButton />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="md:hidden text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
+                >
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">Toggle navigation menu</span>
+                </Button>
+              </div>
             </SheetTrigger>
             <SheetContent side="right" className="bg-white dark:bg-gray-950">
               <div className="grid gap-6 py-6">
@@ -168,7 +164,7 @@ export default function NewHeader() {
                   PLAYLISTS
                 </Link>
                 <Link
-                  href="#"
+                  href="/shop"
                   className="text-lg font-semibold text-gray-800 hover:text-primary dark:text-gray-200 dark:hover:text-primary font-playfair"
                 >
                   SHOP
