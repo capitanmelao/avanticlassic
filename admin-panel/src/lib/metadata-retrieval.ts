@@ -58,7 +58,7 @@ async function getSpotifyMetadata(url: string): Promise<MetadataResult> {
       }
     };
 
-  } catch (error) {
+  } catch {
     return { success: false, error: 'Failed to retrieve Spotify metadata' };
   }
 }
@@ -103,7 +103,7 @@ async function getAppleMusicMetadata(url: string): Promise<MetadataResult> {
       }
     };
 
-  } catch (error) {
+  } catch {
     return { success: false, error: 'Failed to retrieve Apple Music metadata' };
   }
 }
@@ -140,7 +140,7 @@ async function getYouTubeMetadata(url: string): Promise<MetadataResult> {
       }
     };
 
-  } catch (error) {
+  } catch {
     return { success: false, error: 'Failed to retrieve YouTube metadata' };
   }
 }
