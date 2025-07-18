@@ -30,6 +30,20 @@ export async function GET(
             name,
             url
           )
+        ),
+        reviews(
+          id,
+          publication,
+          reviewer_name,
+          review_date,
+          rating,
+          review_url,
+          featured,
+          sort_order,
+          review_translations(
+            language,
+            review_text
+          )
         )
       `)
       .eq(isNumeric ? 'id' : 'url', decodedId)
@@ -63,7 +77,31 @@ export async function GET(
       releaseDate: release.release_date,
       catalogNumber: release.catalog_number,
       shopUrl: release.shop_url,
-      totalTime: release.total_time
+      totalTime: release.total_time,
+      reviews: release.reviews?.map((review: any) => {
+        // Get translation for the requested language, fallback to English
+        const reviewTranslation = review.review_translations?.find((t: any) => t.language === lang) ||
+                                 review.review_translations?.find((t: any) => t.language === 'en') ||
+                                 review.review_translations?.[0]
+        
+        return {
+          id: review.id.toString(),
+          publication: review.publication,
+          reviewerName: review.reviewer_name,
+          reviewDate: review.review_date,
+          rating: review.rating,
+          reviewText: reviewTranslation?.review_text || '',
+          reviewUrl: review.review_url,
+          featured: review.featured,
+          sortOrder: review.sort_order
+        }
+      })?.sort((a: any, b: any) => {
+        // Sort by featured first, then by sort_order, then by date
+        if (a.featured && !b.featured) return -1
+        if (!a.featured && b.featured) return 1
+        if (a.sortOrder !== b.sortOrder) return b.sortOrder - a.sortOrder
+        return new Date(b.reviewDate).getTime() - new Date(a.reviewDate).getTime()
+      }) || []
     }
 
     return NextResponse.json(transformed)

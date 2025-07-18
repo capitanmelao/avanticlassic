@@ -7,6 +7,19 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ChevronLeft, ExternalLink, ShoppingCart } from "lucide-react"
 import { useCart } from '@/contexts/cart-context'
+import ReviewsSection from '@/components/releases/reviews-section'
+
+interface Review {
+  id: string
+  publication: string
+  reviewerName?: string
+  reviewDate: string
+  rating?: number
+  reviewText: string
+  reviewUrl?: string
+  featured: boolean
+  sortOrder: number
+}
 
 interface Release {
   id: string
@@ -19,6 +32,7 @@ interface Release {
   tracklist?: string
   shopUrl?: string
   totalTime?: string
+  reviews?: Review[]
 }
 
 async function getRelease(id: string) {
@@ -1203,6 +1217,9 @@ export default function ReleaseDetailPage({ params }: { params: { id: string } }
           </div>
         </div>
       )}
+
+      {/* Reviews Section */}
+      <ReviewsSection reviews={release.reviews || []} releaseTitle={release.title} />
 
       {/* More from this artist section */}
       <MoreFromArtist currentReleaseId={release.id} artistName={release.artists.split(',')[0].trim()} />
