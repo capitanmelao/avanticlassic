@@ -416,3 +416,232 @@ export interface TemplateVideo {
   artist: string
   thumbnailUrl: string
 }
+
+// E-commerce types
+export interface Product {
+  id: number
+  stripe_product_id: string
+  release_id?: number
+  name: string
+  description?: string
+  type: 'physical' | 'digital'
+  format: 'cd' | 'sacd' | 'vinyl' | 'digital_download'
+  status: 'active' | 'inactive' | 'archived'
+  images: string[]
+  metadata?: unknown // JSONB
+  tax_code?: string
+  inventory_quantity: number
+  inventory_tracking: boolean
+  weight_grams?: number
+  dimensions_cm?: unknown // JSONB
+  featured: boolean
+  sort_order: number
+  created_at?: string
+  updated_at?: string
+}
+
+export interface ProductPrice {
+  id: number
+  product_id: number
+  stripe_price_id: string
+  currency: string
+  amount: number
+  type: 'one_time' | 'recurring'
+  billing_period?: 'day' | 'week' | 'month' | 'year'
+  billing_interval?: number
+  adaptive_pricing_enabled: boolean
+  market_specific_pricing?: unknown // JSONB
+  active: boolean
+  created_at?: string
+  updated_at?: string
+}
+
+export interface Customer {
+  id: number
+  stripe_customer_id?: string
+  email: string
+  first_name?: string
+  last_name?: string
+  phone?: string
+  date_of_birth?: string
+  preferred_language: 'en' | 'fr' | 'de'
+  preferred_currency: string
+  preferred_payment_methods: string[]
+  checkout_personalization_data?: unknown // JSONB
+  marketing_consent: boolean
+  marketing_consent_date?: string
+  email_verified: boolean
+  account_status: 'active' | 'suspended' | 'deleted'
+  last_login?: string
+  created_at?: string
+  updated_at?: string
+}
+
+export interface CustomerAddress {
+  id: number
+  customer_id: number
+  type: 'billing' | 'shipping' | 'both'
+  is_default: boolean
+  first_name: string
+  last_name: string
+  company?: string
+  address_line_1: string
+  address_line_2?: string
+  city: string
+  state_province?: string
+  postal_code: string
+  country: string
+  phone?: string
+  created_at?: string
+  updated_at?: string
+}
+
+export interface CartItem {
+  id: number
+  session_id?: string
+  customer_id?: number
+  product_id: number
+  price_id: number
+  quantity: number
+  unit_amount: number
+  currency: string
+  discounts?: unknown // JSONB
+  personalization_data?: unknown // JSONB
+  created_at?: string
+  updated_at?: string
+}
+
+export interface Order {
+  id: number
+  order_number: string
+  stripe_checkout_session_id?: string
+  stripe_payment_intent_id?: string
+  customer_id?: number
+  customer_email: string
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded'
+  payment_status: 'pending' | 'paid' | 'failed' | 'refunded' | 'partially_refunded'
+  fulfillment_status: 'unfulfilled' | 'partial' | 'fulfilled'
+  subtotal_amount: number
+  tax_amount: number
+  shipping_amount: number
+  discount_amount: number
+  total_amount: number
+  currency: string
+  billing_address: unknown // JSONB
+  shipping_address?: unknown // JSONB
+  payment_method_types: string[]
+  adaptive_pricing_applied: boolean
+  tax_details?: unknown // JSONB
+  shipping_method?: string
+  tracking_number?: string
+  tracking_url?: string
+  shipped_at?: string
+  delivered_at?: string
+  notes?: string
+  customer_notes?: string
+  metadata?: unknown // JSONB
+  created_at?: string
+  updated_at?: string
+}
+
+export interface OrderItem {
+  id: number
+  order_id: number
+  product_id?: number
+  price_id?: number
+  quantity: number
+  unit_amount: number
+  total_amount: number
+  tax_amount: number
+  discount_amount: number
+  product_name: string
+  product_format: string
+  product_images: string[]
+  fulfillment_status: 'unfulfilled' | 'fulfilled' | 'returned'
+  fulfilled_at?: string
+  created_at?: string
+}
+
+export interface ProductCategory {
+  id: number
+  name: string
+  slug: string
+  description?: string
+  parent_id?: number
+  image_url?: string
+  sort_order: number
+  active: boolean
+  created_at?: string
+  updated_at?: string
+}
+
+export interface ProductCategoryRelation {
+  id: number
+  product_id: number
+  category_id: number
+  created_at?: string
+}
+
+export interface DiscountCode {
+  id: number
+  code: string
+  name: string
+  description?: string
+  type: 'percentage' | 'fixed_amount' | 'free_shipping'
+  value: number
+  currency: string
+  usage_limit?: number
+  usage_count: number
+  usage_limit_per_customer: number
+  valid_from: string
+  valid_until?: string
+  minimum_order_amount: number
+  applicable_product_ids: number[]
+  applicable_category_ids: number[]
+  active: boolean
+  created_at?: string
+  updated_at?: string
+}
+
+export interface DiscountUsage {
+  id: number
+  discount_code_id: number
+  order_id: number
+  customer_id?: number
+  discount_amount: number
+  used_at: string
+}
+
+export interface StripeWebhookEvent {
+  id: number
+  stripe_event_id: string
+  event_type: string
+  processed: boolean
+  processing_status: 'pending' | 'success' | 'failed' | 'retrying'
+  retry_count: number
+  max_retries: number
+  data: unknown // JSONB
+  error_message?: string
+  processed_at?: string
+  created_at?: string
+}
+
+// E-commerce helper types for joined queries
+export interface ProductWithPrices extends Product {
+  product_prices?: ProductPrice[]
+  release?: Release
+  categories?: ProductCategory[]
+}
+
+export interface CartItemWithProduct extends CartItem {
+  product?: ProductWithPrices
+  price?: ProductPrice
+}
+
+export interface OrderWithItems extends Order {
+  order_items?: (OrderItem & {
+    product?: Product
+    price?: ProductPrice
+  })[]
+  customer?: Customer
+}
