@@ -1,8 +1,12 @@
+"use client"
+
 import Image from "next/image"
 import Link from "next/link"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { ChevronLeft, ExternalLink } from "lucide-react"
+import { ChevronLeft, ExternalLink, ShoppingCart } from "lucide-react"
+import { useCart } from '@/contexts/cart-context'
 
 interface Release {
   id: string
@@ -975,6 +979,89 @@ Sebastian Wypych : conductor, artistic director & founder`,
   }
 ]
 
+// Buy Section Component for format selection
+function BuySection({ releaseId, releaseTitle, releaseArtist, releaseImage, releaseCatalog }: { 
+  releaseId: string
+  releaseTitle: string
+  releaseArtist: string
+  releaseImage: string
+  releaseCatalog: string
+}) {
+  const [formats, setFormats] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const { addItem } = useCart()
+
+  useEffect(() => {
+    async function fetchFormats() {
+      try {
+        setIsLoading(true)
+        setError(null)
+        
+        const response = await fetch(`/api/products/by-release/${releaseId}`)
+        if (!response.ok) {
+          throw new Error('Failed to fetch products')
+        }
+        
+        const data = await response.json()
+        setFormats(data.formats || [])
+      } catch (err) {
+        console.error('Error fetching formats:', err)
+        setError('Failed to load purchase options')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    if (releaseId) {
+      fetchFormats()
+    }
+  }, [releaseId])
+
+  const handleAddToCart = (format: any) => {
+    addItem({
+      productId: format.id,
+      priceId: format.id, // Using product ID as price ID for now
+      name: releaseTitle,
+      artist: releaseArtist,
+      format: format.format,
+      image: releaseImage,
+      price: format.price / 100, // Convert from cents
+      catalog: releaseCatalog
+    })
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex gap-2">
+        <div className="animate-pulse bg-gray-200 h-8 w-20 rounded"></div>
+        <div className="animate-pulse bg-gray-200 h-8 w-20 rounded"></div>
+      </div>
+    )
+  }
+
+  if (error || formats.length === 0) {
+    return null // Don't show anything if there's an error or no formats
+  }
+
+  return (
+    <div className="flex flex-wrap gap-2">
+      {formats.map((format) => (
+        <Button
+          key={format.id}
+          variant="outline"
+          size="sm"
+          onClick={() => handleAddToCart(format)}
+          disabled={!format.available}
+        >
+          <ShoppingCart className="h-4 w-4 mr-2" />
+          {format.format} - €{(format.price / 100).toFixed(2)}
+        </Button>
+      ))}
+    </div>
+  )
+}
+
 export default async function ReleaseDetailPage({ params }: { params: { id: string } }) {
   // Try to get release from API
   let release = await getRelease(params.id)
@@ -1047,12 +1134,13 @@ export default async function ReleaseDetailPage({ params }: { params: { id: stri
           )}
           
           <div className="flex flex-wrap gap-2 pt-6">
-            <Button asChild variant="outline" size="sm">
-              <Link href={`/shop/releases/${release.id}`}>
-                <ExternalLink className="h-4 w-4 mr-2" />
-                Buy
-              </Link>
-            </Button>
+            <BuySection 
+              releaseId={release.id}
+              releaseTitle={release.title}
+              releaseArtist={release.artists}
+              releaseImage={release.imageUrl || "/placeholder.svg"}
+              releaseCatalog={release.format || ""}
+            />
             <Button asChild variant="outline" size="sm">
               <Link href="#" target="_blank" rel="noopener noreferrer">
                 <ExternalLink className="h-4 w-4 mr-2" />
