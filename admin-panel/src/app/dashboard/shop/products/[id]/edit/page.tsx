@@ -237,7 +237,7 @@ export default function EditProductPage() {
     }
   }
 
-  const handleImageUpload = (imageUrl: string) => {
+  const handleImageUpload = (imageUrl: string, imagePath: string) => {
     setFormData(prev => ({
       ...prev,
       images: [...prev.images, imageUrl]
@@ -714,8 +714,11 @@ export default function EditProductPage() {
           <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
             <div className="space-y-4">
               <ImageUpload
-                onUpload={handleImageUpload}
+                bucket="images"
+                folder="products"
+                onUploadSuccess={handleImageUpload}
                 className="w-full"
+                label="Product Images"
               />
               
               {formData.images.length > 0 && (
