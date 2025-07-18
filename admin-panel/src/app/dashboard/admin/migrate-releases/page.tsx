@@ -137,18 +137,19 @@ export default function MigrateReleasesPage() {
                 What this migration does:
               </h3>
               <ul className="text-sm text-blue-800 space-y-1">
-                <li>• Creates products for all releases without existing products</li>
+                <li>• Creates or updates products for all releases</li>
                 <li>• Sets default pricing: CD (€14), SACD (€16), Vinyl (€25), Digital (€10)</li>
-                <li>• Copies release images and metadata to products</li>
+                <li>• Fixes format capitalization (CD instead of cd)</li>
+                <li>• Cleans up duplicate price entries</li>
                 <li>• Links products to releases via release_id</li>
-                <li>• Creates price variants for each product</li>
+                <li>• Safe to run multiple times</li>
               </ul>
             </div>
 
             <div className="flex items-center space-x-4">
               <button
                 onClick={runMigration}
-                disabled={migrating || status?.needsMigration === 0}
+                disabled={migrating}
                 className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
               >
                 {migrating ? (
