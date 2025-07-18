@@ -121,8 +121,8 @@ function ReviewCard({ review }: { review: Review }) {
       </CardHeader>
       
       <CardContent className="pt-0">
-        <div className="prose prose-sm dark:prose-invert max-w-none">
-          <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+        <div className="text-gray-700 dark:text-gray-300 leading-relaxed text-base">
+          <p className="whitespace-pre-wrap">
             {review.reviewText}
           </p>
         </div>

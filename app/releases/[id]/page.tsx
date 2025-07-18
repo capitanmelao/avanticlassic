@@ -1218,13 +1218,13 @@ export default function ReleaseDetailPage({ params }: { params: { id: string } }
         </div>
       )}
 
+      {/* More from this artist section */}
+      <MoreFromArtist currentReleaseId={release.id} artistName={release.artists.split(',')[0].trim()} />
+
       {/* Reviews Section */}
       {release.reviews && release.reviews.length > 0 && (
         <ReviewsSection reviews={release.reviews} releaseTitle={release.title} />
       )}
-
-      {/* More from this artist section */}
-      <MoreFromArtist currentReleaseId={release.id} artistName={release.artists.split(',')[0].trim()} />
     </div>
   )
 }
