@@ -19,7 +19,6 @@ import {
   ChevronRightIcon,
   Bars3Icon,
   XMarkIcon,
-  ShoppingBagIcon,
   CubeIcon,
   ClipboardDocumentListIcon,
   UserIcon,

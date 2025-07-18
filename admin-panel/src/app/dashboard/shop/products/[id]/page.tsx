@@ -257,7 +257,7 @@ export default function ProductDetailPage() {
   }
 
   const artistName = product.releases?.release_artists?.[0]?.artists?.name || 'Unknown Artist'
-  const activePrices = product.product_prices.filter(price => price.active)
+  // const activePrices = product.product_prices.filter(price => price.active)
   // const primaryPrice = activePrices[0] || product.product_prices[0]
 
   return (
