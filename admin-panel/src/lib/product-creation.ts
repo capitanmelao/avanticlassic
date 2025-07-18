@@ -125,28 +125,47 @@ export const createOrUpdateProductFromRelease = async (
     // Create or update price variants
     const priceVariants = getDefaultPricing(releaseData.format)
     
-    // Delete existing prices for this product
-    await supabase
+    // Check if prices already exist for this product
+    const { data: existingPrices } = await supabase
       .from('product_prices')
-      .delete()
+      .select('id')
       .eq('product_id', productId)
+      .eq('variant_type', 'default')
+      .eq('active', true)
 
-    // Insert new prices
-    const priceData = priceVariants.map(variant => ({
-      product_id: productId,
-      amount: variant.amount,
-      currency: variant.currency,
-      variant_type: variant.variant_type,
-      type: 'one_time' as const,
-      active: true
-    }))
+    if (!existingPrices || existingPrices.length === 0) {
+      // Only create prices if they don't exist
+      const priceData = priceVariants.map(variant => ({
+        product_id: productId,
+        amount: variant.amount,
+        currency: variant.currency,
+        variant_type: variant.variant_type,
+        type: 'one_time' as const,
+        active: true
+      }))
 
-    const { error: priceError } = await supabase
-      .from('product_prices')
-      .insert(priceData)
+      const { error: priceError } = await supabase
+        .from('product_prices')
+        .insert(priceData)
 
-    if (priceError) {
-      return { success: false, error: priceError.message }
+      if (priceError) {
+        return { success: false, error: priceError.message }
+      }
+    } else {
+      // Update existing price with new amount
+      const { error: updateError } = await supabase
+        .from('product_prices')
+        .update({
+          amount: priceVariants[0].amount,
+          currency: priceVariants[0].currency
+        })
+        .eq('product_id', productId)
+        .eq('variant_type', 'default')
+        .eq('active', true)
+
+      if (updateError) {
+        return { success: false, error: updateError.message }
+      }
     }
 
     return { success: true, productId }

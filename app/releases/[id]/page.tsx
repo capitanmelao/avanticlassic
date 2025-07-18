@@ -1004,6 +1004,7 @@ function BuySection({ releaseId, releaseTitle, releaseArtist, releaseImage, rele
         }
         
         const data = await response.json()
+        console.log('API Response:', data) // Debug log
         setFormats(data.formats || [])
       } catch (err) {
         console.error('Error fetching formats:', err)
@@ -1040,8 +1041,12 @@ function BuySection({ releaseId, releaseTitle, releaseArtist, releaseImage, rele
     )
   }
 
-  if (error || formats.length === 0) {
-    return null // Don't show anything if there's an error or no formats
+  if (error) {
+    return <div className="text-red-600 text-sm">{error}</div>
+  }
+
+  if (formats.length === 0) {
+    return <div className="text-gray-500 text-sm">No purchase options available</div>
   }
 
   return (
