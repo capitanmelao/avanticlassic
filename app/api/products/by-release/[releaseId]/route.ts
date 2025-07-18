@@ -40,6 +40,19 @@ export async function GET(
       return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 })
     }
 
+    console.log('Products found:', products?.length)
+    if (products?.length) {
+      console.log('First product:', JSON.stringify(products[0], null, 2))
+      
+      // Check prices separately
+      const { data: prices } = await supabase
+        .from('product_prices')
+        .select('*')
+        .eq('product_id', products[0].id)
+      
+      console.log('Prices for first product:', prices)
+    }
+
     // Transform products into formats
     const formats = products?.map(product => {
       // Get the default price
