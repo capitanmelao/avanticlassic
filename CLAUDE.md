@@ -2,43 +2,44 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## 🎉 **MAJOR UPDATE - JULY 17, 2025**
+## 🎉 **MAJOR UPDATE - JULY 18, 2025**
 
-**✅ PLAYLIST PAGE TRANSFORMATION COMPLETE**  
-Dynamic database-driven playlist system with bold visual design successfully implemented.
+**✅ E-COMMERCE SHOP SYSTEM COMPLETE**  
+Full Stripe-integrated shopping platform with database-driven product catalog successfully implemented and deployed.
 
-### ✅ Latest Session Achievements (July 17, 2025)
+### ✅ Latest Session Achievements (July 18, 2025)
 
-#### **PLAYLIST SYSTEM OVERHAUL**
-- **Status**: ✅ Production Ready
-- **Commits**: `a6230b8` - Complete playlist page transformation
-- **Database**: All constraint issues resolved, image uploads working
-- **Design**: Carousel removed, bold two-section layout implemented
+#### **E-COMMERCE SYSTEM IMPLEMENTATION**
+- **Status**: ✅ Production Ready and Deployed
+- **Tag**: `v1.1.0-ecommerce-complete`
+- **Shop URL**: https://avanticlassic.vercel.app/shop
+- **Products**: 37 classical music releases available for purchase
 
 #### **Key Features Implemented:**
-- ✅ **Dynamic Database Integration** - Real Supabase data replaces dummy content
-- ✅ **Carousel Elimination** - Removed horizontal navigation, replaced with bold sections
-- ✅ **Two-Section Design** - "By Artist" and "By Composer" with gradient headers
-- ✅ **Streaming Integration** - Spotify, Apple Music, YouTube links with hover effects
-- ✅ **Animated Hero Section** - Dynamic gradient background with featured playlists
-- ✅ **Server-Side Image Uploads** - Fixed authentication issues with new API route
-- ✅ **Metadata Retrieval System** - Auto-fetch from streaming service URLs
+- ✅ **Complete Shop System** - Product catalog, cart, and Stripe checkout
+- ✅ **Database Integration** - 37 products populated from releases table
+- ✅ **Shopping Cart** - Persistent cart with localStorage and React Context
+- ✅ **Stripe Payment Processing** - Live API integration with secure checkout
+- ✅ **Order Management** - Complete order tracking and customer system
+- ✅ **API Routes** - Products, cart, checkout, orders, and Stripe webhooks
+- ✅ **Mobile Optimized** - Responsive design for all screen sizes
 
-#### **Admin Panel Fixes Completed:**
-- ✅ **Playlist Creation** - Database constraint fixed, fully functional
-- ✅ **Image Upload API** - Server-side authentication resolves 400 errors
-- ✅ **Streaming Metadata** - Automatic title/image retrieval from URLs
-- ✅ **Build Issues** - All TypeScript/ESLint errors resolved for deployment
+#### **Critical Issues Resolved:**
+- ✅ **Database Queries** - Fixed column names and relationship syntax
+- ✅ **Environment Variables** - Correct Supabase client configuration
+- ✅ **Build Dependencies** - Added missing Stripe packages
+- ✅ **Production Deployment** - All environment variables configured in Vercel
 
 ## Project Overview
 
-This is a multilingual (English/French/German) classical music website for Avanti Classic with a comprehensive admin CMS. Successfully migrated from Baptiste's custom SSG to Next.js with complete two-tier admin architecture implemented.
+This is a multilingual (English/French/German) classical music website for Avanti Classic with a comprehensive admin CMS and complete e-commerce shop system. Successfully migrated from Baptiste's custom SSG to Next.js with full two-tier admin architecture and Stripe-integrated shopping platform.
 
 ### ✅ Production Architecture (COMPLETED)
-- **Next.js Main Site** (`app/`): Modern site with Playfair Display typography and enhanced UX
+- **Next.js Main Site** (`app/`): Modern site with Playfair Display typography, enhanced UX, and complete e-commerce shop
 - **Admin Panel CMS** (`admin-panel/`): ✅ **PRODUCTION READY** - Two-tier role-based admin system
+- **E-commerce Shop** (`app/shop/`): ✅ **PRODUCTION READY** - Stripe-integrated shopping platform
 - **Legacy SSG** (`ssg-eta/`): Baptiste's custom implementation (archived for reference)
-- **Database**: Supabase PostgreSQL with comprehensive schema and audit logging
+- **Database**: Supabase PostgreSQL with comprehensive schema, audit logging, and e-commerce tables
 
 ### ✅ Admin Panel Status (DEPLOYED)
 - **URL**: https://avanticlassic-admin.vercel.app
