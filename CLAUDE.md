@@ -4,14 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 🎉 **MAJOR UPDATE - JULY 18, 2025**
 
-**✅ E-COMMERCE SHOP SYSTEM COMPLETE**  
-Full Stripe-integrated shopping platform with database-driven product catalog successfully implemented and deployed.
+**✅ E-COMMERCE SHOP SYSTEM COMPLETE & OPTIMIZED**  
+Full Stripe-integrated shopping platform with database-driven product catalog successfully implemented, deployed, and optimized for user experience.
 
 ### ✅ Latest Session Achievements (July 18, 2025)
 
 #### **E-COMMERCE SYSTEM IMPLEMENTATION**
 - **Status**: ✅ Production Ready and Deployed
-- **Tag**: `v1.1.0-ecommerce-complete`
+- **Current Tag**: `v1.2.0-shop-complete`
+- **Previous Tag**: `v1.1.0-ecommerce-complete`
 - **Shop URL**: https://avanticlassic.vercel.app/shop
 - **Products**: 37 classical music releases available for purchase
 
@@ -23,12 +24,17 @@ Full Stripe-integrated shopping platform with database-driven product catalog su
 - ✅ **Order Management** - Complete order tracking and customer system
 - ✅ **API Routes** - Products, cart, checkout, orders, and Stripe webhooks
 - ✅ **Mobile Optimized** - Responsive design for all screen sizes
+- ✅ **Direct Purchase** - Buy buttons on release pages with correct pricing
+- ✅ **Simplified Shop** - Streamlined shop page focused on products
 
 #### **Critical Issues Resolved:**
 - ✅ **Database Queries** - Fixed column names and relationship syntax
 - ✅ **Environment Variables** - Correct Supabase client configuration
 - ✅ **Build Dependencies** - Added missing Stripe packages
 - ✅ **Production Deployment** - All environment variables configured in Vercel
+- ✅ **Pricing Display** - Fixed €0.00 issue, now shows correct prices (€14.00 CD, €16.00 Hybrid SACD)
+- ✅ **Format Mapping** - Fixed database constraints and format capitalization
+- ✅ **UUID Compatibility** - Updated product creation for UUID-based schema
 
 ## Project Overview
 
@@ -59,15 +65,23 @@ This is a multilingual (English/French/German) classical music website for Avant
 - **Image Management**: Server-side upload API with proper authentication
 - **Metadata Auto-Fetch**: Retrieves playlist info from streaming URLs
 
+### ✅ Shop System Optimization (LATEST)
+- **Simplified Design**: Removed unnecessary sections for cleaner UX
+- **Direct Purchase**: Buy buttons on release pages with correct pricing (€14.00 CD, €16.00 Hybrid SACD)
+- **Minimalist Shop**: Streamlined shop page with just "Browse All" button and featured products
+- **Format Display**: Fixed capitalization (CD not cd, Hybrid SACD not hybrid_sacd)
+- **Database Integration**: UUID-based products with proper price variant mapping
+- **Production Ready**: All pricing issues resolved, fully functional e-commerce
+
 ## Development Commands
 
 ### Next.js Main Site (Production)
-- **Development server**: `npm run dev` - Serves at http://localhost:3001
+- **Development server**: `npm run dev` - Serves at http://localhost:3000
 - **Build**: `npm run build` - Production build with optimizations  
 - **Production URL**: https://avanticlassic.vercel.app
 
 ### Admin Panel (admin-panel/) - ✅ PRODUCTION READY  
-- **Development server**: `cd admin-panel && npm run dev` - Serves at http://localhost:3000
+- **Development server**: `cd admin-panel && npm run dev` - Serves at http://localhost:3000 (different port when both running)
 - **Build**: `cd admin-panel && npm run build` - Production build for Vercel
 - **Production URL**: https://avanticlassic-admin.vercel.app
 - **Authentication**: leinso@gmail.com / Naviondo123.1 (Super Admin)
