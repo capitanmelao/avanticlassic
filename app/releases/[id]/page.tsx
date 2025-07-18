@@ -1062,18 +1062,48 @@ function BuySection({ releaseId, releaseTitle, releaseArtist, releaseImage, rele
   )
 }
 
-export default async function ReleaseDetailPage({ params }: { params: { id: string } }) {
-  // Try to get release from API
-  let release = await getRelease(params.id)
-  
-  // If API fails, try to find in fallback data by ID or URL
-  if (!release) {
-    const decodedId = decodeURIComponent(params.id)
-    release = fallbackReleases.find((r) => 
-      r.id === params.id || 
-      r.url === params.id ||
-      r.id === decodedId || 
-      r.url === decodedId
+export default function ReleaseDetailPage({ params }: { params: { id: string } }) {
+  const [release, setRelease] = useState<Release | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadRelease() {
+      try {
+        setIsLoading(true)
+        
+        // Try to get release from API
+        let releaseData = await getRelease(params.id)
+        
+        // If API fails, try to find in fallback data by ID or URL
+        if (!releaseData) {
+          const decodedId = decodeURIComponent(params.id)
+          releaseData = fallbackReleases.find((r) => 
+            r.id === params.id || 
+            r.url === params.id ||
+            r.id === decodedId || 
+            r.url === decodedId
+          )
+        }
+        
+        setRelease(releaseData)
+      } catch (error) {
+        console.error('Error loading release:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    
+    loadRelease()
+  }, [params.id])
+
+  if (isLoading) {
+    return (
+      <div className="container px-4 md:px-6 py-12 md:py-24 text-center">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-300 rounded w-48 mx-auto mb-4"></div>
+          <div className="h-4 bg-gray-300 rounded w-32 mx-auto"></div>
+        </div>
+      </div>
     )
   }
 
