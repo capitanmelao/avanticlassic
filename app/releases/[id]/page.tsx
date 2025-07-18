@@ -1021,7 +1021,7 @@ function BuySection({ releaseId, releaseTitle, releaseArtist, releaseImage, rele
   const handleAddToCart = (format: any) => {
     addItem({
       productId: format.id,
-      priceId: format.id, // Using product ID as price ID for now
+      priceId: format.priceId || format.id, // Use actual price ID
       name: releaseTitle,
       artist: releaseArtist,
       format: format.format,

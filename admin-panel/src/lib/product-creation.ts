@@ -19,13 +19,20 @@ export interface PriceVariant {
 export const getDefaultPricing = (format: string): PriceVariant[] => {
   const formatPricing: Record<string, number> = {
     'CD': 1400, // €14.00
+    'cd': 1400, // €14.00
     'SACD': 1600, // €16.00
+    'sacd': 1600, // €16.00
+    'Hybrid SACD': 1600, // €16.00
+    'hybrid sacd': 1600, // €16.00
     'Vinyl': 2500, // €25.00
+    'vinyl': 2500, // €25.00
     'Digital': 1000, // €10.00
+    'digital': 1000, // €10.00
     'Cassette': 1200, // €12.00
+    'cassette': 1200, // €12.00
   }
 
-  const basePrice = formatPricing[format] || 1400
+  const basePrice = formatPricing[format] || formatPricing[format.toLowerCase()] || 1400
   
   return [
     {
@@ -71,7 +78,7 @@ export const createOrUpdateProductFromRelease = async (
       name: releaseData.title,
       description: releaseData.description || `${releaseData.title} - ${releaseData.format}`,
       type: 'physical' as const,
-      format: releaseData.format.toLowerCase(),
+      format: releaseData.format, // Keep original format case
       status: 'active' as const,
       featured: false,
       inventory_quantity: 100, // Default stock

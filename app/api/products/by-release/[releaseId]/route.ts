@@ -54,6 +54,7 @@ export async function GET(
         format: product.format,
         price: defaultPrice?.amount || 0,
         currency: defaultPrice?.currency || 'EUR',
+        priceId: defaultPrice?.id, // Include actual price ID
         inventory_quantity: product.inventory_quantity || 0,
         available
       }
