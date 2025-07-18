@@ -2,7 +2,7 @@
 
 import { useSession } from '@/lib/use-session'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
@@ -16,9 +16,7 @@ import {
   CurrencyDollarIcon,
   CalendarIcon,
   EyeIcon,
-  PencilIcon,
-  ExclamationTriangleIcon,
-  ClipboardDocumentListIcon
+  ExclamationTriangleIcon
 } from '@heroicons/react/24/outline'
 
 interface CustomerAddress {
@@ -70,9 +68,6 @@ export default function CustomerDetailPage() {
   const [customer, setCustomer] = useState<Customer | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [editingAddress, setEditingAddress] = useState<number | null>(null)
-  const [editingNotes, setEditingNotes] = useState(false)
-  const [customerNotes, setCustomerNotes] = useState('')
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -84,9 +79,9 @@ export default function CustomerDetailPage() {
     if (params.id) {
       loadCustomer()
     }
-  }, [params.id])
+  }, [params.id, loadCustomer])
 
-  const loadCustomer = async () => {
+  const loadCustomer = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -198,7 +193,7 @@ export default function CustomerDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [params.id])
 
   const formatPrice = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -293,7 +288,7 @@ export default function CustomerDetailPage() {
           <UserIcon className="mx-auto h-12 w-12 text-gray-400" />
           <h3 className="mt-2 text-sm font-medium text-gray-900">Customer not found</h3>
           <p className="mt-1 text-sm text-gray-500">
-            The customer you're looking for doesn't exist or has been deleted.
+            The customer you&apos;re looking for doesn&apos;t exist or has been deleted.
           </p>
           <div className="mt-6">
             <Link

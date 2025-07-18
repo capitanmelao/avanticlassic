@@ -9,7 +9,6 @@ import {
   UserIcon,
   EyeIcon,
   MagnifyingGlassIcon,
-  FunnelIcon,
   CalendarIcon,
   CurrencyDollarIcon,
   ShoppingBagIcon,
@@ -81,10 +80,10 @@ export default function CustomersPage() {
 
       if (ordersError) throw ordersError
 
-      // Get customers table if it exists
-      const { data: customersData, error: customersError } = await supabase
-        .from('customers')
-        .select('*')
+      // Get customers table if it exists (not used currently)
+      // const { data: customersData, error: customersError } = await supabase
+      //   .from('customers')
+      //   .select('*')
 
       // Aggregate customer data from orders
       const customerMap = new Map<string, Customer>()
@@ -172,7 +171,7 @@ export default function CustomersPage() {
   })
 
   const sortedCustomers = [...filteredCustomers].sort((a, b) => {
-    let aValue: any, bValue: any
+    let aValue: string | number | Date, bValue: string | number | Date
     
     switch (sortBy) {
       case 'name':
@@ -230,10 +229,10 @@ export default function CustomersPage() {
     return customer.email
   }
 
-  const formatAddress = (address: any) => {
-    if (!address) return 'No address'
-    return `${address.address_line_1}${address.address_line_2 ? `, ${address.address_line_2}` : ''}, ${address.city}, ${address.state_province || ''} ${address.postal_code}, ${address.country}`
-  }
+  // const formatAddress = (address: CustomerAddress) => {
+  //   if (!address) return 'No address'
+  //   return `${address.address_line_1}${address.address_line_2 ? `, ${address.address_line_2}` : ''}, ${address.city}, ${address.state_province || ''} ${address.postal_code}, ${address.country}`
+  // }
 
   if (status === 'loading' || loading) {
     return (
@@ -374,7 +373,7 @@ export default function CustomersPage() {
           <select
             id="sortBy"
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
+            onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           >
             <option value="name">Name</option>

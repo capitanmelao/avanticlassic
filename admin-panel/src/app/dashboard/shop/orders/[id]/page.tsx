@@ -2,7 +2,7 @@
 
 import { useSession } from '@/lib/use-session'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
@@ -11,15 +11,10 @@ import {
   ClipboardDocumentListIcon,
   TruckIcon,
   CreditCardIcon,
-  UserIcon,
-  MapPinIcon,
   CalendarIcon,
-  CurrencyDollarIcon,
   PencilIcon,
   CheckIcon,
-  ExclamationTriangleIcon,
-  PrinterIcon,
-  EnvelopeIcon
+  ExclamationTriangleIcon
 } from '@heroicons/react/24/outline'
 
 interface OrderItem {
@@ -54,8 +49,8 @@ interface Order {
   delivered_at?: string
   created_at: string
   updated_at: string
-  billing_address?: any
-  shipping_address?: any
+  billing_address?: Record<string, unknown>
+  shipping_address?: Record<string, unknown>
   customer_notes?: string
   notes?: string
   shipping_method?: string
@@ -86,9 +81,9 @@ export default function OrderDetailPage() {
     if (params.id) {
       loadOrder()
     }
-  }, [params.id])
+  }, [params.id, loadOrder])
 
-  const loadOrder = async () => {
+  const loadOrder = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -131,39 +126,39 @@ export default function OrderDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [params.id])
 
-  const updateOrderStatus = async (field: string, value: string) => {
-    if (!order) return
+  // const updateOrderStatus = async (field: string, value: string) => {
+  //   if (!order) return
 
-    try {
-      const updates: any = { [field]: value }
+  //   try {
+  //     const updates: Record<string, string> = { [field]: value }
       
-      // Auto-update related fields
-      if (field === 'fulfillment_status' && value === 'fulfilled') {
-        updates.status = 'delivered'
-        updates.delivered_at = new Date().toISOString()
-      } else if (field === 'status' && value === 'shipped') {
-        updates.fulfillment_status = 'partial'
-        updates.shipped_at = new Date().toISOString()
-      } else if (field === 'status' && value === 'delivered') {
-        updates.fulfillment_status = 'fulfilled'
-        updates.delivered_at = new Date().toISOString()
-      }
+  //     // Auto-update related fields
+  //     if (field === 'fulfillment_status' && value === 'fulfilled') {
+  //       updates.status = 'delivered'
+  //       updates.delivered_at = new Date().toISOString()
+  //     } else if (field === 'status' && value === 'shipped') {
+  //       updates.fulfillment_status = 'partial'
+  //       updates.shipped_at = new Date().toISOString()
+  //     } else if (field === 'status' && value === 'delivered') {
+  //       updates.fulfillment_status = 'fulfilled'
+  //       updates.delivered_at = new Date().toISOString()
+  //     }
 
-      const { error } = await supabase
-        .from('orders')
-        .update(updates)
-        .eq('id', order.id)
+  //     const { error } = await supabase
+  //       .from('orders')
+  //       .update(updates)
+  //       .eq('id', order.id)
 
-      if (error) throw error
+  //     if (error) throw error
 
-      setOrder({ ...order, ...updates })
-    } catch (err) {
-      console.error('Error updating order:', err)
-      setError(err instanceof Error ? err.message : 'Failed to update order')
-    }
-  }
+  //     setOrder({ ...order, ...updates })
+  //   } catch (err) {
+  //     console.error('Error updating order:', err)
+  //     setError(err instanceof Error ? err.message : 'Failed to update order')
+  //   }
+  // }
 
   const saveTrackingInfo = async () => {
     if (!order) return
@@ -255,9 +250,10 @@ export default function OrderDetailPage() {
     })
   }
 
-  const formatAddress = (address: any) => {
+  const formatAddress = (address: Record<string, unknown> | undefined) => {
     if (!address) return 'No address provided'
-    return `${address.address_line_1}${address.address_line_2 ? `, ${address.address_line_2}` : ''}, ${address.city}, ${address.state_province || ''} ${address.postal_code}, ${address.country}`
+    const addr = address as Record<string, string>
+    return `${addr.address_line_1}${addr.address_line_2 ? `, ${addr.address_line_2}` : ''}, ${addr.city}, ${addr.state_province || ''} ${addr.postal_code}, ${addr.country}`
   }
 
   if (status === 'loading' || loading) {
@@ -303,7 +299,7 @@ export default function OrderDetailPage() {
           <ClipboardDocumentListIcon className="mx-auto h-12 w-12 text-gray-400" />
           <h3 className="mt-2 text-sm font-medium text-gray-900">Order not found</h3>
           <p className="mt-1 text-sm text-gray-500">
-            The order you're looking for doesn't exist or has been deleted.
+            The order you&apos;re looking for doesn&apos;t exist or has been deleted.
           </p>
           <div className="mt-6">
             <Link

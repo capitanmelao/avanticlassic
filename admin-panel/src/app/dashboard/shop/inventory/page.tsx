@@ -13,7 +13,6 @@ import {
   PencilIcon,
   CubeIcon,
   MagnifyingGlassIcon,
-  FunnelIcon,
   ArrowUpIcon,
   ArrowDownIcon,
   CheckCircleIcon,
@@ -148,28 +147,28 @@ export default function InventoryPage() {
     }
   }
 
-  const updateStock = async (productId: number, newQuantity: number) => {
-    try {
-      const { error } = await supabase
-        .from('products')
-        .update({ 
-          inventory_quantity: newQuantity,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', productId)
+  // const updateStock = async (productId: number, newQuantity: number) => {
+  //   try {
+  //     const { error } = await supabase
+  //       .from('products')
+  //       .update({ 
+  //         inventory_quantity: newQuantity,
+  //         updated_at: new Date().toISOString()
+  //       })
+  //       .eq('id', productId)
 
-      if (error) throw error
+  //     if (error) throw error
 
-      setProducts(products.map(product => 
-        product.id === productId 
-          ? { ...product, inventory_quantity: newQuantity }
-          : product
-      ))
-    } catch (err) {
-      console.error('Error updating stock:', err)
-      setError(err instanceof Error ? err.message : 'Failed to update stock')
-    }
-  }
+  //     setProducts(products.map(product => 
+  //       product.id === productId 
+  //         ? { ...product, inventory_quantity: newQuantity }
+  //         : product
+  //     ))
+  //   } catch (err) {
+  //     console.error('Error updating stock:', err)
+  //     setError(err instanceof Error ? err.message : 'Failed to update stock')
+  //   }
+  // }
 
   const toggleInventoryTracking = async (productId: number, currentTracking: boolean) => {
     try {
@@ -240,7 +239,7 @@ export default function InventoryPage() {
   })
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
-    let aValue: any, bValue: any
+    let aValue: string | number | Date, bValue: string | number | Date
     
     switch (sortBy) {
       case 'name':
@@ -299,13 +298,13 @@ export default function InventoryPage() {
     return badges[format as keyof typeof badges] || badges.cd
   }
 
-  const formatPrice = (price: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency,
-      minimumFractionDigits: 2
-    }).format(price / 100)
-  }
+  // const formatPrice = (price: number, currency: string) => {
+  //   return new Intl.NumberFormat('en-US', {
+  //     style: 'currency',
+  //     currency: currency,
+  //     minimumFractionDigits: 2
+  //   }).format(price / 100)
+  // }
 
   const lowStockCount = products.filter(p => p.inventory_tracking && p.inventory_quantity < 10).length
   const outOfStockCount = products.filter(p => p.inventory_tracking && p.inventory_quantity === 0).length
@@ -441,7 +440,7 @@ export default function InventoryPage() {
           <select
             id="status"
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as any)}
+            onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           >
             <option value="all">All Status</option>
@@ -458,7 +457,7 @@ export default function InventoryPage() {
           <select
             id="stock"
             value={stockFilter}
-            onChange={(e) => setStockFilter(e.target.value as any)}
+            onChange={(e) => setStockFilter(e.target.value as typeof stockFilter)}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           >
             <option value="all">All Stock</option>
@@ -475,7 +474,7 @@ export default function InventoryPage() {
           <select
             id="sortBy"
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
+            onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           >
             <option value="name">Name</option>
@@ -579,7 +578,7 @@ export default function InventoryPage() {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {sortedProducts.map((product) => {
-                const primaryPrice = product.product_prices.find(p => p.active) || product.product_prices[0]
+                // const primaryPrice = product.product_prices.find(p => p.active) || product.product_prices[0]
                 const artistName = product.releases?.release_artists?.[0]?.artists?.name || 'Unknown Artist'
                 const stockStatus = getStockStatus(product)
                 

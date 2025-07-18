@@ -2,7 +2,7 @@
 
 import { useSession } from '@/lib/use-session'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
@@ -13,10 +13,6 @@ import {
   TrashIcon,
   CubeIcon,
   ChartBarIcon,
-  CurrencyDollarIcon,
-  TagIcon,
-  CalendarIcon,
-  EyeIcon,
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline'
 
@@ -45,7 +41,7 @@ interface Product {
   updated_at: string
   release_id?: number
   images: string[]
-  metadata?: any
+  metadata?: Record<string, unknown>
   releases?: {
     id: number
     title: string
@@ -80,9 +76,9 @@ export default function ProductDetailPage() {
     if (params.id) {
       loadProduct()
     }
-  }, [params.id])
+  }, [params.id, loadProduct])
 
-  const loadProduct = async () => {
+  const loadProduct = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -132,7 +128,7 @@ export default function ProductDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [params.id])
 
   const deleteProduct = async () => {
     if (!product || !confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
@@ -244,7 +240,7 @@ export default function ProductDetailPage() {
           <CubeIcon className="mx-auto h-12 w-12 text-gray-400" />
           <h3 className="mt-2 text-sm font-medium text-gray-900">Product not found</h3>
           <p className="mt-1 text-sm text-gray-500">
-            The product you're looking for doesn't exist or has been deleted.
+            The product you&apos;re looking for doesn&apos;t exist or has been deleted.
           </p>
           <div className="mt-6">
             <Link
@@ -262,7 +258,7 @@ export default function ProductDetailPage() {
 
   const artistName = product.releases?.release_artists?.[0]?.artists?.name || 'Unknown Artist'
   const activePrices = product.product_prices.filter(price => price.active)
-  const primaryPrice = activePrices[0] || product.product_prices[0]
+  // const primaryPrice = activePrices[0] || product.product_prices[0]
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

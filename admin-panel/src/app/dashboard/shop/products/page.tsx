@@ -260,7 +260,7 @@ export default function ProductsPage() {
           <select
             id="status"
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as any)}
+            onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
           >
             <option value="all">All Status</option>
@@ -277,7 +277,7 @@ export default function ProductsPage() {
           <select
             id="format"
             value={formatFilter}
-            onChange={(e) => setFormatFilter(e.target.value as any)}
+            onChange={(e) => setFormatFilter(e.target.value as typeof formatFilter)}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
           >
             <option value="all">All Formats</option>

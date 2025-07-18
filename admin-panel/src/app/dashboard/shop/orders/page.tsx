@@ -9,10 +9,6 @@ import {
   ClipboardDocumentListIcon,
   EyeIcon,
   TruckIcon,
-  CreditCardIcon,
-  UserIcon,
-  CalendarIcon,
-  CurrencyDollarIcon,
   ExclamationTriangleIcon,
   FunnelIcon,
   MagnifyingGlassIcon
@@ -36,8 +32,8 @@ interface Order {
   delivered_at?: string
   created_at: string
   updated_at: string
-  billing_address?: any
-  shipping_address?: any
+  billing_address?: Record<string, unknown>
+  shipping_address?: Record<string, unknown>
   customer_notes?: string
   notes?: string
   order_items: {
@@ -102,61 +98,61 @@ export default function OrdersPage() {
     }
   }
 
-  const updateOrderStatus = async (orderId: number, field: string, value: string) => {
-    try {
-      const updates: any = { [field]: value }
+  // const updateOrderStatus = async (orderId: number, field: string, value: string) => {
+  //   try {
+  //     const updates: Record<string, string> = { [field]: value }
       
-      // Auto-update related fields
-      if (field === 'fulfillment_status' && value === 'fulfilled') {
-        updates.status = 'delivered'
-        updates.delivered_at = new Date().toISOString()
-      } else if (field === 'status' && value === 'shipped') {
-        updates.fulfillment_status = 'partial'
-        updates.shipped_at = new Date().toISOString()
-      }
+  //     // Auto-update related fields
+  //     if (field === 'fulfillment_status' && value === 'fulfilled') {
+  //       updates.status = 'delivered'
+  //       updates.delivered_at = new Date().toISOString()
+  //     } else if (field === 'status' && value === 'shipped') {
+  //       updates.fulfillment_status = 'partial'
+  //       updates.shipped_at = new Date().toISOString()
+  //     }
 
-      const { error } = await supabase
-        .from('orders')
-        .update(updates)
-        .eq('id', orderId)
+  //     const { error } = await supabase
+  //       .from('orders')
+  //       .update(updates)
+  //       .eq('id', orderId)
 
-      if (error) throw error
+  //     if (error) throw error
 
-      // Update local state
-      setOrders(orders.map(order => 
-        order.id === orderId ? { ...order, ...updates } : order
-      ))
-    } catch (err) {
-      console.error('Error updating order:', err)
-      setError(err instanceof Error ? err.message : 'Failed to update order')
-    }
-  }
+  //     // Update local state
+  //     setOrders(orders.map(order => 
+  //       order.id === orderId ? { ...order, ...updates } : order
+  //     ))
+  //   } catch (err) {
+  //     console.error('Error updating order:', err)
+  //     setError(err instanceof Error ? err.message : 'Failed to update order')
+  //   }
+  // }
 
-  const updateTrackingInfo = async (orderId: number, trackingNumber: string, trackingUrl?: string) => {
-    try {
-      const updates = {
-        tracking_number: trackingNumber,
-        tracking_url: trackingUrl,
-        status: 'shipped',
-        fulfillment_status: 'partial',
-        shipped_at: new Date().toISOString()
-      }
+  // const updateTrackingInfo = async (orderId: number, trackingNumber: string, trackingUrl?: string) => {
+  //   try {
+  //     const updates = {
+  //       tracking_number: trackingNumber,
+  //       tracking_url: trackingUrl,
+  //       status: 'shipped',
+  //       fulfillment_status: 'partial',
+  //       shipped_at: new Date().toISOString()
+  //     }
 
-      const { error } = await supabase
-        .from('orders')
-        .update(updates)
-        .eq('id', orderId)
+  //     const { error } = await supabase
+  //       .from('orders')
+  //       .update(updates)
+  //       .eq('id', orderId)
 
-      if (error) throw error
+  //     if (error) throw error
 
-      setOrders(orders.map(order => 
-        order.id === orderId ? { ...order, ...updates } : order
-      ))
-    } catch (err) {
-      console.error('Error updating tracking info:', err)
-      setError(err instanceof Error ? err.message : 'Failed to update tracking info')
-    }
-  }
+  //     setOrders(orders.map(order => 
+  //       order.id === orderId ? { ...order, ...updates } : order
+  //     ))
+  //   } catch (err) {
+  //     console.error('Error updating tracking info:', err)
+  //     setError(err instanceof Error ? err.message : 'Failed to update tracking info')
+  //   }
+  // }
 
   const filteredOrders = orders.filter(order => {
     const matchesSearch = order.order_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -277,7 +273,7 @@ export default function OrdersPage() {
           <select
             id="status"
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as any)}
+            onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           >
             <option value="all">All Status</option>
@@ -297,7 +293,7 @@ export default function OrdersPage() {
           <select
             id="payment"
             value={paymentFilter}
-            onChange={(e) => setPaymentFilter(e.target.value as any)}
+            onChange={(e) => setPaymentFilter(e.target.value as typeof paymentFilter)}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           >
             <option value="all">All Payment</option>
@@ -316,7 +312,7 @@ export default function OrdersPage() {
           <select
             id="fulfillment"
             value={fulfillmentFilter}
-            onChange={(e) => setFulfillmentFilter(e.target.value as any)}
+            onChange={(e) => setFulfillmentFilter(e.target.value as typeof fulfillmentFilter)}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           >
             <option value="all">All Fulfillment</option>
