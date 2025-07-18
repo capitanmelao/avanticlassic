@@ -7,6 +7,7 @@ import { supabase, type Artist } from '@/lib/supabase'
 import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 import ImageUpload from '@/components/ImageUpload'
 import { extractStoragePath } from '@/lib/image-upload'
+import { createOrUpdateProductFromRelease } from '@/lib/product-creation'
 
 interface FormData {
   url: string
@@ -36,6 +37,12 @@ interface FormData {
   }
   // Artists
   artistIds: number[]
+  // E-commerce
+  ecommerce_enabled: boolean
+  product_formats: string[]
+  product_prices: { [format: string]: number }
+  inventory_tracking: boolean
+  inventory_quantities: { [format: string]: number }
 }
 
 export default function EditReleasePage() {
@@ -66,14 +73,20 @@ export default function EditReleasePage() {
       fr: { tracklist: '', description: '' },
       de: { tracklist: '', description: '' }
     },
-    artistIds: []
+    artistIds: [],
+    // E-commerce defaults
+    ecommerce_enabled: true,
+    product_formats: ['CD'],
+    product_prices: { 'CD': 14.00 },
+    inventory_tracking: true,
+    inventory_quantities: { 'CD': 100 }
   })
 
   const [artists, setArtists] = useState<Artist[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<'basic' | 'content' | 'streaming' | 'seo'>('basic')
+  const [activeTab, setActiveTab] = useState<'basic' | 'content' | 'streaming' | 'seo' | 'ecommerce'>('basic')
   const [, setImagePath] = useState<string | null>(null)
 
   useEffect(() => {
@@ -145,7 +158,13 @@ export default function EditReleasePage() {
           meta_title: release.meta_title || '',
           meta_description: release.meta_description || '',
           translations,
-          artistIds
+          artistIds,
+          // E-commerce fields initialized with defaults
+          ecommerce_enabled: true,
+          product_formats: [release.format || 'CD'],
+          product_prices: { [release.format || 'CD']: release.format === 'SACD' ? 16.00 : release.format === 'Vinyl' ? 25.00 : release.format === 'Digital' ? 10.00 : 14.00 },
+          inventory_tracking: true,
+          inventory_quantities: { [release.format || 'CD']: 100 }
         })
         
         // Extract storage path from image URL
@@ -227,6 +246,24 @@ export default function EditReleasePage() {
           .insert(releaseArtists)
       }
 
+      // Create or update product for this release
+      const productResult = await createOrUpdateProductFromRelease(
+        parseInt(releaseId),
+        {
+          title: formData.title,
+          format: formData.format,
+          image_url: formData.image_url,
+          catalog_number: formData.catalog_number,
+          description: formData.translations.en.description || formData.title
+        }
+      )
+
+      if (!productResult.success) {
+        console.warn('Failed to create/update product:', productResult.error)
+        // Don't fail the release save if product creation fails
+        // Just log the error for now
+      }
+
       router.push('/dashboard/releases')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save release')
@@ -235,7 +272,7 @@ export default function EditReleasePage() {
     }
   }
 
-  const updateField = (field: keyof FormData, value: string | number | boolean | number[]) => {
+  const updateField = (field: keyof FormData, value: string | number | boolean | number[] | string[] | { [key: string]: number }) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
@@ -313,12 +350,13 @@ export default function EditReleasePage() {
               { id: 'basic', name: 'Basic Info' },
               { id: 'content', name: 'Content & Artists' },
               { id: 'streaming', name: 'Streaming Links' },
-              { id: 'seo', name: 'SEO & Metadata' }
+              { id: 'seo', name: 'SEO & Metadata' },
+              { id: 'ecommerce', name: 'E-commerce' }
             ].map((tab) => (
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => setActiveTab(tab.id as 'basic' | 'content' | 'streaming' | 'seo')}
+                onClick={() => setActiveTab(tab.id as 'basic' | 'content' | 'streaming' | 'seo' | 'ecommerce')}
                 className={`py-2 px-1 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
                     ? 'border-black text-black'
@@ -636,6 +674,118 @@ export default function EditReleasePage() {
           </div>
         )}
 
+        {/* E-commerce Tab */}
+        {activeTab === 'ecommerce' && (
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="space-y-6">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="ecommerce_enabled"
+                  checked={formData.ecommerce_enabled}
+                  onChange={(e) => updateField('ecommerce_enabled', e.target.checked)}
+                  className="rounded border-gray-300 text-black focus:ring-black"
+                />
+                <label htmlFor="ecommerce_enabled" className="ml-2 text-sm font-medium text-gray-700">
+                  Enable E-commerce for this release
+                </label>
+              </div>
+
+              {formData.ecommerce_enabled && (
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      Available Formats
+                    </label>
+                    <div className="space-y-3">
+                      {['CD', 'SACD', 'Vinyl', 'Digital'].map((format) => (
+                        <div key={format} className="flex items-center space-x-4">
+                          <input
+                            type="checkbox"
+                            id={`format_${format}`}
+                            checked={formData.product_formats.includes(format)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                updateField('product_formats', [...formData.product_formats, format])
+                                updateField('product_prices', { ...formData.product_prices, [format]: format === 'CD' ? 14.00 : format === 'SACD' ? 16.00 : format === 'Vinyl' ? 25.00 : 10.00 })
+                                updateField('inventory_quantities', { ...formData.inventory_quantities, [format]: 100 })
+                              } else {
+                                updateField('product_formats', formData.product_formats.filter(f => f !== format))
+                                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                                const { [format]: _price, ...remainingPrices } = formData.product_prices
+                                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                                const { [format]: _quantity, ...remainingQuantities } = formData.inventory_quantities
+                                updateField('product_prices', remainingPrices)
+                                updateField('inventory_quantities', remainingQuantities)
+                              }
+                            }}
+                            className="rounded border-gray-300 text-black focus:ring-black"
+                          />
+                          <label htmlFor={`format_${format}`} className="text-sm text-gray-700 min-w-[60px]">
+                            {format}
+                          </label>
+                          
+                          {formData.product_formats.includes(format) && (
+                            <>
+                              <div className="flex items-center space-x-2">
+                                <label className="text-sm text-gray-600">Price:</label>
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  min="0"
+                                  value={formData.product_prices[format] || 0}
+                                  onChange={(e) => updateField('product_prices', { ...formData.product_prices, [format]: parseFloat(e.target.value) || 0 })}
+                                  className="w-24 px-2 py-1 border border-gray-300 rounded text-sm"
+                                />
+                                <span className="text-sm text-gray-500">€</span>
+                              </div>
+                              
+                              {formData.inventory_tracking && (
+                                <div className="flex items-center space-x-2">
+                                  <label className="text-sm text-gray-600">Stock:</label>
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    value={formData.inventory_quantities[format] || 0}
+                                    onChange={(e) => updateField('inventory_quantities', { ...formData.inventory_quantities, [format]: parseInt(e.target.value) || 0 })}
+                                    className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                                  />
+                                </div>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="inventory_tracking"
+                      checked={formData.inventory_tracking}
+                      onChange={(e) => updateField('inventory_tracking', e.target.checked)}
+                      className="rounded border-gray-300 text-black focus:ring-black"
+                    />
+                    <label htmlFor="inventory_tracking" className="ml-2 text-sm font-medium text-gray-700">
+                      Enable inventory tracking
+                    </label>
+                  </div>
+
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h4 className="font-medium text-blue-900 mb-2">Product Information</h4>
+                    <div className="text-sm text-blue-800 space-y-1">
+                      <p>• Products are automatically created/updated when you save the release</p>
+                      <p>• Prices are in EUR and will be converted to cents in the database</p>
+                      <p>• Inventory tracking helps manage stock levels</p>
+                      <p>• Products will use the same image and description as the release</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
         {/* Submit Buttons */}
         <div className="flex items-center justify-between pt-6 border-t border-gray-200">
           <Link

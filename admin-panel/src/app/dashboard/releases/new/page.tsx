@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import { createOrUpdateProductFromRelease } from '@/lib/product-creation'
 
 export default function NewReleasePage() {
   const { data: session, status } = useSession()
@@ -150,6 +151,24 @@ export default function NewReleasePage() {
           console.warn('Failed to create some translations:', translationsError)
           // Don't fail the whole operation for translation errors
         }
+      }
+
+      // Create product for this release
+      const productResult = await createOrUpdateProductFromRelease(
+        releaseData.id,
+        {
+          title: formData.title,
+          format: 'CD', // Default format for new releases
+          image_url: undefined, // No image on initial creation
+          catalog_number: undefined, // No catalog number on initial creation
+          description: formData.title
+        }
+      )
+
+      if (!productResult.success) {
+        console.warn('Failed to create product for new release:', productResult.error)
+        // Don't fail the release creation if product creation fails
+        // Just log the error for now
       }
 
       router.push('/dashboard/releases')

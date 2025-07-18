@@ -2,7 +2,8 @@ import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { ChevronLeft, ShoppingCart, ExternalLink } from "lucide-react"
+import { ChevronLeft, ExternalLink } from "lucide-react"
+import ReleaseBuyButton from "@/components/release-buy-button"
 
 interface Release {
   id: string
@@ -1047,26 +1048,24 @@ export default async function ReleaseDetailPage({ params }: { params: { id: stri
           )}
           
           <div className="flex flex-wrap gap-4 pt-6">
-            {release.shopUrl && (
-              <Button asChild className="bg-primary hover:bg-primary/90">
-                <Link href={release.shopUrl} target="_blank" rel="noopener noreferrer">
-                  <ShoppingCart className="h-4 w-4 mr-2" />
-                  Buy Now
+            {/* Native E-commerce Buy Button */}
+            <ReleaseBuyButton releaseId={release.id} />
+            
+            {/* Streaming Links */}
+            <div className="flex gap-2">
+              <Button asChild variant="outline" size="sm">
+                <Link href="#" target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Spotify
                 </Link>
               </Button>
-            )}
-            <Button asChild variant="outline">
-              <Link href="#" target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="h-4 w-4 mr-2" />
-                Spotify
-              </Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="#" target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="h-4 w-4 mr-2" />
-                Apple Music
-              </Link>
-            </Button>
+              <Button asChild variant="outline" size="sm">
+                <Link href="#" target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Apple Music
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </div>
