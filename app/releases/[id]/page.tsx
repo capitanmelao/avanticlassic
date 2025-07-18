@@ -3,7 +3,6 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ChevronLeft, ExternalLink } from "lucide-react"
-import ReleaseBuyButton from "@/components/release-buy-button"
 
 interface Release {
   id: string
@@ -1047,25 +1046,25 @@ export default async function ReleaseDetailPage({ params }: { params: { id: stri
             </div>
           )}
           
-          <div className="flex flex-wrap gap-4 pt-6">
-            {/* Native E-commerce Buy Button */}
-            <ReleaseBuyButton releaseId={release.id} />
-            
-            {/* Streaming Links */}
-            <div className="flex gap-2">
-              <Button asChild variant="outline" size="sm">
-                <Link href="#" target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  Spotify
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="sm">
-                <Link href="#" target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  Apple Music
-                </Link>
-              </Button>
-            </div>
+          <div className="flex flex-wrap gap-2 pt-6">
+            <Button asChild variant="outline" size="sm">
+              <Link href={`/shop/releases/${release.id}`}>
+                <ExternalLink className="h-4 w-4 mr-2" />
+                Buy
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="#" target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="h-4 w-4 mr-2" />
+                Spotify
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="#" target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="h-4 w-4 mr-2" />
+                Apple Music
+              </Link>
+            </Button>
           </div>
         </div>
       </div>
