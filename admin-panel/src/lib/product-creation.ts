@@ -38,7 +38,7 @@ export const getDefaultPricing = (format: string): PriceVariant[] => {
     {
       amount: basePrice,
       currency: 'EUR',
-      variant_type: 'default'
+      variant_type: 'physical'
     }
   ]
 }
@@ -52,7 +52,7 @@ export const createOrUpdateProductFromRelease = async (
     catalog_number?: string
     description?: string
   }
-): Promise<{ success: boolean; productId?: number; error?: string }> => {
+): Promise<{ success: boolean; productId?: string; error?: string }> => {
   try {
     // Check if product already exists for this release
     const { data: existingProduct } = await supabase
@@ -73,12 +73,26 @@ export const createOrUpdateProductFromRelease = async (
       sortOrder = maxSortOrder?.[0]?.sort_order ? maxSortOrder[0].sort_order + 1 : 1
     }
 
+    // Map release format to database format (database expects lowercase snake_case)
+    const formatMapping: Record<string, string> = {
+      'CD': 'cd',
+      'cd': 'cd',
+      'SACD': 'sacd',
+      'sacd': 'sacd',
+      'Hybrid SACD': 'hybrid_sacd',
+      'hybrid sacd': 'hybrid_sacd',
+      'hybrid_sacd': 'hybrid_sacd',
+      'HYBRID SACD': 'hybrid_sacd'
+    }
+    
+    const dbFormat = formatMapping[releaseData.format] || formatMapping[releaseData.format.toLowerCase()] || 'cd'
+
     // Prepare product data
     const productData = {
       name: releaseData.title,
       description: releaseData.description || `${releaseData.title} - ${releaseData.format}`,
       type: 'physical' as const,
-      format: releaseData.format, // Keep original format case
+      format: dbFormat, // Use database-compatible format
       status: 'active' as const,
       featured: false,
       inventory_quantity: 100, // Default stock
@@ -89,11 +103,12 @@ export const createOrUpdateProductFromRelease = async (
       metadata: {
         catalog_number: releaseData.catalog_number,
         auto_created: true,
-        created_from_release: true
+        created_from_release: true,
+        original_format: releaseData.format // Keep original format for reference
       }
     }
 
-    let productId: number
+    let productId: string
 
     if (existingProduct) {
       // Update existing product

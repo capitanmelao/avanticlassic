@@ -55,19 +55,28 @@ export async function GET(
 
     // Transform products into formats
     const formats = products?.map(product => {
-      // Get the default price
-      const defaultPrice = product.product_prices?.find(p => p.variant_type === 'default' && p.active)
+      // Get the physical price (main price for the product)
+      const physicalPrice = product.product_prices?.find(p => p.variant_type === 'physical' && p.active)
       
       // Check availability
       const available = product.status === 'active' && 
                        (!product.inventory_tracking || product.inventory_quantity > 0)
 
+      // Map database format back to display format
+      const displayFormatMapping: Record<string, string> = {
+        'cd': 'CD',
+        'sacd': 'SACD', 
+        'hybrid_sacd': 'Hybrid SACD'
+      }
+      
+      const displayFormat = displayFormatMapping[product.format] || product.format.toUpperCase()
+
       return {
         id: product.id,
-        format: product.format,
-        price: defaultPrice?.amount || 0,
-        currency: defaultPrice?.currency || 'EUR',
-        priceId: defaultPrice?.id, // Include actual price ID
+        format: displayFormat, // Use display format instead of database format
+        price: physicalPrice?.amount || 0,
+        currency: physicalPrice?.currency || 'EUR',
+        priceId: physicalPrice?.id, // Include actual price ID
         inventory_quantity: product.inventory_quantity || 0,
         available
       }
