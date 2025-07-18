@@ -237,7 +237,7 @@ export default function EditProductPage() {
     }
   }
 
-  const handleImageUpload = (imageUrl: string, imagePath: string) => {
+  const handleImageUpload = (imageUrl: string, _imagePath: string) => {
     setFormData(prev => ({
       ...prev,
       images: [...prev.images, imageUrl]
