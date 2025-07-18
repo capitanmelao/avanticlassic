@@ -2,10 +2,10 @@
 
 import { Suspense, useEffect, useState } from 'react'
 import Link from 'next/link'
-import { ShoppingBag, Music, Star, ArrowRight } from 'lucide-react'
+import { ShoppingBag, ArrowRight } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { useCart } from '@/contexts/cart-context'
 import { createClient } from '@/lib/supabase/browser'
@@ -49,69 +49,6 @@ async function getFeaturedProducts() {
   }
 }
 
-// Fetch product statistics for categories
-async function getProductStats() {
-  try {
-    const supabase = createClient()
-    
-    const { data: stats, error } = await supabase
-      .from('products')
-      .select('format')
-      .eq('status', 'active')
-    
-    if (error) {
-      console.error('Error fetching product stats:', error)
-      return { 'Hybrid SACD': 0, 'CD': 0, 'Multi-disc': 0, 'Digital': 0 }
-    }
-    
-    const formatCounts = stats.reduce((acc: any, product: any) => {
-      const format = product.format
-      if (format === 'Hybrid SACD') acc['Hybrid SACD'] = (acc['Hybrid SACD'] || 0) + 1
-      else if (format === 'CD') acc['CD'] = (acc['CD'] || 0) + 1
-      else if (format === 'Multi-disc') acc['Multi-disc'] = (acc['Multi-disc'] || 0) + 1
-      else acc['Digital'] = (acc['Digital'] || 0) + 1
-      return acc
-    }, {})
-    
-    return formatCounts
-  } catch (error) {
-    console.error('Error in getProductStats:', error)
-    return { 'Hybrid SACD': 0, 'CD': 0, 'Multi-disc': 0, 'Digital': 0 }
-  }
-}
-
-function getCategories(stats: any) {
-  return [
-    {
-      name: "Hybrid SACD",
-      description: "High-quality Super Audio CD format",
-      count: stats['Hybrid SACD'] || 0,
-      icon: "🎵",
-      filter: "Hybrid SACD"
-    },
-    {
-      name: "CD Releases",
-      description: "Standard CD format",
-      count: stats['CD'] || 0,
-      icon: "💿",
-      filter: "CD"
-    },
-    {
-      name: "Multi-disc Sets",
-      description: "Box sets and collections",
-      count: stats['Multi-disc'] || 0,
-      icon: "📀",
-      filter: "Multi-disc"
-    },
-    {
-      name: "Digital Downloads",
-      description: "Instant digital access",
-      count: stats['Digital'] || 0,
-      icon: "📱",
-      filter: "Digital"
-    }
-  ]
-}
 
 function ProductCard({ product }: { product: any }) {
   const { addItem } = useCart()
@@ -190,41 +127,17 @@ function ProductCard({ product }: { product: any }) {
   )
 }
 
-function CategoryCard({ category }: { category: any }) {
-  return (
-    <Card className="hover:shadow-lg transition-shadow duration-200 cursor-pointer">
-      <CardContent className="p-6 text-center">
-        <div className="text-4xl mb-4">{category.icon}</div>
-        <h3 className="font-playfair font-semibold text-lg mb-2">{category.name}</h3>
-        <p className="text-sm text-gray-600 mb-3">{category.description}</p>
-        <Badge variant="outline" className="mb-4">
-          {category.count} releases
-        </Badge>
-        <Button asChild variant="outline" size="sm" className="w-full">
-          <Link href={`/shop/products?format=${encodeURIComponent(category.filter)}`}>
-            Browse Collection
-          </Link>
-        </Button>
-      </CardContent>
-    </Card>
-  )
-}
 
 export default function ShopPage() {
   const [featuredProducts, setFeaturedProducts] = useState<any[]>([])
-  const [productStats, setProductStats] = useState<any>({})
   const [isLoading, setIsLoading] = useState(true)
   
   useEffect(() => {
     async function loadData() {
       try {
         setIsLoading(true)
-        const [products, stats] = await Promise.all([
-          getFeaturedProducts(),
-          getProductStats()
-        ])
+        const products = await getFeaturedProducts()
         setFeaturedProducts(products)
-        setProductStats(stats)
       } catch (error) {
         console.error('Error loading shop data:', error)
       } finally {
@@ -235,31 +148,17 @@ export default function ShopPage() {
     loadData()
   }, [])
   
-  const categories = getCategories(productStats)
-  
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-black to-gray-900 text-white">
-        <div className="absolute inset-0 bg-black/20" />
-        <div className="relative container mx-auto px-4 py-16 md:py-24">
+      <section className="relative bg-black text-white">
+        <div className="relative container mx-auto px-4 py-8 md:py-12">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="font-playfair text-4xl md:text-6xl font-bold mb-6">
-              Avanti Classic Shop
-            </h1>
-            <p className="text-xl md:text-2xl mb-8 text-gray-300">
-              Discover exceptional classical music recordings in premium formats
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
+            <div className="flex justify-center">
+              <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-black">
                 <Link href="/shop/products">
-                  <ShoppingBag className="mr-2 h-5 w-5" />
-                  Browse All Products
+                  Browse All
                 </Link>
-              </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-black">
-                <Music className="mr-2 h-5 w-5" />
-                Listen to Samples
               </Button>
             </div>
           </div>
@@ -317,66 +216,7 @@ export default function ShopPage() {
         </div>
       </section>
 
-      {/* Categories */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="font-playfair text-3xl md:text-4xl font-bold mb-4">
-              Shop by Format
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Choose your preferred listening experience from our collection of premium formats
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {categories.map((category) => (
-              <CategoryCard key={category.name} category={category} />
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Features */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="font-playfair text-3xl md:text-4xl font-bold mb-4">
-              Why Choose Avanti Classic?
-            </h2>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Star className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="font-playfair font-semibold text-xl mb-2">Premium Quality</h3>
-              <p className="text-gray-600">
-                High-resolution recordings and premium formats including Hybrid SACD
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Music className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="font-playfair font-semibold text-xl mb-2">Curated Selection</h3>
-              <p className="text-gray-600">
-                Carefully selected classical music from renowned artists and orchestras
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <ShoppingBag className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="font-playfair font-semibold text-xl mb-2">Worldwide Shipping</h3>
-              <p className="text-gray-600">
-                Fast and secure delivery to classical music lovers worldwide
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   )
 }
