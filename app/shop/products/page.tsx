@@ -110,7 +110,7 @@ function ProductCard({ product }: { product: any }) {
   return (
     <Card className="group hover:shadow-lg transition-all duration-200">
       <CardHeader className="p-0">
-        <Link href={`/shop/products/${product.id}`}>
+        <Link href={`/releases/${release.id}`}>
           <div className="relative aspect-square overflow-hidden rounded-t-lg cursor-pointer">
             <img
               src={release.image_url || '/images/placeholder-album.jpg'}
@@ -137,7 +137,7 @@ function ProductCard({ product }: { product: any }) {
       </CardHeader>
       <CardContent className="p-4">
         <div className="space-y-2">
-          <Link href={`/shop/products/${product.id}`}>
+          <Link href={`/releases/${release.id}`}>
             <h3 className="font-playfair font-semibold text-lg leading-tight group-hover:text-primary transition-colors line-clamp-2 cursor-pointer">
               {release.title}
             </h3>
@@ -195,7 +195,7 @@ function ProductListItem({ product }: { product: any }) {
     <Card className="group hover:shadow-md transition-shadow duration-200">
       <CardContent className="p-4">
         <div className="flex gap-4">
-          <Link href={`/shop/products/${product.id}`}>
+          <Link href={`/releases/${release.id}`}>
             <div className="relative w-24 h-24 flex-shrink-0 cursor-pointer">
               <img
                 src={release.image_url || '/images/placeholder-album.jpg'}
@@ -212,7 +212,7 @@ function ProductListItem({ product }: { product: any }) {
           <div className="flex-1 min-w-0">
             <div className="flex justify-between items-start">
               <div className="flex-1 min-w-0">
-                <Link href={`/shop/products/${product.id}`}>
+                <Link href={`/releases/${release.id}`}>
                   <h3 className="font-playfair font-semibold text-lg leading-tight group-hover:text-primary transition-colors line-clamp-1 cursor-pointer">
                     {release.title}
                   </h3>
