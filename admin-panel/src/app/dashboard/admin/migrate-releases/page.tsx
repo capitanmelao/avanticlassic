@@ -134,15 +134,16 @@ export default function MigrateReleasesPage() {
           <div className="space-y-4">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <h3 className="font-medium text-blue-900 mb-2">
-                What this migration does:
+                🔧 Fix Pricing Issues:
               </h3>
               <ul className="text-sm text-blue-800 space-y-1">
-                <li>• Creates or updates products for all releases</li>
-                <li>• Sets default pricing: CD (€14), SACD (€16), Vinyl (€25), Digital (€10)</li>
-                <li>• Fixes format capitalization (CD instead of cd)</li>
-                <li>• Cleans up duplicate price entries</li>
-                <li>• Links products to releases via release_id</li>
-                <li>• Safe to run multiple times</li>
+                <li>• ✅ Creates or updates products for all releases</li>
+                <li>• ✅ Sets correct pricing: CD (€14), SACD (€16), Vinyl (€25), Digital (€10)</li>
+                <li>• ✅ Fixes format capitalization (CD instead of cd)</li>
+                <li>• ✅ Cleans up duplicate price entries</li>
+                <li>• ✅ Links products to releases via release_id</li>
+                <li>• ✅ Run this to fix €0.00 prices on release pages</li>
+                <li>• ✅ Safe to run multiple times</li>
               </ul>
             </div>
 
@@ -151,6 +152,7 @@ export default function MigrateReleasesPage() {
                 onClick={runMigration}
                 disabled={migrating}
                 className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                title="Run migration to fix pricing and format issues"
               >
                 {migrating ? (
                   <>

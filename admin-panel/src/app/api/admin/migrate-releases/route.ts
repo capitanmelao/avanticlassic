@@ -60,13 +60,12 @@ export async function GET(_request: NextRequest) {
 
     const totalReleases = releases.length
     const releasesWithProducts = products.length
-    const needsMigration = totalReleases - releasesWithProducts
 
     return NextResponse.json({
       totalReleases,
       releasesWithProducts,
-      needsMigration,
-      migrationComplete: needsMigration === 0
+      needsMigration: totalReleases, // Always show as needing migration
+      migrationComplete: false // Always allow re-running to fix prices
     })
   } catch (error) {
     console.error('Migration status error:', error)
