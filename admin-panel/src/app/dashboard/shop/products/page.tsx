@@ -37,7 +37,7 @@ interface Product {
     release_artists: {
       artists: {
         name: string
-      }
+      }[]
     }[]
   }
   product_prices: {
@@ -342,7 +342,7 @@ export default function ProductsPage() {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredProducts.map((product) => {
                 const primaryPrice = product.product_prices.find(p => p.active) || product.product_prices[0]
-                const artistName = product.releases?.release_artists?.[0]?.artists?.name || 'Unknown Artist'
+                const artistName = product.releases?.release_artists?.[0]?.artists?.[0]?.name || 'Unknown Artist'
                 
                 return (
                   <tr key={product.id} className="hover:bg-gray-50">

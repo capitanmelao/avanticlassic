@@ -22,7 +22,7 @@ interface Release {
   release_artists: {
     artists: {
       name: string
-    }
+    }[]
   }[]
 }
 
@@ -549,7 +549,7 @@ export default function EditProductPage() {
                   <option value="">Select a release (optional)</option>
                   {releases.map((release) => (
                     <option key={release.id} value={release.id}>
-                      {release.title} - {release.release_artists?.[0]?.artists?.name || 'Unknown Artist'}
+                      {release.title} - {release.release_artists?.[0]?.artists?.[0]?.name || 'Unknown Artist'}
                     </option>
                   ))}
                 </select>
