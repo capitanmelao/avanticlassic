@@ -37,9 +37,9 @@ interface Release {
 
 async function getRelease(id: string) {
   try {
-    // Use relative URL to avoid port issues
+    // Use absolute URL for production or relative URL for development
     const baseUrl = process.env.NODE_ENV === 'production' 
-      ? process.env.NEXT_PUBLIC_SITE_URL 
+      ? 'https://avanticlassic.vercel.app'
       : '';
     const res = await fetch(`${baseUrl}/api/releases/${encodeURIComponent(id)}`, {
       cache: 'no-store'
