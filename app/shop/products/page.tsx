@@ -35,18 +35,18 @@ async function fetchProducts(filters: any = {}) {
       .select(`
         *,
         product_prices(*),
-        releases!inner(
+        releases(
           id,
           title,
           image_url,
           catalog_number,
-          release_artists!inner(
-            artists!inner(
+          release_artists(
+            artists(
               name
             )
           )
         )
-      `)
+      `, { count: 'exact' })
       .eq('status', 'active')
     
     // Apply filters
@@ -80,7 +80,7 @@ async function fetchProducts(filters: any = {}) {
     
     // Apply pagination
     const page = filters.page || 1
-    const limit = 12
+    const limit = 24  // Increased from 12 to show more products
     const from = (page - 1) * limit
     const to = from + limit - 1
     query = query.range(from, to)
@@ -425,7 +425,7 @@ function ProductsContent() {
         )}
 
         {/* Pagination */}
-        {total > 12 && (
+        {total > 24 && (
           <div className="flex justify-center mt-12">
             <div className="flex items-center gap-2">
               <Button 
@@ -436,9 +436,9 @@ function ProductsContent() {
               >
                 Previous
               </Button>
-              {Array.from({ length: Math.ceil(total / 12) }, (_, i) => {
+              {Array.from({ length: Math.ceil(total / 24) }, (_, i) => {
                 const page = i + 1
-                if (page === 1 || page === Math.ceil(total / 12) || Math.abs(page - filters.page) <= 1) {
+                if (page === 1 || page === Math.ceil(total / 24) || Math.abs(page - filters.page) <= 1) {
                   return (
                     <Button 
                       key={page}
@@ -458,7 +458,7 @@ function ProductsContent() {
               <Button 
                 variant="outline" 
                 size="sm" 
-                disabled={filters.page === Math.ceil(total / 12)}
+                disabled={filters.page === Math.ceil(total / 24)}
                 onClick={() => setFilters(prev => ({ ...prev, page: prev.page + 1 }))}
               >
                 Next
