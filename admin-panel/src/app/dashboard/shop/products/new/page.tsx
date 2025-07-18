@@ -147,7 +147,8 @@ export default function NewProductPage() {
     }
   }
 
-  const handleImageUpload = (imageUrl: string, _imagePath: string) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleImageUpload = (imageUrl: string, _path: string) => {
     setFormData(prev => ({
       ...prev,
       images: [...prev.images, imageUrl]
