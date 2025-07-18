@@ -177,7 +177,7 @@ export const migrateReleasesToProducts = async (): Promise<{
         format, 
         image_url, 
         catalog_number,
-        translations
+        description
       `)
       .order('id')
 
@@ -187,7 +187,7 @@ export const migrateReleasesToProducts = async (): Promise<{
 
     // Convert each release to product
     for (const release of releases || []) {
-      const description = release.translations?.en?.description || 
+      const description = release.description || 
                          `${release.title} - ${release.format} release`
 
       const result = await createOrUpdateProductFromRelease(release.id, {
