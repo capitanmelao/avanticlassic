@@ -77,12 +77,6 @@ export default function OrderDetailPage() {
     }
   }, [status, router])
 
-  useEffect(() => {
-    if (params.id) {
-      loadOrder()
-    }
-  }, [params.id, loadOrder])
-
   const loadOrder = useCallback(async () => {
     try {
       setLoading(true)
@@ -127,6 +121,12 @@ export default function OrderDetailPage() {
       setLoading(false)
     }
   }, [params.id])
+
+  useEffect(() => {
+    if (params.id) {
+      loadOrder()
+    }
+  }, [params.id, loadOrder])
 
   // const updateOrderStatus = async (field: string, value: string) => {
   //   if (!order) return

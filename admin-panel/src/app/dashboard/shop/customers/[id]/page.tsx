@@ -75,12 +75,6 @@ export default function CustomerDetailPage() {
     }
   }, [status, router])
 
-  useEffect(() => {
-    if (params.id) {
-      loadCustomer()
-    }
-  }, [params.id, loadCustomer])
-
   const loadCustomer = useCallback(async () => {
     try {
       setLoading(true)
@@ -194,6 +188,12 @@ export default function CustomerDetailPage() {
       setLoading(false)
     }
   }, [params.id])
+
+  useEffect(() => {
+    if (params.id) {
+      loadCustomer()
+    }
+  }, [params.id, loadCustomer])
 
   const formatPrice = (amount: number) => {
     return new Intl.NumberFormat('en-US', {

@@ -72,12 +72,6 @@ export default function ProductDetailPage() {
     }
   }, [status, router])
 
-  useEffect(() => {
-    if (params.id) {
-      loadProduct()
-    }
-  }, [params.id, loadProduct])
-
   const loadProduct = useCallback(async () => {
     try {
       setLoading(true)
@@ -129,6 +123,12 @@ export default function ProductDetailPage() {
       setLoading(false)
     }
   }, [params.id])
+
+  useEffect(() => {
+    if (params.id) {
+      loadProduct()
+    }
+  }, [params.id, loadProduct])
 
   const deleteProduct = async () => {
     if (!product || !confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
