@@ -48,8 +48,6 @@ async function fetchProducts(filters: any = {}) {
         )
       `)
       .eq('status', 'active')
-      .order('sort_order', { ascending: true })
-      .order('created_at', { ascending: false })
     
     // Apply filters
     if (filters.format && filters.format !== 'all') {
@@ -57,7 +55,27 @@ async function fetchProducts(filters: any = {}) {
     }
     
     if (filters.search) {
-      query = query.or(`name.ilike.%${filters.search}%,releases.title.ilike.%${filters.search}%,releases.release_artists.artists.name.ilike.%${filters.search}%`)
+      query = query.or(`name.ilike.%${filters.search}%,releases.title.ilike.%${filters.search}%`)
+    }
+    
+    // Apply sorting
+    switch (filters.sort) {
+      case 'oldest':
+        query = query.order('created_at', { ascending: true })
+        break
+      case 'price-low':
+        query = query.order('product_prices.amount', { ascending: true })
+        break
+      case 'price-high':
+        query = query.order('product_prices.amount', { ascending: false })
+        break
+      case 'name':
+        query = query.order('releases.title', { ascending: true })
+        break
+      case 'newest':
+      default:
+        query = query.order('created_at', { ascending: false })
+        break
     }
     
     // Apply pagination
@@ -288,20 +306,16 @@ function ProductsContent() {
     setFilters(prev => ({ ...prev, format: value, page: 1 }))
   }
   
+  const handleSortChange = (value: string) => {
+    setFilters(prev => ({ ...prev, sort: value, page: 1 }))
+  }
+  
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <h1 className="font-playfair text-3xl md:text-4xl font-bold">
-                Classical Music Collection
-              </h1>
-              <p className="text-gray-600 mt-2">
-                Discover our complete catalog of premium classical recordings
-              </p>
-            </div>
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-500">
                 {total} products
@@ -332,25 +346,14 @@ function ProductsContent() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Formats</SelectItem>
-                  <SelectItem value="Hybrid SACD">Hybrid SACD</SelectItem>
-                  <SelectItem value="CD">CD</SelectItem>
-                  <SelectItem value="Digital">Digital</SelectItem>
+                  <SelectItem value="hybrid_sacd">Hybrid SACD</SelectItem>
+                  <SelectItem value="cd">CD</SelectItem>
+                  <SelectItem value="sacd">SACD</SelectItem>
                 </SelectContent>
               </Select>
 
-              <Select defaultValue="all">
-                <SelectTrigger className="w-[140px]">
-                  <SelectValue placeholder="Price" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Prices</SelectItem>
-                  <SelectItem value="under-15">Under €15</SelectItem>
-                  <SelectItem value="15-20">€15 - €20</SelectItem>
-                  <SelectItem value="over-20">Over €20</SelectItem>
-                </SelectContent>
-              </Select>
 
-              <Select defaultValue="newest">
+              <Select value={filters.sort} onValueChange={handleSortChange}>
                 <SelectTrigger className="w-[140px]">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
@@ -422,25 +425,47 @@ function ProductsContent() {
         )}
 
         {/* Pagination */}
-        <div className="flex justify-center mt-12">
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" disabled>
-              Previous
-            </Button>
-            <Button variant="outline" size="sm" className="bg-primary text-white">
-              1
-            </Button>
-            <Button variant="outline" size="sm">
-              2
-            </Button>
-            <Button variant="outline" size="sm">
-              3
-            </Button>
-            <Button variant="outline" size="sm">
-              Next
-            </Button>
+        {total > 12 && (
+          <div className="flex justify-center mt-12">
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                disabled={filters.page === 1}
+                onClick={() => setFilters(prev => ({ ...prev, page: prev.page - 1 }))}
+              >
+                Previous
+              </Button>
+              {Array.from({ length: Math.ceil(total / 12) }, (_, i) => {
+                const page = i + 1
+                if (page === 1 || page === Math.ceil(total / 12) || Math.abs(page - filters.page) <= 1) {
+                  return (
+                    <Button 
+                      key={page}
+                      variant="outline" 
+                      size="sm" 
+                      className={filters.page === page ? "bg-primary text-white" : ""}
+                      onClick={() => setFilters(prev => ({ ...prev, page }))}
+                    >
+                      {page}
+                    </Button>
+                  )
+                } else if (Math.abs(page - filters.page) === 2) {
+                  return <span key={page} className="px-2">...</span>
+                }
+                return null
+              })}
+              <Button 
+                variant="outline" 
+                size="sm" 
+                disabled={filters.page === Math.ceil(total / 12)}
+                onClick={() => setFilters(prev => ({ ...prev, page: prev.page + 1 }))}
+              >
+                Next
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )
