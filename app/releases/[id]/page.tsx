@@ -1099,7 +1099,7 @@ export default function ReleaseDetailPage({ params }: { params: { id: string } }
         // Try to get release from API
         let releaseData = await getRelease(params.id)
         
-        // If API fails, try to find in fallback data by ID or URL
+        // If API fails, try to find in fallback data by ID or URL, but also try to fetch reviews separately
         if (!releaseData) {
           const decodedId = decodeURIComponent(params.id)
           releaseData = fallbackReleases.find((r) => 
@@ -1108,6 +1108,21 @@ export default function ReleaseDetailPage({ params }: { params: { id: string } }
             r.id === decodedId || 
             r.url === decodedId
           )
+          
+          // If we found fallback data, try to get reviews from API
+          if (releaseData) {
+            try {
+              const reviewsResponse = await fetch(`/api/releases/${encodeURIComponent(params.id)}`)
+              if (reviewsResponse.ok) {
+                const apiData = await reviewsResponse.json()
+                if (apiData.reviews && apiData.reviews.length > 0) {
+                  releaseData.reviews = apiData.reviews
+                }
+              }
+            } catch (error) {
+              console.error('Failed to fetch reviews separately:', error)
+            }
+          }
         }
         
         setRelease(releaseData)
