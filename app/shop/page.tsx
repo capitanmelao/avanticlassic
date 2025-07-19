@@ -241,14 +241,6 @@ export default function ShopPage() {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-12">
-          <div className="text-center mb-12">
-            <h1 className="font-playfair text-4xl md:text-5xl font-bold mb-4">
-              Shop
-            </h1>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Discover and purchase our classical music collection
-            </p>
-          </div>
           <div className="flex items-center justify-center py-20">
             <Loader2 className="h-8 w-8 animate-spin" />
             <span className="ml-2 text-lg">Loading products...</span>
@@ -260,22 +252,8 @@ export default function ShopPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Simple Header Section */}
-      <section className="py-12">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h1 className="font-playfair text-4xl md:text-5xl font-bold mb-4">
-              Shop
-            </h1>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Discover and purchase our classical music collection
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* Products Grid */}
-      <section className="pb-16">
+      <section className="py-12">
         <div className="container mx-auto px-4">
           {displayedProducts.length > 0 ? (
             <>
