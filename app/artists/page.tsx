@@ -71,7 +71,7 @@ const fallbackArtists: Artist[] = [
     name: "Manu Comté",
     instrument: "Bandoneon",
     imageUrl: "/images/artists/4-800.jpeg",
-    url: "Manu-Comté",
+    url: "Manu-Comte",
     bio: "Manu Comté is a French bandoneon player who brings contemporary innovation to traditional tango music. His collaborations span classical, jazz, and world music, creating a unique sound that bridges cultures and genres.",
     facebook: "https://www.facebook.com/manu.comte"
   },

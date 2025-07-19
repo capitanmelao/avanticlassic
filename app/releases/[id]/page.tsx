@@ -832,7 +832,7 @@ Omega
     artists: "Manu Comté, B'Strings Quintet",
     format: "1 Hybrid SACD",
     imageUrl: "/images/releases/25.jpeg",
-    url: "Homilia-Manu-Comté-B'Strings-Quintet",
+    url: "Homilia-Manu-Comte-B'Strings-Quintet",
     description: "Contemporary tango compositions featuring bandoneon and strings in innovative arrangements."
   },
   {
@@ -1257,7 +1257,7 @@ function ArtistLinks({ artistsString }: { artistsString: string }) {
     { name: "Martha Argerich", url: "Martha-Argerich" },
     { name: "Evgeni Bozhanov", url: "Evgeni-Bozhanov" },
     { name: "Pedro Burmester", url: "Pedro-Burmester" },
-    { name: "Manu Comté", url: "Manu-Comté" },
+    { name: "Manu Comté", url: "Manu-Comte" },
     { name: "Myriam Fuks", url: "Myriam-Fuks" },
     { name: "Adriel Gomez-Mansur", url: "Adriel-Gomez-Mansur" },
     { name: "Adriel Gomez Mansur", url: "Adriel-Gomez-Mansur" },

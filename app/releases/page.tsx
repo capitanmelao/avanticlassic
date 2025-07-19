@@ -262,7 +262,7 @@ const fallbackReleases: Release[] = [
     artists: "Manu Comté, B'Strings Quintet",
     format: "1 Hybrid SACD",
     imageUrl: "/images/releases/25.jpeg",
-    url: "Homilia-Manu-Comté-B'Strings-Quintet",
+    url: "Homilia-Manu-Comte-B'Strings-Quintet",
     description: "Contemporary tango compositions featuring bandoneon and strings.",
   },
   {
