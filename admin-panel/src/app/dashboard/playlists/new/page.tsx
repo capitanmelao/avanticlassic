@@ -11,7 +11,7 @@ interface FormData {
   slug: string
   title: string
   description: string
-  category: 'by_artist' | 'by_composer' | ''
+  category: 'by_artist' | 'by_composer' | 'by_theme' | ''
   image_url: string
   spotify_url: string
   apple_music_url: string
@@ -321,6 +321,7 @@ export default function NewPlaylistPage() {
                   <option value="">Select category...</option>
                   <option value="by_artist">By Artist</option>
                   <option value="by_composer">By Composer</option>
+                  <option value="by_theme">By Theme</option>
                 </select>
               </div>
 
