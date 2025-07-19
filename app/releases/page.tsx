@@ -1,11 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { Loader2, ArrowUp } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import SearchFilter from "@/components/shared/search-filter"
-import PaginationControls from "@/components/shared/pagination-controls"
 
 interface Release {
   id: string
@@ -23,7 +24,7 @@ async function getReleases() {
     const baseUrl = process.env.NODE_ENV === 'production' 
       ? process.env.NEXT_PUBLIC_SITE_URL || ''
       : '';
-    const res = await fetch(`${baseUrl}/api/releases?limit=50`, {
+    const res = await fetch(`${baseUrl}/api/releases?limit=100`, {
       cache: 'no-store'
     })
     if (!res.ok) {
@@ -376,18 +377,20 @@ const fallbackReleases: Release[] = [
 ]
 
 export default function ReleasesPage() {
-  const [releases, setReleases] = useState<Release[]>([])
+  // State management
+  const [allReleases, setAllReleases] = useState<Release[]>([])
   const [filteredReleases, setFilteredReleases] = useState<Release[]>([])
+  const [displayedReleases, setDisplayedReleases] = useState<Release[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedArtist, setSelectedArtist] = useState("all")
-  const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+  const [showScrollTop, setShowScrollTop] = useState(false)
   
-  const releasesPerPage = 12
-  const totalPages = Math.ceil(filteredReleases.length / releasesPerPage)
-  const startIndex = (currentPage - 1) * releasesPerPage
-  const endIndex = startIndex + releasesPerPage
-  const currentReleases = filteredReleases.slice(startIndex, endIndex)
+  // Refs
+  const loadMoreRef = useRef<HTMLDivElement>(null)
+  const releasesPerLoad = 16
 
   const filterOptions = [
     { value: "all", label: "All Artists" },
@@ -403,27 +406,24 @@ export default function ReleasesPage() {
     { value: "Dietrich Henschel", label: "Dietrich Henschel" },
   ]
 
-  useEffect(() => {
-    const fetchReleases = async () => {
-      try {
-        const { releases: apiReleases } = await getReleases()
-        const releasesToUse = apiReleases.length > 0 ? apiReleases : fallbackReleases
-        setReleases(releasesToUse)
-        setFilteredReleases(releasesToUse)
-      } catch (error) {
-        console.error('Error fetching releases:', error)
-        setReleases(fallbackReleases)
-        setFilteredReleases(fallbackReleases)
-      } finally {
-        setLoading(false)
-      }
+  // Fetch all releases
+  const fetchReleases = useCallback(async () => {
+    try {
+      setLoading(true)
+      const { releases: apiReleases } = await getReleases()
+      const releasesToUse = apiReleases.length > 0 ? apiReleases : fallbackReleases
+      setAllReleases(releasesToUse)
+    } catch (error) {
+      console.error('Error fetching releases:', error)
+      setAllReleases(fallbackReleases)
+    } finally {
+      setLoading(false)
     }
-
-    fetchReleases()
   }, [])
 
+  // Filter releases based on search and artist
   useEffect(() => {
-    let filtered = releases
+    let filtered = allReleases
 
     // Filter by artist
     if (selectedArtist && selectedArtist !== "all") {
@@ -441,8 +441,58 @@ export default function ReleasesPage() {
     }
 
     setFilteredReleases(filtered)
-    setCurrentPage(1) // Reset to first page when filters change
-  }, [releases, selectedArtist, searchTerm])
+    // Reset displayed releases when filters change
+    setDisplayedReleases(filtered.slice(0, releasesPerLoad))
+    setHasMore(filtered.length > releasesPerLoad)
+  }, [allReleases, selectedArtist, searchTerm])
+
+  // Load more releases
+  const loadMoreReleases = useCallback(() => {
+    if (loadingMore || !hasMore) return
+    
+    setLoadingMore(true)
+    
+    setTimeout(() => {
+      const currentLength = displayedReleases.length
+      const nextBatch = filteredReleases.slice(currentLength, currentLength + releasesPerLoad)
+      setDisplayedReleases(prev => [...prev, ...nextBatch])
+      setHasMore(currentLength + releasesPerLoad < filteredReleases.length)
+      setLoadingMore(false)
+    }, 100) // Reduced delay for faster loading
+  }, [filteredReleases, displayedReleases, loadingMore, hasMore])
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore) {
+          loadMoreReleases()
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current)
+    }
+
+    return () => observer.disconnect()
+  }, [loadMoreReleases, hasMore, loadingMore])
+
+  // Scroll to top functionality
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 500)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Initial load
+  useEffect(() => {
+    fetchReleases()
+  }, [fetchReleases])
 
   const handleSearchChange = (search: string) => {
     setSearchTerm(search)
@@ -452,22 +502,23 @@ export default function ReleasesPage() {
     setSelectedArtist(filter)
   }
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page)
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   if (loading) {
     return (
       <div className="container px-4 md:px-6 py-12 md:py-16">
-        <h1 className="text-4xl md:text-5xl font-bold text-center mb-8 text-gray-900 dark:text-gray-50">Our Releases</h1>
-        <div className="text-center py-8">Loading releases...</div>
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="h-8 w-8 animate-spin" />
+          <span className="ml-2 text-lg">Loading releases...</span>
+        </div>
       </div>
     )
   }
 
   return (
     <div className="container px-4 md:px-6 py-12 md:py-16">
-      <h1 className="text-4xl md:text-5xl font-bold text-center mb-8 text-gray-900 dark:text-gray-50">Our Releases</h1>
       <SearchFilter
         searchPlaceholder="Search releases..."
         filterOptions={filterOptions}
@@ -477,25 +528,59 @@ export default function ReleasesPage() {
         searchValue={searchTerm}
         filterValue={selectedArtist}
       />
+      
       <section className="py-8">
-        {currentReleases.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {currentReleases.map((release) => (
-              <ReleaseCard key={release.id} release={release} />
-            ))}
-          </div>
+        {displayedReleases.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+              {displayedReleases.map((release) => (
+                <ReleaseCard key={release.id} release={release} />
+              ))}
+            </div>
+            
+            {/* Loading more indicator */}
+            <div ref={loadMoreRef} className="py-8">
+              {loadingMore && (
+                <div className="flex items-center justify-center">
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                  <span className="ml-2">Loading more releases...</span>
+                </div>
+              )}
+              {!hasMore && displayedReleases.length > releasesPerLoad && (
+                <div className="text-center text-muted-foreground">
+                  You've seen all {filteredReleases.length} releases
+                </div>
+              )}
+            </div>
+          </>
         ) : (
-          <div className="text-center py-8 text-gray-600 dark:text-gray-400">
-            No releases found matching your search criteria.
+          <div className="text-center py-20">
+            <h3 className="text-2xl font-semibold mb-4">No releases found</h3>
+            <p className="text-muted-foreground mb-6">
+              Try adjusting your search or filter criteria
+            </p>
+            <Button 
+              onClick={() => {
+                setSearchTerm("")
+                setSelectedArtist("all")
+              }}
+              variant="outline"
+            >
+              Clear Filters
+            </Button>
           </div>
         )}
       </section>
-      {totalPages > 1 && (
-        <PaginationControls
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+
+      {/* Scroll to top button */}
+      {showScrollTop && (
+        <Button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 z-50 rounded-full p-3 shadow-lg"
+          size="icon"
+        >
+          <ArrowUp className="h-5 w-5" />
+        </Button>
       )}
     </div>
   )

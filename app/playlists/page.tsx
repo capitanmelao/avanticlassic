@@ -1,8 +1,11 @@
+"use client"
+
+import { useState, useEffect, useCallback, useRef } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { Loader2, ArrowUp, ExternalLinkIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { ExternalLinkIcon } from "lucide-react"
 
 interface Playlist {
   id: number
@@ -18,114 +21,40 @@ interface Playlist {
   track_count: number
 }
 
-// Category navigation component
-function CategoryNavigation() {
-  const categories = [
-    { name: "BY ARTIST", href: "#by-artist" },
-    { name: "BY COMPOSERS", href: "#by-composers" },
-    { name: "BY THEME", href: "#by-theme" },
-  ]
-
-  return (
-    <nav className="w-full bg-gray-100 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 py-4">
-      <div className="container px-4 md:px-6">
-        <div className="flex justify-center space-x-8">
-          {categories.map((category) => (
-            <Link
-              key={category.name}
-              href={category.href}
-              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors"
-            >
-              {category.name}
-            </Link>
-          ))}
-        </div>
-      </div>
-    </nav>
-  )
+// Fetch all playlists from API
+async function getAllPlaylists(): Promise<Playlist[]> {
+  try {
+    const baseUrl = process.env.NODE_ENV === 'production' 
+      ? process.env.NEXT_PUBLIC_SITE_URL || ''
+      : '';
+    const response = await fetch(`${baseUrl}/api/playlists?lang=en`, {
+      cache: 'no-store'
+    })
+    
+    if (!response.ok) {
+      console.error('API response not ok:', response.status, response.statusText)
+      return []
+    }
+    
+    const playlists: Playlist[] = await response.json()
+    return playlists || []
+  } catch (error) {
+    console.error('Error fetching playlists:', error)
+    return []
+  }
 }
 
-// Artist playlist card component
-function ArtistPlaylistCard({ playlist }: { playlist: Playlist }) {
-  return (
-    <Card className="group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 bg-white dark:bg-gray-800">
-      <CardContent className="p-0">
-        <div className="relative w-full aspect-square">
-          {playlist.image_url ? (
-            <Image
-              src={playlist.image_url}
-              width={300}
-              height={300}
-              alt={playlist.title}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-              <span className="text-gray-400">No Image</span>
-            </div>
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
-            <h3 className="text-xl font-bold text-white">{playlist.title}</h3>
-          </div>
-        </div>
-        <div className="p-4">
-          {playlist.description && (
-            <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2 min-h-[2.5em] mb-4">
-              {playlist.description}
-            </p>
-          )}
-          <div className="flex justify-center gap-4">
-            {playlist.spotify_url && (
-              <Link
-                href={playlist.spotify_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="opacity-70 hover:opacity-100 transition-opacity bg-gray-100 dark:bg-gray-700 p-2 rounded-full"
-                aria-label={`Listen to ${playlist.title} on Spotify`}
-              >
-                <ExternalLinkIcon className="h-4 w-4 text-gray-600 dark:text-gray-300" />
-              </Link>
-            )}
-            {playlist.apple_music_url && (
-              <Link
-                href={playlist.apple_music_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="opacity-70 hover:opacity-100 transition-opacity bg-gray-100 dark:bg-gray-700 p-2 rounded-full"
-                aria-label={`Listen to ${playlist.title} on Apple Music`}
-              >
-                <ExternalLinkIcon className="h-4 w-4 text-gray-600 dark:text-gray-300" />
-              </Link>
-            )}
-            {playlist.youtube_url && (
-              <Link
-                href={playlist.youtube_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="opacity-70 hover:opacity-100 transition-opacity bg-gray-100 dark:bg-gray-700 p-2 rounded-full"
-                aria-label={`Listen to ${playlist.title} on YouTube`}
-              >
-                <ExternalLinkIcon className="h-4 w-4 text-gray-600 dark:text-gray-300" />
-              </Link>
-            )}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
-
-// Simple playlist card for composers and themes
+// Unified playlist card component
 function PlaylistCard({ playlist }: { playlist: Playlist }) {
   return (
-    <Card className="group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 bg-white dark:bg-gray-800">
+    <Card className="group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800 cursor-pointer hover:scale-105">
       <CardContent className="p-0">
         <div className="relative w-full aspect-square">
           {playlist.image_url ? (
             <Image
               src={playlist.image_url}
-              width={300}
-              height={300}
+              width={400}
+              height={400}
               alt={playlist.title}
               className="w-full h-full object-cover"
             />
@@ -141,7 +70,8 @@ function PlaylistCard({ playlist }: { playlist: Playlist }) {
                   href={playlist.spotify_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2 rounded-full transition-colors"
+                  className="bg-green-500/80 hover:bg-green-500 backdrop-blur-sm text-white p-2 rounded-full transition-colors"
+                  aria-label={`Listen to ${playlist.title} on Spotify`}
                 >
                   <ExternalLinkIcon className="w-4 h-4" />
                 </Link>
@@ -151,7 +81,8 @@ function PlaylistCard({ playlist }: { playlist: Playlist }) {
                   href={playlist.apple_music_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2 rounded-full transition-colors"
+                  className="bg-black/80 hover:bg-black backdrop-blur-sm text-white p-2 rounded-full transition-colors"
+                  aria-label={`Listen to ${playlist.title} on Apple Music`}
                 >
                   <ExternalLinkIcon className="w-4 h-4" />
                 </Link>
@@ -161,7 +92,8 @@ function PlaylistCard({ playlist }: { playlist: Playlist }) {
                   href={playlist.youtube_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2 rounded-full transition-colors"
+                  className="bg-red-500/80 hover:bg-red-500 backdrop-blur-sm text-white p-2 rounded-full transition-colors"
+                  aria-label={`Listen to ${playlist.title} on YouTube`}
                 >
                   <ExternalLinkIcon className="w-4 h-4" />
                 </Link>
@@ -169,17 +101,17 @@ function PlaylistCard({ playlist }: { playlist: Playlist }) {
             </div>
           </div>
         </div>
-        <div className="p-4">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-50 mb-2">
+        <div className="p-4 text-center">
+          <h3 className="font-semibold text-lg line-clamp-2 min-h-[2.5em] text-gray-900 dark:text-gray-50 group-hover:text-primary transition-colors">
             {playlist.title}
           </h3>
           {playlist.description && (
-            <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+            <p className="text-sm text-muted-foreground line-clamp-2 min-h-[2.5em] mt-2">
               {playlist.description}
             </p>
           )}
-          <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
-            {playlist.track_count} tracks
+          <p className="text-xs text-muted-foreground mt-1">
+            {playlist.track_count} tracks • {playlist.category.replace('by_', '').replace('_', ' ')}
           </p>
         </div>
       </CardContent>
@@ -187,114 +119,149 @@ function PlaylistCard({ playlist }: { playlist: Playlist }) {
   )
 }
 
-async function getPlaylists(): Promise<{
-  byArtist: Playlist[]
-  byComposer: Playlist[]
-  byTheme: Playlist[]
-}> {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
-    
-    const response = await fetch(`${baseUrl}/api/playlists?lang=en`, {
-      next: { revalidate: 3600 }
-    })
-    
-    if (!response.ok) {
-      console.error('Failed to fetch playlists:', response.status)
-      return { byArtist: [], byComposer: [], byTheme: [] }
+export default function PlaylistsPage() {
+  // State management
+  const [allPlaylists, setAllPlaylists] = useState<Playlist[]>([])
+  const [displayedPlaylists, setDisplayedPlaylists] = useState<Playlist[]>([])
+  const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+  const [showScrollTop, setShowScrollTop] = useState(false)
+  
+  // Refs
+  const loadMoreRef = useRef<HTMLDivElement>(null)
+  const playlistsPerLoad = 16
+  
+  // Fetch all playlists
+  const fetchPlaylists = useCallback(async () => {
+    try {
+      setLoading(true)
+      const playlists = await getAllPlaylists()
+      setAllPlaylists(playlists)
+    } catch (error) {
+      console.error('Error fetching playlists:', error)
+    } finally {
+      setLoading(false)
     }
-    
-    const playlists: Playlist[] = await response.json()
-    
-    return {
-      byArtist: playlists.filter(p => p.category === 'by_artist'),
-      byComposer: playlists.filter(p => p.category === 'by_composer'),
-      byTheme: playlists.filter(p => p.category === 'by_theme')
-    }
-  } catch (error) {
-    console.error('Error fetching playlists:', error)
-    return { byArtist: [], byComposer: [], byTheme: [] }
-  }
-}
+  }, [])
 
-export default async function PlaylistsPage() {
-  const { byArtist, byComposer, byTheme } = await getPlaylists()
+  // Initialize displayed playlists when allPlaylists changes
+  useEffect(() => {
+    if (allPlaylists.length > 0) {
+      setDisplayedPlaylists(allPlaylists.slice(0, playlistsPerLoad))
+      setHasMore(allPlaylists.length > playlistsPerLoad)
+    }
+  }, [allPlaylists])
+  
+  // Load more playlists
+  const loadMorePlaylists = useCallback(() => {
+    if (loadingMore || !hasMore) return
+    
+    setLoadingMore(true)
+    
+    setTimeout(() => {
+      const currentLength = displayedPlaylists.length
+      const nextBatch = allPlaylists.slice(currentLength, currentLength + playlistsPerLoad)
+      setDisplayedPlaylists(prev => [...prev, ...nextBatch])
+      setHasMore(currentLength + playlistsPerLoad < allPlaylists.length)
+      setLoadingMore(false)
+    }, 100) // Reduced delay for faster loading
+  }, [allPlaylists, displayedPlaylists, loadingMore, hasMore])
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore) {
+          loadMorePlaylists()
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current)
+    }
+
+    return () => observer.disconnect()
+  }, [loadMorePlaylists, hasMore, loadingMore])
+
+  // Scroll to top functionality
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 500)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Initial load
+  useEffect(() => {
+    fetchPlaylists()
+  }, [fetchPlaylists])
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  if (loading) {
+    return (
+      <div className="container px-4 md:px-6 py-12 md:py-16">
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="h-8 w-8 animate-spin" />
+          <span className="ml-2 text-lg">Loading playlists...</span>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="flex flex-col">
-      {/* Hero Section */}
-      <section className="w-full py-8 md:py-12 lg:py-16 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 text-center relative overflow-hidden">
-        <div className="container px-4 md:px-6 relative z-10">
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 text-gray-900 dark:text-gray-50">
-            OUR PLAYLISTS,
-            <br />
-            YOUR MOMENT
-          </h1>
-          <Button
-            asChild
-            className="mt-8 px-6 py-2 text-base bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-          >
-            <Link href="#by-artist">Explore Playlists</Link>
-          </Button>
-        </div>
-      </section>
-
-      {/* Category Navigation */}
-      <CategoryNavigation />
-
-      {/* By Artist Section */}
-      <section id="by-artist" className="py-16 md:py-24 bg-white dark:bg-gray-950">
-        <div className="container px-4 md:px-6">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-50 mb-12">BY ARTIST</h2>
-          {byArtist.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-8">
-              {byArtist.map((playlist) => (
-                <ArtistPlaylistCard key={playlist.id} playlist={playlist} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-600 dark:text-gray-400">No artist playlists available yet.</p>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* By Composers Section */}
-      <section id="by-composers" className="py-16 md:py-24 bg-gray-50 dark:bg-gray-900">
-        <div className="container px-4 md:px-6">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-50 mb-12">BY COMPOSERS</h2>
-          {byComposer.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {byComposer.map((playlist) => (
+    <div className="container px-4 md:px-6 py-12 md:py-16">
+      <section className="py-8">
+        {displayedPlaylists.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+              {displayedPlaylists.map((playlist) => (
                 <PlaylistCard key={playlist.id} playlist={playlist} />
               ))}
             </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-600 dark:text-gray-400">No composer playlists available yet.</p>
+            
+            {/* Loading more indicator */}
+            <div ref={loadMoreRef} className="py-8">
+              {loadingMore && (
+                <div className="flex items-center justify-center">
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                  <span className="ml-2">Loading more playlists...</span>
+                </div>
+              )}
+              {!hasMore && displayedPlaylists.length > playlistsPerLoad && (
+                <div className="text-center text-muted-foreground">
+                  You've seen all {allPlaylists.length} playlists
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </>
+        ) : (
+          <div className="text-center py-20">
+            <h3 className="text-2xl font-semibold mb-4">No playlists found</h3>
+            <p className="text-muted-foreground mb-6">
+              Playlists will appear here when they become available
+            </p>
+          </div>
+        )}
       </section>
 
-      {/* By Theme Section */}
-      <section id="by-theme" className="py-16 md:py-24 bg-white dark:bg-gray-950">
-        <div className="container px-4 md:px-6">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-50 mb-12">BY THEME</h2>
-          {byTheme.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
-              {byTheme.map((playlist) => (
-                <PlaylistCard key={playlist.id} playlist={playlist} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-600 dark:text-gray-400">No theme playlists available yet.</p>
-            </div>
-          )}
-        </div>
-      </section>
+      {/* Scroll to top button */}
+      {showScrollTop && (
+        <Button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 z-50 rounded-full p-3 shadow-lg"
+          size="icon"
+        >
+          <ArrowUp className="h-5 w-5" />
+        </Button>
+      )}
     </div>
   )
 }

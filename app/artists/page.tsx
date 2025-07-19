@@ -1,11 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { Loader2, ArrowUp } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import SearchFilter from "@/components/shared/search-filter"
-import PaginationControls from "@/components/shared/pagination-controls"
 
 interface Artist {
   id: string
@@ -25,13 +26,18 @@ async function getArtists() {
   try {
     // Use relative URL to avoid port issues
     const baseUrl = process.env.NODE_ENV === 'production' 
-      ? process.env.NEXT_PUBLIC_SITE_URL 
+      ? process.env.NEXT_PUBLIC_SITE_URL || ''
       : '';
-    const res = await fetch(`${baseUrl}/api/artists?limit=24`, {
+    const res = await fetch(`${baseUrl}/api/artists?limit=100`, {
       cache: 'no-store'
     })
-    if (!res.ok) return { artists: [] }
-    return await res.json()
+    if (!res.ok) {
+      console.error('API response not ok:', res.status, res.statusText)
+      return { artists: [] }
+    }
+    const data = await res.json()
+    console.log('API response:', data.artists?.length || 0, 'artists')
+    return data
   } catch (error) {
     console.error('Error fetching artists:', error)
     return { artists: [] }
@@ -211,40 +217,38 @@ const fallbackArtists: Artist[] = [
 ]
 
 export default function ArtistsPage() {
-  const [artists, setArtists] = useState<Artist[]>([])
+  // State management
+  const [allArtists, setAllArtists] = useState<Artist[]>([])
   const [filteredArtists, setFilteredArtists] = useState<Artist[]>([])
+  const [displayedArtists, setDisplayedArtists] = useState<Artist[]>([])
   const [searchTerm, setSearchTerm] = useState("")
-  const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+  const [showScrollTop, setShowScrollTop] = useState(false)
   
-  const artistsPerPage = 12
-  const totalPages = Math.ceil(filteredArtists.length / artistsPerPage)
-  const startIndex = (currentPage - 1) * artistsPerPage
-  const endIndex = startIndex + artistsPerPage
-  const currentArtists = filteredArtists.slice(startIndex, endIndex)
+  // Refs
+  const loadMoreRef = useRef<HTMLDivElement>(null)
+  const artistsPerLoad = 16
 
-
-  useEffect(() => {
-    const fetchArtists = async () => {
-      try {
-        const { artists: apiArtists } = await getArtists()
-        const artistsToUse = apiArtists.length > 0 ? apiArtists : fallbackArtists
-        setArtists(artistsToUse)
-        setFilteredArtists(artistsToUse)
-      } catch (error) {
-        console.error('Error fetching artists:', error)
-        setArtists(fallbackArtists)
-        setFilteredArtists(fallbackArtists)
-      } finally {
-        setLoading(false)
-      }
+  // Fetch all artists
+  const fetchArtists = useCallback(async () => {
+    try {
+      setLoading(true)
+      const { artists: apiArtists } = await getArtists()
+      const artistsToUse = apiArtists.length > 0 ? apiArtists : fallbackArtists
+      setAllArtists(artistsToUse)
+    } catch (error) {
+      console.error('Error fetching artists:', error)
+      setAllArtists(fallbackArtists)
+    } finally {
+      setLoading(false)
     }
-
-    fetchArtists()
   }, [])
 
+  // Filter artists based on search
   useEffect(() => {
-    let filtered = artists
+    let filtered = allArtists
 
     // Filter by search term
     if (searchTerm) {
@@ -254,54 +258,135 @@ export default function ArtistsPage() {
     }
 
     setFilteredArtists(filtered)
-    setCurrentPage(1) // Reset to first page when filters change
-  }, [artists, searchTerm])
+    // Reset displayed artists when filters change
+    setDisplayedArtists(filtered.slice(0, artistsPerLoad))
+    setHasMore(filtered.length > artistsPerLoad)
+  }, [allArtists, searchTerm])
+
+  // Load more artists
+  const loadMoreArtists = useCallback(() => {
+    if (loadingMore || !hasMore) return
+    
+    setLoadingMore(true)
+    
+    setTimeout(() => {
+      const currentLength = displayedArtists.length
+      const nextBatch = filteredArtists.slice(currentLength, currentLength + artistsPerLoad)
+      setDisplayedArtists(prev => [...prev, ...nextBatch])
+      setHasMore(currentLength + artistsPerLoad < filteredArtists.length)
+      setLoadingMore(false)
+    }, 100) // Reduced delay for faster loading
+  }, [filteredArtists, displayedArtists, loadingMore, hasMore])
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore) {
+          loadMoreArtists()
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current)
+    }
+
+    return () => observer.disconnect()
+  }, [loadMoreArtists, hasMore, loadingMore])
+
+  // Scroll to top functionality
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 500)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Initial load
+  useEffect(() => {
+    fetchArtists()
+  }, [fetchArtists])
 
   const handleSearchChange = (search: string) => {
     setSearchTerm(search)
   }
 
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page)
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   if (loading) {
     return (
       <div className="container px-4 md:px-6 py-12 md:py-16">
-        <h1 className="text-4xl md:text-5xl font-bold text-center mb-8 text-gray-900 dark:text-gray-50">Our Artists</h1>
-        <div className="text-center py-8">Loading artists...</div>
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="h-8 w-8 animate-spin" />
+          <span className="ml-2 text-lg">Loading artists...</span>
+        </div>
       </div>
     )
   }
 
   return (
     <div className="container px-4 md:px-6 py-12 md:py-16">
-      <h1 className="text-4xl md:text-5xl font-bold text-center mb-8 text-gray-900 dark:text-gray-50">Our Artists</h1>
       <SearchFilter
         searchPlaceholder="Search artists..."
         onSearchChange={handleSearchChange}
         searchValue={searchTerm}
       />
+      
       <section className="py-8">
-        {currentArtists.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {currentArtists.map((artist) => (
-              <ArtistCard key={artist.id} artist={artist} />
-            ))}
-          </div>
+        {displayedArtists.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+              {displayedArtists.map((artist) => (
+                <ArtistCard key={artist.id} artist={artist} />
+              ))}
+            </div>
+            
+            {/* Loading more indicator */}
+            <div ref={loadMoreRef} className="py-8">
+              {loadingMore && (
+                <div className="flex items-center justify-center">
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                  <span className="ml-2">Loading more artists...</span>
+                </div>
+              )}
+              {!hasMore && displayedArtists.length > artistsPerLoad && (
+                <div className="text-center text-muted-foreground">
+                  You've seen all {filteredArtists.length} artists
+                </div>
+              )}
+            </div>
+          </>
         ) : (
-          <div className="text-center py-8 text-gray-600 dark:text-gray-400">
-            No artists found matching your search criteria.
+          <div className="text-center py-20">
+            <h3 className="text-2xl font-semibold mb-4">No artists found</h3>
+            <p className="text-muted-foreground mb-6">
+              Try adjusting your search criteria
+            </p>
+            <Button 
+              onClick={() => setSearchTerm("")}
+              variant="outline"
+            >
+              Clear Search
+            </Button>
           </div>
         )}
       </section>
-      {totalPages > 1 && (
-        <PaginationControls
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+
+      {/* Scroll to top button */}
+      {showScrollTop && (
+        <Button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 z-50 rounded-full p-3 shadow-lg"
+          size="icon"
+        >
+          <ArrowUp className="h-5 w-5" />
+        </Button>
       )}
     </div>
   )
@@ -310,7 +395,7 @@ export default function ArtistsPage() {
 function ArtistCard({ artist }: { artist: Artist }) {
   return (
     <Link href={`/artists/${artist.url || artist.id}`} className="block">
-      <Card className="group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 bg-white dark:bg-gray-800">
+      <Card className="group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800 cursor-pointer hover:scale-105">
         <CardContent className="p-0">
           <Image
             src={artist.imageUrl || "/placeholder.svg"}
@@ -320,7 +405,10 @@ function ArtistCard({ artist }: { artist: Artist }) {
             className="w-full h-auto object-cover aspect-square"
           />
           <div className="p-4 text-center">
-            <h3 className="font-semibold text-lg line-clamp-2 text-gray-900 dark:text-gray-50">{artist.name}</h3>
+            <h3 className="font-semibold text-lg line-clamp-2 min-h-[2.5em] text-gray-900 dark:text-gray-50 group-hover:text-primary transition-colors">
+              {artist.name}
+            </h3>
+            <p className="text-sm text-muted-foreground mt-1">{artist.instrument}</p>
           </div>
         </CardContent>
       </Card>
