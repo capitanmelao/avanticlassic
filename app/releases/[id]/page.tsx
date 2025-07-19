@@ -37,22 +37,13 @@ interface Release {
 
 async function getRelease(id: string) {
   try {
-    // Use absolute URL for production or relative URL for development
-    const baseUrl = process.env.NODE_ENV === 'production' 
-      ? 'https://avanticlassic.vercel.app'
-      : '';
-    
-    console.log('Fetching release from:', `${baseUrl}/api/releases/${encodeURIComponent(id)}`)
+    // Check if we're on the server or client
+    const isServer = typeof window === 'undefined'
+    const baseUrl = isServer ? 'https://avanticlassic.vercel.app' : ''
     
     const res = await fetch(`${baseUrl}/api/releases/${encodeURIComponent(id)}`, {
-      cache: 'no-store',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
+      cache: 'no-store'
     })
-    
-    console.log('API Response status:', res.status, res.statusText)
     
     if (!res.ok) {
       console.error('API request failed:', res.status, res.statusText)
@@ -60,7 +51,6 @@ async function getRelease(id: string) {
     }
     
     const data = await res.json()
-    console.log('API returned data with reviews:', data.reviews ? data.reviews.length : 'no reviews')
     return data
   } catch (error) {
     console.error('Error fetching release:', error)
