@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
       .from('playlists')
       .select(`
         *,
-        playlist_translations!inner (
+        playlist_translations (
           title,
           description,
           language
@@ -29,7 +29,6 @@ export async function GET(request: NextRequest) {
           )
         )
       `)
-      .eq('playlist_translations.language', lang)
       .order('sort_order', { ascending: false })
 
     // Filter by category if provided
@@ -55,25 +54,30 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform the data to match the expected format
-    const transformedPlaylists = playlists?.map(playlist => ({
-      id: playlist.id,
-      slug: playlist.slug,
-      title: playlist.playlist_translations?.[0]?.title || playlist.title,
-      description: playlist.playlist_translations?.[0]?.description || playlist.description,
-      category: playlist.category,
-      image_url: playlist.image_url,
-      spotify_url: playlist.spotify_url,
-      apple_music_url: playlist.apple_music_url,
-      youtube_url: playlist.youtube_url,
-      featured: playlist.featured,
-      track_count: playlist.playlist_tracks?.length || 0,
-      tracks: playlist.playlist_tracks?.map(track => ({
-        id: track.id,
-        release_id: track.release_id,
-        release_title: track.releases?.title,
-        release_image: track.releases?.image_url
-      })) || []
-    })) || []
+    const transformedPlaylists = playlists?.map(playlist => {
+      // Find translation for the requested language, fallback to default title/description
+      const translation = playlist.playlist_translations?.find(t => t.language === lang)
+      
+      return {
+        id: playlist.id,
+        slug: playlist.slug,
+        title: translation?.title || playlist.title,
+        description: translation?.description || playlist.description,
+        category: playlist.category,
+        image_url: playlist.image_url,
+        spotify_url: playlist.spotify_url,
+        apple_music_url: playlist.apple_music_url,
+        youtube_url: playlist.youtube_url,
+        featured: playlist.featured,
+        track_count: playlist.playlist_tracks?.length || 0,
+        tracks: playlist.playlist_tracks?.map(track => ({
+          id: track.id,
+          release_id: track.release_id,
+          release_title: track.releases?.title,
+          release_image: track.releases?.image_url
+        })) || []
+      }
+    }) || []
 
     return NextResponse.json(transformedPlaylists)
 
