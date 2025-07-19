@@ -1244,8 +1244,8 @@ export default function ReleaseDetailPage({ params }: { params: { id: string } }
         <ReviewsSection reviews={release.reviews} releaseTitle={release.title} />
       ) : null}
 
-      {/* More from this artist section */}
-      <MoreFromArtist currentReleaseId={release.id} artistName={release.artists.split(',')[0].trim()} />
+      {/* More from these artists section */}
+      <MoreFromTheseArtists currentReleaseId={release.id} artistsString={release.artists} />
     </div>
   )
 }
@@ -1403,6 +1403,148 @@ function MoreFromArtist({ currentReleaseId, artistName }: { currentReleaseId: st
       </h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {artistReleases.map((release) => (
+          <Link key={release.id} href={`/releases/${release.url || release.id}`} className="block">
+            <Card className="group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800 cursor-pointer hover:scale-105">
+              <CardContent className="p-0">
+                <Image
+                  src={release.imageUrl || "/placeholder.svg"}
+                  width={200}
+                  height={200}
+                  alt={release.title}
+                  className="w-full h-auto object-cover aspect-square"
+                />
+                <div className="p-3 text-center">
+                  <h3 className="font-semibold text-xs line-clamp-2 min-h-[2em] text-gray-900 dark:text-gray-50 group-hover:text-primary transition-colors">
+                    {release.title}
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-1">{release.format}</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function MoreFromTheseArtists({ currentReleaseId, artistsString }: { currentReleaseId: string; artistsString: string }) {
+  const [allArtistReleases, setAllArtistReleases] = useState<Release[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchAllArtistReleases() {
+      try {
+        setIsLoading(true)
+        
+        // Parse all artists from the string (split by common separators)
+        const artists = artistsString
+          .split(/[,-]|&|and|\s+with\s+|\s+feat\.\s+|\s+featuring\s+/i)
+          .map(artist => artist.trim())
+          .filter(artist => artist.length > 0)
+        
+        console.log('Fetching releases for artists:', artists)
+        
+        const baseUrl = process.env.NODE_ENV === 'production' 
+          ? 'https://avanticlassic.vercel.app'
+          : '';
+        
+        // Fetch releases for each artist
+        const allReleases = new Set<Release>()
+        
+        for (const artist of artists) {
+          try {
+            const response = await fetch(
+              `${baseUrl}/api/releases/by-artist/${encodeURIComponent(artist)}?exclude=${currentReleaseId}`,
+              { cache: 'no-store' }
+            )
+            
+            if (response.ok) {
+              const data = await response.json()
+              if (data.releases && data.releases.length > 0) {
+                data.releases.forEach((release: Release) => {
+                  allReleases.add(release)
+                })
+              }
+            }
+          } catch (error) {
+            console.error(`Error fetching releases for artist ${artist}:`, error)
+          }
+        }
+        
+        // If API calls failed, use fallback data
+        if (allReleases.size === 0) {
+          console.warn('All API calls failed, using fallback data for artists:', artists)
+          artists.forEach(artist => {
+            const fallbackReleasesFiltered = fallbackReleases.filter(release => 
+              release.artists.includes(artist) && release.id !== currentReleaseId
+            )
+            fallbackReleasesFiltered.forEach(release => allReleases.add(release))
+          })
+        }
+        
+        // Convert Set to Array and limit to 8 releases
+        const uniqueReleases = Array.from(allReleases).slice(0, 8)
+        setAllArtistReleases(uniqueReleases)
+        
+      } catch (error) {
+        console.error('Error fetching artist releases:', error)
+        // Final fallback
+        const artists = artistsString.split(/[,-]|&|and|\s+with\s+/).map(a => a.trim()).filter(a => a.length > 0)
+        const allReleases = new Set<Release>()
+        artists.forEach(artist => {
+          const fallbackReleasesFiltered = fallbackReleases.filter(release => 
+            release.artists.includes(artist) && release.id !== currentReleaseId
+          )
+          fallbackReleasesFiltered.forEach(release => allReleases.add(release))
+        })
+        setAllArtistReleases(Array.from(allReleases).slice(0, 8))
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    if (artistsString) {
+      fetchAllArtistReleases()
+    }
+  }, [currentReleaseId, artistsString])
+
+  if (isLoading) {
+    return (
+      <div className="mt-12 border-t pt-8">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-50 mb-6">
+          More from these artists
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="animate-pulse">
+              <div className="bg-gray-300 aspect-square rounded-lg mb-2"></div>
+              <div className="bg-gray-300 h-4 rounded mb-1"></div>
+              <div className="bg-gray-300 h-3 rounded w-2/3"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (allArtistReleases.length === 0) {
+    return null
+  }
+
+  // Determine section title based on number of artists
+  const artists = artistsString.split(/[,-]|&|and|\s+with\s+/).map(a => a.trim()).filter(a => a.length > 0)
+  const sectionTitle = artists.length === 1 
+    ? `More from ${artists[0]}` 
+    : `More from these artists`
+
+  return (
+    <div className="mt-12 border-t pt-8">
+      <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-50 mb-6">
+        {sectionTitle}
+      </h2>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {allArtistReleases.map((release) => (
           <Link key={release.id} href={`/releases/${release.url || release.id}`} className="block">
             <Card className="group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800 cursor-pointer hover:scale-105">
               <CardContent className="p-0">
