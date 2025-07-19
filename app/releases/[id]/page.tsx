@@ -1450,7 +1450,7 @@ function MoreFromTheseArtists({ currentReleaseId, artistsString }: { currentRele
           : '';
         
         // Fetch releases for each artist
-        const allReleases = new Set<Release>()
+        const allReleases = new Map<string, Release>() // Use Map with ID as key to prevent duplicates
         
         for (const artist of artists) {
           try {
@@ -1463,7 +1463,8 @@ function MoreFromTheseArtists({ currentReleaseId, artistsString }: { currentRele
               const data = await response.json()
               if (data.releases && data.releases.length > 0) {
                 data.releases.forEach((release: Release) => {
-                  allReleases.add(release)
+                  // Use release ID as key to prevent duplicates
+                  allReleases.set(release.id, release)
                 })
               }
             }
@@ -1479,26 +1480,26 @@ function MoreFromTheseArtists({ currentReleaseId, artistsString }: { currentRele
             const fallbackReleasesFiltered = fallbackReleases.filter(release => 
               release.artists.includes(artist) && release.id !== currentReleaseId
             )
-            fallbackReleasesFiltered.forEach(release => allReleases.add(release))
+            fallbackReleasesFiltered.forEach(release => allReleases.set(release.id, release))
           })
         }
         
-        // Convert Set to Array and limit to 8 releases
-        const uniqueReleases = Array.from(allReleases).slice(0, 8)
+        // Convert Map to Array and limit to 8 releases
+        const uniqueReleases = Array.from(allReleases.values()).slice(0, 8)
         setAllArtistReleases(uniqueReleases)
         
       } catch (error) {
         console.error('Error fetching artist releases:', error)
         // Final fallback
         const artists = artistsString.split(/[,-]|&|and|\s+with\s+/).map(a => a.trim()).filter(a => a.length > 0)
-        const allReleases = new Set<Release>()
+        const allReleases = new Map<string, Release>()
         artists.forEach(artist => {
           const fallbackReleasesFiltered = fallbackReleases.filter(release => 
             release.artists.includes(artist) && release.id !== currentReleaseId
           )
-          fallbackReleasesFiltered.forEach(release => allReleases.add(release))
+          fallbackReleasesFiltered.forEach(release => allReleases.set(release.id, release))
         })
-        setAllArtistReleases(Array.from(allReleases).slice(0, 8))
+        setAllArtistReleases(Array.from(allReleases.values()).slice(0, 8))
       } finally {
         setIsLoading(false)
       }

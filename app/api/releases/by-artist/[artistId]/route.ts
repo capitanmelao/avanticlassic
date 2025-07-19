@@ -22,17 +22,19 @@ export async function GET(
     if (isNumeric) {
       targetArtistId = parseInt(decodedArtistId)
     } else {
-      // Find artist by name
+      // Find artist by name with better matching
       const { data: artistData, error: artistError } = await supabase
         .from('artists')
-        .select('id')
-        .or(`name.ilike.%${decodedArtistId}%,url.eq.${decodedArtistId}`)
-        .single()
+        .select('id, name')
+        .or(`name.ilike.%${decodedArtistId}%,url.eq.${decodedArtistId},name.eq.${decodedArtistId}`)
+        .maybeSingle()
         
       if (artistError || !artistData) {
-        console.log('Artist not found:', decodedArtistId)
+        console.log('Artist not found:', decodedArtistId, 'Error:', artistError)
         return NextResponse.json({ releases: [] })
       }
+      
+      console.log('Found artist:', artistData.name, 'for search:', decodedArtistId)
       
       targetArtistId = artistData.id
     }
@@ -52,6 +54,11 @@ export async function GET(
           release_translations(
             language,
             description
+          ),
+          release_artists(
+            artist:artists(
+              name
+            )
           )
         )
       `)
@@ -86,10 +93,14 @@ export async function GET(
                            release.release_translations?.find((t: any) => t.language === 'en') ||
                            release.release_translations?.[0]
 
+        // Get all artists for this release
+        const allArtists = release.release_artists?.map((ra: any) => ra.artist?.name).filter(Boolean) || []
+        const artistsString = allArtists.join(', ')
+
         return {
           id: release.id.toString(),
           title: release.title,
-          artists: decodedArtistId, // Use the artist name we're searching for
+          artists: artistsString, // Include all artists, not just the one searched for
           format: release.format || 'CD',
           imageUrl: release.image_url || `/images/releases/${release.id}.jpeg`,
           url: release.url,
