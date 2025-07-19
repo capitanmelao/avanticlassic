@@ -1371,45 +1371,38 @@ function MoreFromArtist({ currentReleaseId, artistName }: { currentReleaseId: st
     )
   }
 
-  // Always show the section, even if empty - for debugging and better UX
-  // if (artistReleases.length === 0) {
-  //   return null
-  // }
+  if (artistReleases.length === 0) {
+    return null
+  }
 
   return (
     <div className="mt-12 border-t pt-8">
       <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-50 mb-6">
         More from {artistName}
       </h2>
-      {artistReleases.length === 0 ? (
-        <div className="text-gray-500 text-sm">
-          No other releases found for this artist. Debug: Artist "{artistName}", Current Release: {currentReleaseId}
-        </div>
-      ) : (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {artistReleases.map((release) => (
-            <Link key={release.id} href={`/releases/${release.url || release.id}`} className="block">
-              <Card className="group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800 cursor-pointer hover:scale-105">
-                <CardContent className="p-0">
-                  <Image
-                    src={release.imageUrl || "/placeholder.svg"}
-                    width={200}
-                    height={200}
-                    alt={release.title}
-                    className="w-full h-auto object-cover aspect-square"
-                  />
-                  <div className="p-3 text-center">
-                    <h3 className="font-semibold text-xs line-clamp-2 min-h-[2em] text-gray-900 dark:text-gray-50 group-hover:text-primary transition-colors">
-                      {release.title}
-                    </h3>
-                    <p className="text-xs text-muted-foreground mt-1">{release.format}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      )}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {artistReleases.map((release) => (
+          <Link key={release.id} href={`/releases/${release.url || release.id}`} className="block">
+            <Card className="group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800 cursor-pointer hover:scale-105">
+              <CardContent className="p-0">
+                <Image
+                  src={release.imageUrl || "/placeholder.svg"}
+                  width={200}
+                  height={200}
+                  alt={release.title}
+                  className="w-full h-auto object-cover aspect-square"
+                />
+                <div className="p-3 text-center">
+                  <h3 className="font-semibold text-xs line-clamp-2 min-h-[2em] text-gray-900 dark:text-gray-50 group-hover:text-primary transition-colors">
+                    {release.title}
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-1">{release.format}</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
+      </div>
     </div>
   )
 }
