@@ -1295,10 +1295,70 @@ function ArtistLinks({ artistsString }: { artistsString: string }) {
 }
 
 function MoreFromArtist({ currentReleaseId, artistName }: { currentReleaseId: string; artistName: string }) {
-  // Filter releases by the same artist, excluding the current release
-  const artistReleases = fallbackReleases.filter(release => 
-    release.artists.includes(artistName) && release.id !== currentReleaseId
-  ).slice(0, 4) // Show max 4 related releases
+  const [artistReleases, setArtistReleases] = useState<Release[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchArtistReleases() {
+      try {
+        setIsLoading(true)
+        
+        // Use absolute URL for production or relative URL for development
+        const baseUrl = process.env.NODE_ENV === 'production' 
+          ? 'https://avanticlassic.vercel.app'
+          : '';
+        
+        const response = await fetch(
+          `${baseUrl}/api/releases/by-artist/${encodeURIComponent(artistName)}?exclude=${currentReleaseId}`,
+          { cache: 'no-store' }
+        )
+        
+        if (response.ok) {
+          const data = await response.json()
+          setArtistReleases(data.releases?.slice(0, 4) || []) // Show max 4 related releases
+        } else {
+          // Fallback to the original logic if API fails
+          console.warn('API failed, using fallback data')
+          const fallbackReleasesFiltered = fallbackReleases.filter(release => 
+            release.artists.includes(artistName) && release.id !== currentReleaseId
+          ).slice(0, 4)
+          setArtistReleases(fallbackReleasesFiltered)
+        }
+      } catch (error) {
+        console.error('Error fetching artist releases:', error)
+        // Fallback to original logic
+        const fallbackReleasesFiltered = fallbackReleases.filter(release => 
+          release.artists.includes(artistName) && release.id !== currentReleaseId
+        ).slice(0, 4)
+        setArtistReleases(fallbackReleasesFiltered)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    if (artistName) {
+      fetchArtistReleases()
+    }
+  }, [currentReleaseId, artistName])
+
+  if (isLoading) {
+    return (
+      <div className="mt-12 border-t pt-8">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-50 mb-6">
+          More from {artistName}
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="animate-pulse">
+              <div className="bg-gray-300 aspect-square rounded-lg mb-2"></div>
+              <div className="bg-gray-300 h-4 rounded mb-1"></div>
+              <div className="bg-gray-300 h-3 rounded w-2/3"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
 
   if (artistReleases.length === 0) {
     return null
