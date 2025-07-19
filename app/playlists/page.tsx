@@ -24,6 +24,7 @@ interface Playlist {
 // Fetch all playlists from API
 async function getAllPlaylists(): Promise<Playlist[]> {
   try {
+    console.log('Fetching playlists from /api/playlists?lang=en')
     // Use relative URL for API calls to work in all environments
     const response = await fetch(`/api/playlists?lang=en`, {
       cache: 'no-store'
@@ -35,6 +36,7 @@ async function getAllPlaylists(): Promise<Playlist[]> {
     }
     
     const playlists: Playlist[] = await response.json()
+    console.log('Raw API response:', playlists)
     return playlists || []
   } catch (error) {
     console.error('Error fetching playlists:', error)
@@ -135,6 +137,7 @@ export default function PlaylistsPage() {
     try {
       setLoading(true)
       const playlists = await getAllPlaylists()
+      console.log('Fetched playlists:', playlists.length, playlists)
       setAllPlaylists(playlists)
     } catch (error) {
       console.error('Error fetching playlists:', error)
