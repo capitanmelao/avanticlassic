@@ -178,24 +178,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* About Preview Section */}
-      <section className="py-16 md:py-24 bg-white dark:bg-gray-950">
-        <div className="container px-4 md:px-6 max-w-4xl text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900 dark:text-gray-50">About Avanti Classic</h2>
-          <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-8">
-            Avanti Classic and AvantiJazz were created with the aim of re-establishing a relationship between artist and
-            record company that, in the current music industry, practically no longer exists. We are dedicated to
-            supporting artists and delivering the highest quality recordings to music lovers worldwide.
-          </p>
-          <Button
-            asChild
-            variant="outline"
-            className="px-8 py-3 text-lg text-primary border-primary hover:bg-primary hover:text-primary-foreground dark:text-primary-foreground dark:border-primary-foreground dark:hover:bg-primary dark:hover:text-primary-foreground bg-transparent"
-          >
-            <Link href="/about">Learn More About Us</Link>
-          </Button>
-        </div>
-      </section>
     </div>
   )
 }
