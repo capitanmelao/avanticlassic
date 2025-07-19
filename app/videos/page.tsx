@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import SearchFilter from "@/components/shared/search-filter"
 import PaginationControls from "@/components/shared/pagination-controls"
+import FeaturedReviews from "@/components/videos/featured-reviews"
 
 // Legacy videos from old SSG site with real titles from YouTube
 const legacyVideos = [
@@ -42,8 +43,24 @@ async function getVideos() {
   }
 }
 
+// Fetch featured reviews from API
+async function getFeaturedReviews() {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/reviews?featured=true&limit=6`, {
+      next: { revalidate: 3600 } // Revalidate every hour
+    })
+    if (!response.ok) throw new Error('Failed to fetch reviews')
+    const reviews = await response.json()
+    return reviews
+  } catch (error) {
+    console.error('Error fetching featured reviews:', error)
+    return []
+  }
+}
+
 export default async function VideosPage() {
   const videos = await getVideos()
+  const featuredReviews = await getFeaturedReviews()
   
   const filterOptions = [
     { value: "all", label: "All Categories" },
@@ -84,6 +101,9 @@ export default async function VideosPage() {
         </div>
       </section>
       <PaginationControls />
+      
+      {/* Featured Reviews Section */}
+      <FeaturedReviews reviews={featuredReviews} />
     </div>
   )
 }

@@ -110,9 +110,31 @@ export default function NewPlaylistPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
+    // Client-side validation
+    if (!formData.title.trim()) {
+      setError('Title is required')
+      return
+    }
+    
+    if (!formData.slug.trim()) {
+      setError('URL slug is required')
+      return
+    }
+    
+    if (!formData.category) {
+      setError('Category is required')
+      return
+    }
+    
     try {
       setSaving(true)
       setError(null)
+
+      console.log('Submitting playlist data:', {
+        slug: formData.slug,
+        title: formData.title,
+        category: formData.category
+      })
 
       // Create playlist using API route to bypass RLS
       const response = await fetch('/api/playlists', {
@@ -136,13 +158,19 @@ export default function NewPlaylistPage() {
         })
       })
 
+      console.log('Response status:', response.status)
+
       if (!response.ok) {
         const errorData = await response.json()
+        console.error('API error response:', errorData)
         throw new Error(errorData.error || 'Failed to create playlist')
       }
 
+      const result = await response.json()
+      console.log('Success:', result)
       router.push('/dashboard/playlists')
     } catch (err) {
+      console.error('Submit error:', err)
       setError(err instanceof Error ? err.message : 'Failed to create playlist')
     } finally {
       setSaving(false)

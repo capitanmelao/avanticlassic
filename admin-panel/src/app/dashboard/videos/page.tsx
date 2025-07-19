@@ -2,7 +2,7 @@
 
 import { useSession } from '@/lib/use-session'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { supabase, type Video } from '@/lib/supabase'
 import Link from 'next/link'
 
@@ -27,11 +27,7 @@ export default function VideosPage() {
     setReleaseFilter(release)
   }, [searchParams])
 
-  useEffect(() => {
-    loadVideos()
-  }, [releaseFilter])
-
-  const loadVideos = async () => {
+  const loadVideos = useCallback(async () => {
     try {
       setLoading(true)
       
@@ -74,7 +70,11 @@ export default function VideosPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [releaseFilter])
+
+  useEffect(() => {
+    loadVideos()
+  }, [loadVideos])
 
   const deleteVideo = async (id: number) => {
     if (!confirm('Are you sure you want to delete this video?')) return

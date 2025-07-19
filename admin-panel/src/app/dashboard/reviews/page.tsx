@@ -2,7 +2,7 @@
 
 import { useSession } from '@/lib/use-session'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { supabase, type Review, type Release } from '@/lib/supabase'
 import Link from 'next/link'
 import { 
@@ -40,11 +40,7 @@ export default function ReviewsPage() {
     setReleaseFilter(release)
   }, [searchParams])
 
-  useEffect(() => {
-    loadReviews()
-  }, [releaseFilter])
-
-  const loadReviews = async () => {
+  const loadReviews = useCallback(async () => {
     try {
       setLoading(true)
       
@@ -90,7 +86,11 @@ export default function ReviewsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [releaseFilter])
+
+  useEffect(() => {
+    loadReviews()
+  }, [loadReviews])
 
   const deleteReview = async (id: number) => {
     if (!confirm('Are you sure you want to delete this review?')) return
