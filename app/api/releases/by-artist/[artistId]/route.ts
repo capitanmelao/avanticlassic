@@ -17,10 +17,10 @@ export async function GET(
     const isNumeric = !isNaN(parseInt(decodedArtistId))
     
     // First, find the artist to get the artist ID
-    let artistId: number | null = null
+    let targetArtistId: number | null = null
     
     if (isNumeric) {
-      artistId = parseInt(decodedArtistId)
+      targetArtistId = parseInt(decodedArtistId)
     } else {
       // Find artist by name
       const { data: artistData, error: artistError } = await supabase
@@ -34,7 +34,7 @@ export async function GET(
         return NextResponse.json({ releases: [] })
       }
       
-      artistId = artistData.id
+      targetArtistId = artistData.id
     }
 
     // Build the query to get releases by artist
@@ -55,7 +55,7 @@ export async function GET(
           )
         )
       `)
-      .eq('artist_id', artistId)
+      .eq('artist_id', targetArtistId)
       .order('release(release_date)', { ascending: false })
       .limit(8)
 
