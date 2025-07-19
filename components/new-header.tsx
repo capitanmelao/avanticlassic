@@ -99,10 +99,10 @@ export default function NewHeader() {
             SHOP
           </Link>
           <Link
-            href="/news-and-more"
+            href="/videos"
             className="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors font-playfair"
           >
-            VIDEOS & MORE
+            VIDEOS
           </Link>
           <Link
             href="/about"
@@ -170,10 +170,10 @@ export default function NewHeader() {
                   SHOP
                 </Link>
                 <Link
-                  href="/news-and-more"
+                  href="/videos"
                   className="text-lg font-semibold text-gray-800 hover:text-primary dark:text-gray-200 dark:hover:text-primary font-playfair"
                 >
-                  VIDEOS & MORE
+                  VIDEOS
                 </Link>
                 <Link
                   href="/about"

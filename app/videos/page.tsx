@@ -52,7 +52,7 @@ export default function VideosPage() {
   
   // Refs
   const loadMoreRef = useRef<HTMLDivElement>(null)
-  const videosPerLoad = 12
+  const videosPerLoad = 16
   
   // Fetch all videos from API
   const fetchVideos = useCallback(async () => {
@@ -141,7 +141,7 @@ export default function VideosPage() {
       setDisplayedVideos(prev => [...prev, ...nextBatch])
       setHasMore(currentLength + videosPerLoad < filteredVideos.length)
       setLoadingMore(false)
-    }, 500) // Simulate loading delay for smooth UX
+    }, 100) // Reduced delay for faster loading
   }, [filteredVideos, displayedVideos, loadingMore, hasMore])
 
   // Intersection Observer for infinite scroll
@@ -233,7 +233,7 @@ export default function VideosPage() {
       <section className="py-12">
         {displayedVideos.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {displayedVideos.map((video) => (
                 <div key={video.id}>
                   {video.id.toString().startsWith('legacy-') ? (
@@ -303,7 +303,7 @@ export default function VideosPage() {
 
 function VideoCard({ video }: { video: any }) {
   const getThumbnail = (youtubeId: string) => {
-    return `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`
+    return `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`
   }
 
   const thumbnailUrl = video.youtubeId 
@@ -311,54 +311,29 @@ function VideoCard({ video }: { video: any }) {
     : video.thumbnailUrl || "/placeholder.svg"
 
   return (
-    <Card className="group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transform transition-all duration-500 hover:scale-105 bg-white dark:bg-gray-800">
-      <CardContent className="p-0 relative">
-        <div className="relative overflow-hidden">
-          <Image
-            src={thumbnailUrl}
-            width={600}
-            height={338} // 16:9 aspect ratio for larger videos
-            alt={video.title}
-            className="w-full h-auto object-cover aspect-video group-hover:scale-110 transition-transform duration-700"
-          />
-          {/* Gradient overlay for better text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          
-          {/* Play button overlay */}
-          <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-all duration-300">
-            <div className="transform transition-all duration-300 group-hover:scale-110">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-20 w-20 rounded-full bg-white/20 text-white hover:bg-white/30 backdrop-blur-md border border-white/30 shadow-xl"
-              >
-                <Play className="h-10 w-10 fill-current ml-1" />
-                <span className="sr-only">Play video</span>
-              </Button>
-            </div>
-          </div>
-
-          {/* Title overlay on hover */}
-          <div className="absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-            <h3 className="font-bold text-xl mb-2 drop-shadow-lg">
-              {video.title}
-            </h3>
-            <p className="text-sm text-white/90 drop-shadow">
-              {video.artistName || video.artist || 'Avanti Classic'}
-            </p>
+    <div className="group relative overflow-hidden rounded-lg bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow">
+      <div className="relative aspect-video overflow-hidden">
+        <Image
+          src={thumbnailUrl}
+          alt={video.title}
+          width={400}
+          height={225}
+          className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+        />
+        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+          <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <Play className="w-5 h-5 text-gray-900 ml-0.5" fill="currentColor" />
           </div>
         </div>
-        
-        {/* Default title (visible when not hovering) */}
-        <div className="p-6 group-hover:opacity-0 transition-opacity duration-300">
-          <h3 className="font-semibold text-xl line-clamp-2 mb-2 text-gray-900 dark:text-gray-50">
-            {video.title}
-          </h3>
-          <p className="text-base text-muted-foreground">
-            {video.artistName || video.artist || 'Avanti Classic'}
-          </p>
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+      <div className="p-4">
+        <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-50 mb-2 line-clamp-2">
+          {video.title}
+        </h3>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">
+          {video.artistName || video.artist || 'Avanti Classic'}
+        </p>
+      </div>
+    </div>
   )
 }
