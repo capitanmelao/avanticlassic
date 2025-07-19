@@ -212,11 +212,8 @@ export default function VideosPage() {
     <div className="container px-4 md:px-6 py-12 md:py-20">
       <div className="text-center mb-12">
         <h1 className="text-5xl md:text-7xl font-bold mb-4 text-gray-900 dark:text-gray-50 tracking-tight">
-          Our Videos
+          Videos
         </h1>
-        <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
-          Discover the artistry and passion of classical music through our curated video collection
-        </p>
       </div>
       
       <VideoSearchFilter
