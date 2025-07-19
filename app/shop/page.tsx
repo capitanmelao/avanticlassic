@@ -1,17 +1,43 @@
 "use client"
 
-import { Suspense, useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import Link from 'next/link'
-import { ShoppingBag, ArrowRight } from 'lucide-react'
+import { Loader2, ArrowUp } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { useCart } from '@/contexts/cart-context'
 import { createClient } from '@/lib/supabase/browser'
 
-// Fetch featured products from API
-async function getFeaturedProducts() {
+// Product interface
+interface Product {
+  id: number
+  name: string
+  format: string
+  status: string
+  featured: boolean
+  sort_order: number
+  product_prices: Array<{
+    id: number
+    amount: number
+    currency: string
+  }>
+  releases: {
+    id: number
+    title: string
+    image_url: string
+    catalog_number: string
+    release_artists: Array<{
+      artists: {
+        name: string
+      }
+    }>
+  }
+}
+
+// Fetch all products from API
+async function getAllProducts(): Promise<Product[]> {
   try {
     const supabase = createClient()
     
@@ -33,24 +59,22 @@ async function getFeaturedProducts() {
         )
       `)
       .eq('status', 'active')
-      .eq('featured', true)
+      .order('featured', { ascending: false }) // Featured first
       .order('sort_order', { ascending: true })
-      .limit(3)
     
     if (error) {
-      console.error('Error fetching featured products:', error)
+      console.error('Error fetching products:', error)
       return []
     }
     
     return products || []
   } catch (error) {
-    console.error('Error in getFeaturedProducts:', error)
+    console.error('Error in getAllProducts:', error)
     return []
   }
 }
 
-
-function ProductCard({ product }: { product: any }) {
+function ProductCard({ product }: { product: Product }) {
   const { addItem } = useCart()
   
   // Get the default price (first available price)
@@ -127,96 +151,176 @@ function ProductCard({ product }: { product: any }) {
   )
 }
 
-
 export default function ShopPage() {
-  const [featuredProducts, setFeaturedProducts] = useState<any[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  // State management
+  const [allProducts, setAllProducts] = useState<Product[]>([])
+  const [displayedProducts, setDisplayedProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+  const [showScrollTop, setShowScrollTop] = useState(false)
   
-  useEffect(() => {
-    async function loadData() {
-      try {
-        setIsLoading(true)
-        const products = await getFeaturedProducts()
-        setFeaturedProducts(products)
-      } catch (error) {
-        console.error('Error loading shop data:', error)
-      } finally {
-        setIsLoading(false)
-      }
+  // Refs
+  const loadMoreRef = useRef<HTMLDivElement>(null)
+  const productsPerLoad = 12
+  
+  // Fetch all products from API
+  const fetchProducts = useCallback(async () => {
+    try {
+      setLoading(true)
+      const products = await getAllProducts()
+      setAllProducts(products)
+    } catch (error) {
+      console.error('Error fetching products:', error)
+    } finally {
+      setLoading(false)
     }
-    
-    loadData()
   }, [])
-  
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <section className="relative bg-black text-white">
-        <div className="relative container mx-auto px-4 py-8 md:py-12">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="flex justify-center">
-              <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-black">
-                <Link href="/shop/products">
-                  Browse All
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Featured Products */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
+  // Initialize displayed products when allProducts changes
+  useEffect(() => {
+    if (allProducts.length > 0) {
+      setDisplayedProducts(allProducts.slice(0, productsPerLoad))
+      setHasMore(allProducts.length > productsPerLoad)
+    }
+  }, [allProducts])
+  
+  // Load more products
+  const loadMoreProducts = useCallback(() => {
+    if (loadingMore || !hasMore) return
+    
+    setLoadingMore(true)
+    
+    setTimeout(() => {
+      const currentLength = displayedProducts.length
+      const nextBatch = allProducts.slice(currentLength, currentLength + productsPerLoad)
+      setDisplayedProducts(prev => [...prev, ...nextBatch])
+      setHasMore(currentLength + productsPerLoad < allProducts.length)
+      setLoadingMore(false)
+    }, 100) // Reduced delay for faster loading
+  }, [allProducts, displayedProducts, loadingMore, hasMore])
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore) {
+          loadMoreProducts()
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current)
+    }
+
+    return () => observer.disconnect()
+  }, [loadMoreProducts, hasMore, loadingMore])
+
+  // Scroll to top functionality
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 500)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Initial load
+  useEffect(() => {
+    fetchProducts()
+  }, [fetchProducts])
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 py-12">
           <div className="text-center mb-12">
-            <h2 className="font-playfair text-3xl md:text-4xl font-bold mb-4">
-              Featured Releases
-            </h2>
+            <h1 className="font-playfair text-4xl md:text-5xl font-bold mb-4">
+              Shop
+            </h1>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Handpicked selections from our catalog, featuring the finest classical music recordings
+              Discover and purchase our classical music collection
             </p>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            {isLoading ? (
-              // Loading skeleton
-              Array.from({ length: 3 }).map((_, index) => (
-                <Card key={index} className="animate-pulse">
-                  <CardHeader className="p-0">
-                    <div className="aspect-square bg-gray-300 rounded-t-lg"></div>
-                  </CardHeader>
-                  <CardContent className="p-4">
-                    <div className="space-y-2">
-                      <div className="h-4 bg-gray-300 rounded w-3/4"></div>
-                      <div className="h-3 bg-gray-300 rounded w-1/2"></div>
-                      <div className="h-3 bg-gray-300 rounded w-1/4"></div>
-                      <div className="flex items-center justify-between">
-                        <div className="h-4 bg-gray-300 rounded w-16"></div>
-                        <div className="h-8 bg-gray-300 rounded w-20"></div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
-            ) : (
-              featuredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))
-            )}
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="h-8 w-8 animate-spin" />
+            <span className="ml-2 text-lg">Loading products...</span>
           </div>
+        </div>
+      </div>
+    )
+  }
 
-          <div className="text-center">
-            <Button asChild size="lg" variant="outline">
-              <Link href="/shop/products">
-                View All Products
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Simple Header Section */}
+      <section className="py-12">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h1 className="font-playfair text-4xl md:text-5xl font-bold mb-4">
+              Shop
+            </h1>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Discover and purchase our classical music collection
+            </p>
           </div>
         </div>
       </section>
 
+      {/* Products Grid */}
+      <section className="pb-16">
+        <div className="container mx-auto px-4">
+          {displayedProducts.length > 0 ? (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                {displayedProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+              
+              {/* Loading more indicator */}
+              <div ref={loadMoreRef} className="py-8">
+                {loadingMore && (
+                  <div className="flex items-center justify-center">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                    <span className="ml-2">Loading more products...</span>
+                  </div>
+                )}
+                {!hasMore && displayedProducts.length > productsPerLoad && (
+                  <div className="text-center text-muted-foreground">
+                    You've seen all {allProducts.length} products
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-20">
+              <h3 className="text-2xl font-semibold mb-4">No products available</h3>
+              <p className="text-muted-foreground mb-6">
+                Products will appear here when they become available
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
 
+      {/* Scroll to top button */}
+      {showScrollTop && (
+        <Button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 z-50 rounded-full p-3 shadow-lg"
+          size="icon"
+        >
+          <ArrowUp className="h-5 w-5" />
+        </Button>
+      )}
     </div>
   )
 }
