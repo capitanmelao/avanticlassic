@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Play } from "lucide-react"
 import { ReviewItem } from "@/components/news-and-more/review-item"
@@ -48,9 +49,11 @@ function VideoCard({ video }: { video: any }) {
   return (
     <div className="group relative overflow-hidden rounded-lg bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow">
       <div className="relative aspect-video overflow-hidden">
-        <img
+        <Image
           src={getThumbnail(video.youtubeId)}
           alt={video.title}
+          width={400}
+          height={225}
           className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
         />
         <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors flex items-center justify-center">
@@ -73,36 +76,32 @@ function VideoCard({ video }: { video: any }) {
   )
 }
 
-// Dummy data for reviews
-const dummyReviews = [
-  {
-    id: "r1",
-    date: "25.06.2026",
-    publication: "LA LIBRE BELGIQUE",
-    albumImage: "/placeholder.svg?height=80&width=80&text=Album+1",
-    reviewText:
-      "[...] la voix chaleureuse, le naturel et la maîtrise de Appl transforment le concept en une véritable réussite artistique.",
-  },
-  {
-    id: "r2",
-    date: "11.11.2025",
-    publication: "BBC RADIO 3",
-    albumImage: "/placeholder.svg?height=80&width=80&text=Album+2",
-    reviewText:
-      "There's an excellent mike balance here which means that the clarity is superb, and it really captures that youthful fresh vigour in his performance. He's known for flair and risk-taking and I think he was an excellent choice for the concert.",
-  },
-  {
-    id: "r3",
-    date: "11.11.2025",
-    publication: "BBC RADIO 3",
-    albumImage: "/placeholder.svg?height=80&width=80&text=Album+3",
-    reviewText:
-      "What they do bring instead is a freshness and they're very good at sustaining the pace, so it's a lovely recording. Like I said it's got a freshness to it, and it does seem very well historically informed. Quite exciting.",
-  },
-]
+// Fetch reviews from API
+async function getReviews() {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/reviews?featured=true&limit=3`, {
+      next: { revalidate: 3600 } // Revalidate every hour
+    })
+    if (!response.ok) throw new Error('Failed to fetch reviews')
+    const reviews = await response.json()
+    
+    // Transform to match ReviewItem interface
+    return reviews.map((review: any) => ({
+      id: review.id,
+      date: new Date(review.reviewDate).toLocaleDateString('en-GB'),
+      publication: review.publication,
+      albumImage: review.release?.imageUrl || "/placeholder.svg",
+      reviewText: review.reviewText
+    }))
+  } catch (error) {
+    console.error('Error fetching reviews:', error)
+    return []
+  }
+}
 
 export default async function VideosAndMorePage() {
   const videos = await getVideos()
+  const reviews = await getReviews()
 
   return (
     <div className="flex flex-col">
@@ -160,9 +159,15 @@ export default async function VideosAndMorePage() {
             </Button>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {dummyReviews.map((reviewItem) => (
-              <ReviewItem key={reviewItem.id} review={reviewItem} />
-            ))}
+            {reviews.length > 0 ? (
+              reviews.map((reviewItem) => (
+                <ReviewItem key={reviewItem.id} review={reviewItem} />
+              ))
+            ) : (
+              <div className="col-span-full text-center py-12">
+                <p className="text-gray-600 dark:text-gray-400">No reviews available at the moment.</p>
+              </div>
+            )}
           </div>
         </div>
       </section>
