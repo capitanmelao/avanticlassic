@@ -24,10 +24,8 @@ interface Playlist {
 // Fetch all playlists from API
 async function getAllPlaylists(): Promise<Playlist[]> {
   try {
-    const baseUrl = process.env.NODE_ENV === 'production' 
-      ? process.env.NEXT_PUBLIC_SITE_URL || ''
-      : '';
-    const response = await fetch(`${baseUrl}/api/playlists?lang=en`, {
+    // Use relative URL for API calls to work in all environments
+    const response = await fetch(`/api/playlists?lang=en`, {
       cache: 'no-store'
     })
     
