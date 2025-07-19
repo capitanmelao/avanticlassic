@@ -122,9 +122,9 @@ function ReviewCard({ review }: { review: Review }) {
       
       <CardContent className="pt-0">
         <div className="text-gray-700 dark:text-gray-300 leading-relaxed text-base">
-          <p className="whitespace-pre-wrap">
+          <div className="whitespace-pre-wrap break-words">
             {review.reviewText}
-          </p>
+          </div>
         </div>
       </CardContent>
     </Card>
@@ -143,7 +143,7 @@ export default function ReviewsSection({ reviews, releaseTitle }: ReviewsSection
     : null
 
   return (
-    <section className="mt-12 border-t pt-8">
+    <section className="mt-12 border-t pt-8 w-full">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-50 mb-2">
@@ -167,7 +167,7 @@ export default function ReviewsSection({ reviews, releaseTitle }: ReviewsSection
         )}
       </div>
       
-      <div className="space-y-6">
+      <div className="space-y-6 w-full">
         {reviews.map((review) => (
           <ReviewCard key={review.id} review={review} />
         ))}
