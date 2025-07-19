@@ -21,6 +21,23 @@ interface Playlist {
   track_count: number
 }
 
+// Fallback playlists for testing
+const fallbackPlaylists: Playlist[] = [
+  {
+    id: 999,
+    slug: "fallback-test",
+    title: "Fallback Test Playlist",
+    description: "This is a fallback playlist for testing",
+    category: "by_artist",
+    image_url: "/images/placeholder-album.jpg",
+    spotify_url: "https://open.spotify.com/playlist/example",
+    apple_music_url: null,
+    youtube_url: null,
+    featured: false,
+    track_count: 5
+  }
+]
+
 // Fetch all playlists from API
 async function getAllPlaylists(): Promise<Playlist[]> {
   try {
@@ -37,10 +54,10 @@ async function getAllPlaylists(): Promise<Playlist[]> {
     
     const playlists: Playlist[] = await response.json()
     console.log('Raw API response:', playlists)
-    return playlists || []
+    return playlists.length > 0 ? playlists : fallbackPlaylists
   } catch (error) {
     console.error('Error fetching playlists:', error)
-    return []
+    return fallbackPlaylists
   }
 }
 
