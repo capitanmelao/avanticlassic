@@ -41,11 +41,27 @@ async function getRelease(id: string) {
     const baseUrl = process.env.NODE_ENV === 'production' 
       ? 'https://avanticlassic.vercel.app'
       : '';
+    
+    console.log('Fetching release from:', `${baseUrl}/api/releases/${encodeURIComponent(id)}`)
+    
     const res = await fetch(`${baseUrl}/api/releases/${encodeURIComponent(id)}`, {
-      cache: 'no-store'
+      cache: 'no-store',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
     })
-    if (!res.ok) return null
-    return await res.json()
+    
+    console.log('API Response status:', res.status, res.statusText)
+    
+    if (!res.ok) {
+      console.error('API request failed:', res.status, res.statusText)
+      return null
+    }
+    
+    const data = await res.json()
+    console.log('API returned data with reviews:', data.reviews ? data.reviews.length : 'no reviews')
+    return data
   } catch (error) {
     console.error('Error fetching release:', error)
     return null
@@ -1222,9 +1238,9 @@ export default function ReleaseDetailPage({ params }: { params: { id: string } }
       <MoreFromArtist currentReleaseId={release.id} artistName={release.artists.split(',')[0].trim()} />
 
       {/* Reviews Section */}
-      {release.reviews && release.reviews.length > 0 && (
+      {release.reviews && release.reviews.length > 0 ? (
         <ReviewsSection reviews={release.reviews} releaseTitle={release.title} />
-      )}
+      ) : null}
     </div>
   )
 }
