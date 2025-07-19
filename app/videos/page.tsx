@@ -5,7 +5,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import SearchFilter from "@/components/shared/search-filter"
 import PaginationControls from "@/components/shared/pagination-controls"
-import FeaturedReviews from "@/components/videos/featured-reviews"
 
 // Legacy videos from old SSG site with real titles from YouTube
 const legacyVideos = [
@@ -43,24 +42,8 @@ async function getVideos() {
   }
 }
 
-// Fetch featured reviews from API
-async function getFeaturedReviews() {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/reviews?featured=true&limit=6`, {
-      next: { revalidate: 3600 } // Revalidate every hour
-    })
-    if (!response.ok) throw new Error('Failed to fetch reviews')
-    const reviews = await response.json()
-    return reviews
-  } catch (error) {
-    console.error('Error fetching featured reviews:', error)
-    return []
-  }
-}
-
 export default async function VideosPage() {
   const videos = await getVideos()
-  const featuredReviews = await getFeaturedReviews()
   
   const filterOptions = [
     { value: "all", label: "All Categories" },
@@ -70,15 +53,22 @@ export default async function VideosPage() {
   ]
 
   return (
-    <div className="container px-4 md:px-6 py-12 md:py-16">
-      <h1 className="text-4xl md:text-5xl font-bold text-center mb-8 text-gray-900 dark:text-gray-50">Our Videos</h1>
+    <div className="container px-4 md:px-6 py-12 md:py-20">
+      <div className="text-center mb-12">
+        <h1 className="text-5xl md:text-7xl font-bold mb-4 text-gray-900 dark:text-gray-50 tracking-tight">
+          Our Videos
+        </h1>
+        <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
+          Discover the artistry and passion of classical music through our curated video collection
+        </p>
+      </div>
       <SearchFilter
         searchPlaceholder="Search videos..."
         filterOptions={filterOptions}
         filterPlaceholder="Filter by Category"
       />
-      <section className="py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <section className="py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
           {videos.map((video: any) => (
             <div key={video.id}>
               {video.id.toString().startsWith('legacy-') ? (
@@ -101,16 +91,13 @@ export default async function VideosPage() {
         </div>
       </section>
       <PaginationControls />
-      
-      {/* Featured Reviews Section */}
-      <FeaturedReviews reviews={featuredReviews} />
     </div>
   )
 }
 
 function VideoCard({ video }: { video: any }) {
   const getThumbnail = (youtubeId: string) => {
-    return `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`
+    return `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`
   }
 
   const thumbnailUrl = video.youtubeId 
@@ -118,30 +105,50 @@ function VideoCard({ video }: { video: any }) {
     : video.thumbnailUrl || "/placeholder.svg"
 
   return (
-    <Card className="group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 bg-white dark:bg-gray-800">
+    <Card className="group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transform transition-all duration-500 hover:scale-105 bg-white dark:bg-gray-800">
       <CardContent className="p-0 relative">
-        <Image
-          src={thumbnailUrl}
-          width={400}
-          height={225} // 16:9 aspect ratio for videos
-          alt={video.title}
-          className="w-full h-auto object-cover aspect-video"
-        />
-        <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/60 transition-colors duration-300">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-16 w-16 rounded-full bg-white/30 text-white hover:bg-white/50 backdrop-blur-sm"
-          >
-            <Play className="h-8 w-8 fill-current" />
-            <span className="sr-only">Play video</span>
-          </Button>
+        <div className="relative overflow-hidden">
+          <Image
+            src={thumbnailUrl}
+            width={600}
+            height={338} // 16:9 aspect ratio for larger videos
+            alt={video.title}
+            className="w-full h-auto object-cover aspect-video group-hover:scale-110 transition-transform duration-700"
+          />
+          {/* Gradient overlay for better text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          
+          {/* Play button overlay */}
+          <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-all duration-300">
+            <div className="transform transition-all duration-300 group-hover:scale-110">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-20 w-20 rounded-full bg-white/20 text-white hover:bg-white/30 backdrop-blur-md border border-white/30 shadow-xl"
+              >
+                <Play className="h-10 w-10 fill-current ml-1" />
+                <span className="sr-only">Play video</span>
+              </Button>
+            </div>
+          </div>
+
+          {/* Title overlay on hover */}
+          <div className="absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+            <h3 className="font-bold text-xl mb-2 drop-shadow-lg">
+              {video.title}
+            </h3>
+            <p className="text-sm text-white/90 drop-shadow">
+              {video.artistName || video.artist || 'Avanti Classic'}
+            </p>
+          </div>
         </div>
-        <div className="p-4 text-center">
-          <h3 className="font-semibold text-lg line-clamp-2 min-h-[2.5em] text-gray-900 dark:text-gray-50">
+        
+        {/* Default title (visible when not hovering) */}
+        <div className="p-6 group-hover:opacity-0 transition-opacity duration-300">
+          <h3 className="font-semibold text-xl line-clamp-2 mb-2 text-gray-900 dark:text-gray-50">
             {video.title}
           </h3>
-          <p className="text-sm text-muted-foreground line-clamp-1">
+          <p className="text-base text-muted-foreground">
             {video.artistName || video.artist || 'Avanti Classic'}
           </p>
         </div>
