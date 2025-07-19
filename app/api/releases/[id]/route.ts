@@ -40,6 +40,7 @@ export async function GET(
           review_url,
           featured,
           sort_order,
+          review_text,
           review_translations(
             language,
             review_text
@@ -79,10 +80,13 @@ export async function GET(
       shopUrl: release.shop_url,
       totalTime: release.total_time,
       reviews: release.reviews?.map((review: any) => {
-        // Get translation for the requested language, fallback to English
+        // Get translation for the requested language, fallback to English, then fallback to direct review_text
         const reviewTranslation = review.review_translations?.find((t: any) => t.language === lang) ||
                                  review.review_translations?.find((t: any) => t.language === 'en') ||
                                  review.review_translations?.[0]
+        
+        // Use translation text first, then fallback to direct review_text field
+        const reviewText = reviewTranslation?.review_text || review.review_text || ''
         
         return {
           id: review.id.toString(),
@@ -90,7 +94,7 @@ export async function GET(
           reviewerName: review.reviewer_name,
           reviewDate: review.review_date,
           rating: review.rating,
-          reviewText: reviewTranslation?.review_text || '',
+          reviewText: reviewText,
           reviewUrl: review.review_url,
           featured: review.featured,
           sortOrder: review.sort_order
