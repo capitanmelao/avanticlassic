@@ -1,6 +1,7 @@
 "use client"
 
-import { Star, ExternalLink, Calendar, User } from "lucide-react"
+import { useState } from "react"
+import { Star, ExternalLink, Calendar, User, ChevronDown, ChevronUp } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -59,14 +60,22 @@ function StarRating({ rating }: { rating?: number }) {
 }
 
 function ReviewCard({ review }: { review: Review }) {
+  const [isExpanded, setIsExpanded] = useState(false)
   const reviewDate = new Date(review.reviewDate).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
   })
 
+  // Show preview of first 150 characters
+  const previewText = review.reviewText.length > 150 
+    ? review.reviewText.substring(0, 150) + "..."
+    : review.reviewText
+
+  const hasLongText = review.reviewText.length > 150
+
   return (
-    <Card className={`${review.featured ? 'ring-2 ring-yellow-400 bg-yellow-50 dark:bg-yellow-950/20' : ''}`}>
+    <Card className={`transition-all duration-300 cursor-pointer hover:shadow-lg ${review.featured ? 'ring-2 ring-yellow-400 bg-yellow-50 dark:bg-yellow-950/20' : ''}`}>
       <CardHeader className="pb-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
@@ -104,6 +113,7 @@ function ReviewCard({ review }: { review: Review }) {
                 variant="outline"
                 size="sm"
                 className="text-xs"
+                onClick={(e) => e.stopPropagation()}
               >
                 <a 
                   href={review.reviewUrl} 
@@ -122,9 +132,36 @@ function ReviewCard({ review }: { review: Review }) {
       
       <CardContent className="pt-0">
         <div className="text-gray-700 dark:text-gray-300 leading-relaxed text-base">
-          <div className="whitespace-pre-wrap break-words">
-            {review.reviewText}
+          <div 
+            className={`whitespace-pre-wrap break-words transition-all duration-500 ease-in-out overflow-hidden ${
+              isExpanded ? 'max-h-none opacity-100' : 'max-h-24 opacity-90'
+            }`}
+          >
+            {isExpanded ? review.reviewText : previewText}
           </div>
+          
+          {hasLongText && (
+            <div className="flex items-center justify-center mt-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 transition-all duration-300 hover:bg-blue-50 dark:hover:bg-blue-950/20 rounded-lg px-4 py-2"
+              >
+                {isExpanded ? (
+                  <>
+                    <ChevronUp className="h-4 w-4 mr-1 transition-transform duration-300" />
+                    Show Less
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="h-4 w-4 mr-1 transition-transform duration-300" />
+                    Read More
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
