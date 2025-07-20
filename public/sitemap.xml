@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<sitemap><loc>http://localhost:4321/sitemap-0.xml</loc></sitemap>
+<sitemap><loc>https://avanticlassic.vercel.app/sitemap-artists.xml</loc></sitemap>
+<sitemap><loc>https://avanticlassic.vercel.app/sitemap-releases.xml</loc></sitemap>
+<sitemap><loc>https://avanticlassic.vercel.app/sitemap-playlists.xml</loc></sitemap>
+<sitemap><loc>https://avanticlassic.vercel.app/sitemap-videos.xml</loc></sitemap>
+<sitemap><loc>https://avanticlassic.vercel.app/sitemap-products.xml</loc></sitemap>
+</sitemapindex>
