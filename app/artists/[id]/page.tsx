@@ -247,42 +247,6 @@ const fallbackArtists: Artist[] = [
     url: "Kasparas-Uinskas",
     bio: "Kasparas Uinskas is an internationally acclaimed pianist, praised by critics for his virtuosity and romantic style. Kasparas performs in the most renowned concert halls like New York's Carnegie Hall, the Berlin Philharmonie, London's Wigmore Hall, Madrid's Auditorio Nacional, the J. F. Kennedy Center in Washington, DC and many others.<br><br>His recent performances include his concert with legendary cellist Alexander Kniazev at the Martha Argerich Festival in Hamburg (in June 2021) after his first appearance at this festival in piano duo with pianist Evgeni Bozhanov; with the Royal Chamber Orchestra of Wallonia (Belgium), with the Lithuanian State Symphony Orchestra, with the North Czech Philharmonic Orchestra (Czech Republic), with the Philharmonie Südwestfalen (Germany), with the Liepaja Symphony Orchestra at Piano Stars Festival (Latvia), with the Krakow Philharmonic Orchestra (Poland), as well as solo recitals at the Wigmore Hall in London, at the Baerum Kulturhus at the Piano Master Series (Norway), at the BoZar concert hall in Brussels, at the Brussels piano festival, at the Festival Nordland Musikkfestuke in Bodø (Norway), at the Fantastic Pianist Series tour in Japan and during a chamber recital tour in Norway and Lithuania together with the International Tchaikovsky Competition laureate, violinist Nikita Boriso-Glebsky; piano duo concert tour with pianist Evgeni Bozhanov and chamber concert tour with cello legend Alexander Kniazev and also with the International Tchaikovsky competition winner cellist Andrei Ionita.<br><br>Last season, Mr. Uinskas appeared together with violinist Nikita Boriso-Glebsky at the Bratislava festival, at the Slovak Philharmonic hall, with solo recital in Zurich (Switzerland), in Mumbai (India), in solo recitals and concerts with orchestra in Moscow, Voronezh, Ulyanovsk (Russia), with the Rosario Symphony orchestra at Teatro El Circulo in Rosario (Argentina), with an all Chopin recital in Belgium's Brussels Chopin days among others. Mr. Uinskas is a frequent guest at many international music festivals throughout Europe and the USA, including the Aspen Music Festival (USA), the Music Festival of the Hamptons (USA), the South Shore Music (USA), and the Holland Music Sessions. Kasparas Uinskas also appeared as a soloist at the Verbier Festival as recipient of the Reuter's Grand Prix, awarded by the festival.<br><br>His repertoire includes works by a wide range of composers, from Johann Sebastian Bach to 20th Century, however composers of the romantic era dominate his repertoire. Recent releases include Uinskas' recording of a Chopin recital and the DVD of his live concert at the Berlin Philharmonie.<br><br>Kasparas Uinskas is a frequent guest on the Radio and TV programs, including BBC Radio 3 'In Tune' program; the classical music radio station of The New York Times, program 'Reflections from the Keyboard' on WQXR with David Dubal.<br><br>Kasparas Uinskas was born in Lithuania. He began studying the piano at the age of six. He studied at the Lithuanian Academy of Music and Theatre, where he completed his Doctoral studies, at the Frédéric Chopin Music University in Warsaw, Poland, and at The Juilliard School in New York (with the prof. Kalichstein), as a recipient of the Vladimir Horowitz Scholarship.",
     facebook: "https://www.facebook.com/kasparas.uinskas"
-  },
-  {
-    id: "25",
-    name: "Dora Schwarzberg - Polina Leschenko",
-    instrument: "Piano Duo",
-    imageUrl: "/placeholder.svg",
-    url: "Dora-Schwarzberg---Polina-Leschenko",
-    bio: "Dora Schwarzberg and Polina Leschenko form an exceptional piano duo, bringing together their individual virtuosity and musical sensitivity to create memorable performances. Their collaboration showcases the rich tradition of piano duet repertoire while exploring contemporary interpretations of classical works.",
-    facebook: "https://www.facebook.com/dora.polina.duo"
-  },
-  {
-    id: "49",
-    name: "Bireli Lagrene",
-    instrument: "Guitar",
-    imageUrl: "/placeholder.svg",
-    url: "Bireli-Lagrene",
-    bio: "Biréli Lagrène is a French jazz guitarist who rose to fame in the 1980s for his Django Reinhardt-influenced style. Born into a gypsy family in Saverne, Alsace, France, he started playing guitar at the age of four. Lagrène has become one of the most acclaimed jazz guitarists in the world, known for his virtuosic technique and ability to blend traditional gypsy jazz with modern styles. His collaboration with various artists and his solo career have established him as a master of the genre.",
-    facebook: "https://www.facebook.com/bireli.lagrene"
-  },
-  {
-    id: "70",
-    name: "Matt Herskovitz Trio",
-    instrument: "Jazz Ensemble",
-    imageUrl: "/placeholder.svg",
-    url: "Matt-Herskovitz-Trio",
-    bio: "The Matt Herskovitz Trio is a distinguished jazz ensemble known for their innovative interpretations of classical and contemporary repertoire. Led by pianist Matt Herskovitz, the trio brings a fresh perspective to the jazz tradition while maintaining the highest standards of musical excellence. Their performances showcase exceptional musicianship and creative collaboration.",
-    facebook: "https://www.facebook.com/matth.trio"
-  },
-  {
-    id: "76",
-    name: "Dr L. Subramaniam",
-    instrument: "Violin",
-    imageUrl: "/placeholder.svg",
-    url: "Dr-L.-Subramaniam",
-    bio: "Dr. L. Subramaniam is an acclaimed Indian violinist and composer who has revolutionized the art of violin playing in Indian classical music. Born into a musical family, he has achieved international recognition for his innovative approach to blending Indian classical music with Western classical and world music traditions. His virtuosic technique and creative vision have made him one of the most respected musicians in the world music scene.",
-    facebook: "https://www.facebook.com/drlsubramaniam"
   }
 ]
 
