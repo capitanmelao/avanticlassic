@@ -40,29 +40,21 @@ const fallbackPlaylists: Playlist[] = [
 
 // Fetch all playlists from API
 async function getAllPlaylists(): Promise<Playlist[]> {
-  console.log('getAllPlaylists called')
   try {
-    console.log('Fetching playlists from /api/playlists?lang=en')
     // Use relative URL for API calls to work in all environments
     const response = await fetch(`/api/playlists?lang=en`, {
       cache: 'no-store'
     })
     
-    console.log('Response received:', response.status, response.ok)
-    
     if (!response.ok) {
       console.error('API response not ok:', response.status, response.statusText)
-      console.log('Returning fallback playlists due to bad response')
       return fallbackPlaylists
     }
     
     const playlists: Playlist[] = await response.json()
-    console.log('Raw API response:', playlists)
-    console.log('Returning playlists, length:', playlists.length)
     return playlists.length > 0 ? playlists : fallbackPlaylists
   } catch (error) {
     console.error('Error fetching playlists:', error)
-    console.log('Returning fallback playlists due to error')
     return fallbackPlaylists
   }
 }
@@ -70,7 +62,7 @@ async function getAllPlaylists(): Promise<Playlist[]> {
 // Unified playlist card component
 function PlaylistCard({ playlist }: { playlist: Playlist }) {
   return (
-    <Card className="group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800 cursor-pointer hover:scale-105">
+    <Card className="group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800">
       <CardContent className="p-0">
         <div className="relative w-full aspect-square">
           {playlist.image_url ? (
@@ -79,63 +71,80 @@ function PlaylistCard({ playlist }: { playlist: Playlist }) {
               width={400}
               height={400}
               alt={playlist.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           ) : (
             <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
               <span className="text-gray-400">No Image</span>
             </div>
           )}
-          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors flex items-center justify-center">
-            <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              {playlist.spotify_url && (
-                <Link
-                  href={playlist.spotify_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-green-500/80 hover:bg-green-500 backdrop-blur-sm text-white p-2 rounded-full transition-colors"
-                  aria-label={`Listen to ${playlist.title} on Spotify`}
-                >
-                  <ExternalLinkIcon className="w-4 h-4" />
-                </Link>
-              )}
-              {playlist.apple_music_url && (
-                <Link
-                  href={playlist.apple_music_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-black/80 hover:bg-black backdrop-blur-sm text-white p-2 rounded-full transition-colors"
-                  aria-label={`Listen to ${playlist.title} on Apple Music`}
-                >
-                  <ExternalLinkIcon className="w-4 h-4" />
-                </Link>
-              )}
-              {playlist.youtube_url && (
-                <Link
-                  href={playlist.youtube_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-red-500/80 hover:bg-red-500 backdrop-blur-sm text-white p-2 rounded-full transition-colors"
-                  aria-label={`Listen to ${playlist.title} on YouTube`}
-                >
-                  <ExternalLinkIcon className="w-4 h-4" />
-                </Link>
-              )}
-            </div>
+          {/* Category badge */}
+          <div className="absolute top-2 right-2">
+            <span className="bg-black/70 text-white text-xs px-2 py-1 rounded-full">
+              {playlist.category.replace('by_', '').replace('_', ' ').toUpperCase()}
+            </span>
           </div>
         </div>
-        <div className="p-4 text-center">
-          <h3 className="font-semibold text-lg line-clamp-2 min-h-[2.5em] text-gray-900 dark:text-gray-50 group-hover:text-primary transition-colors">
+        <div className="p-4">
+          <h3 className="font-semibold text-lg line-clamp-2 min-h-[2.5em] text-gray-900 dark:text-gray-50 group-hover:text-primary transition-colors text-center mb-2">
             {playlist.title}
           </h3>
           {playlist.description && (
-            <p className="text-sm text-muted-foreground line-clamp-2 min-h-[2.5em] mt-2">
+            <p className="text-sm text-muted-foreground line-clamp-2 min-h-[2.5em] text-center mb-3">
               {playlist.description}
             </p>
           )}
-          <p className="text-xs text-muted-foreground mt-1">
-            {playlist.track_count} tracks • {playlist.category.replace('by_', '').replace('_', ' ')}
-          </p>
+          
+          {/* Track count */}
+          <div className="text-center mb-3">
+            <span className="text-xs text-muted-foreground">
+              {playlist.track_count > 0 ? `${playlist.track_count} tracks` : 'No tracks'}
+            </span>
+          </div>
+          
+          {/* Streaming service buttons */}
+          <div className="flex justify-center gap-2">
+            {playlist.spotify_url && (
+              <Link
+                href={playlist.spotify_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 max-w-[100px] bg-green-500 hover:bg-green-600 text-white text-xs py-2 px-3 rounded-md transition-colors text-center"
+                aria-label={`Listen to ${playlist.title} on Spotify`}
+              >
+                Spotify
+              </Link>
+            )}
+            {playlist.apple_music_url && (
+              <Link
+                href={playlist.apple_music_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 max-w-[100px] bg-gray-800 hover:bg-gray-900 text-white text-xs py-2 px-3 rounded-md transition-colors text-center"
+                aria-label={`Listen to ${playlist.title} on Apple Music`}
+              >
+                Apple Music
+              </Link>
+            )}
+            {playlist.youtube_url && (
+              <Link
+                href={playlist.youtube_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 max-w-[100px] bg-red-500 hover:bg-red-600 text-white text-xs py-2 px-3 rounded-md transition-colors text-center"
+                aria-label={`Listen to ${playlist.title} on YouTube`}
+              >
+                YouTube
+              </Link>
+            )}
+          </div>
+          
+          {/* Show message if no streaming links */}
+          {!playlist.spotify_url && !playlist.apple_music_url && !playlist.youtube_url && (
+            <div className="text-center">
+              <span className="text-xs text-muted-foreground">No streaming links available</span>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
@@ -157,22 +166,14 @@ export default function PlaylistsPage() {
   
   // Fetch all playlists
   const fetchPlaylists = useCallback(async () => {
-    console.log('fetchPlaylists called')
     try {
-      console.log('Setting loading to true')
       setLoading(true)
-      console.log('Calling getAllPlaylists')
       const playlists = await getAllPlaylists()
-      console.log('getAllPlaylists returned:', playlists.length, playlists)
-      console.log('Setting allPlaylists')
       setAllPlaylists(playlists)
-      console.log('allPlaylists set')
     } catch (error) {
       console.error('Error in fetchPlaylists:', error)
-      console.log('Setting fallback playlists due to error')
       setAllPlaylists(fallbackPlaylists)
     } finally {
-      console.log('Setting loading to false')
       setLoading(false)
     }
   }, [])
@@ -242,7 +243,7 @@ export default function PlaylistsPage() {
       <div className="container px-4 md:px-6 py-12 md:py-16">
         <div className="flex items-center justify-center py-20">
           <Loader2 className="h-8 w-8 animate-spin" />
-          <span className="ml-2 text-lg">Loading playlists... (Debug: allPlaylists.length = {allPlaylists.length})</span>
+          <span className="ml-2 text-lg">Loading playlists...</span>
         </div>
       </div>
     )
@@ -250,9 +251,6 @@ export default function PlaylistsPage() {
 
   return (
     <div className="container px-4 md:px-6 py-12 md:py-16">
-      <div className="mb-4 p-4 bg-yellow-100 border border-yellow-300 rounded">
-        DEBUG: loading={loading ? 'true' : 'false'}, allPlaylists.length={allPlaylists.length}, displayedPlaylists.length={displayedPlaylists.length}
-      </div>
       <section className="py-8">
         {displayedPlaylists.length > 0 ? (
           <>
