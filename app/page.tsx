@@ -3,7 +3,9 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { HeroVideoSection } from "@/components/hero-video-section"
+import { JsonLdScript } from "@/components/json-ld"
 import { supabase } from "@/lib/supabase"
+import { generateOrganizationSchema, generateWebsiteSchema, generateItemListSchema } from "@/lib/structured-data"
 
 // Revalidate the page every 5 minutes to pick up featured release changes
 export const revalidate = 300
@@ -67,8 +69,26 @@ async function getFeaturedReleases() {
 export default async function HomePage() {
   const featuredReleases = await getFeaturedReleases()
   
+  // Generate structured data for the homepage
+  const organizationSchema = generateOrganizationSchema()
+  const websiteSchema = generateWebsiteSchema()
+  const featuredReleasesSchema = generateItemListSchema({
+    name: "Featured Classical Music Releases",
+    description: "Curated selection of exceptional classical music releases from Avanti Classic",
+    url: "/",
+    items: featuredReleases.map(release => ({
+      name: release.title,
+      url: `/releases/${release.url || release.id}`,
+      image: release.imageUrl,
+      description: `${release.title} by ${release.artists}`
+    }))
+  })
+
+  const schemas = [organizationSchema, websiteSchema, featuredReleasesSchema]
+  
   return (
     <div className="flex flex-col">
+      <JsonLdScript data={schemas} />
       <HeroVideoSection />
 
       {/* Featured Releases Section */}

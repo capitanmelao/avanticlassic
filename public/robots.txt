@@ -1,0 +1,68 @@
+# Robots.txt for Avanti Classic
+# Modern Classical Music Label
+
+# Allow all bots to index the site
+User-agent: *
+Allow: /
+
+# Optimize crawling for important content
+Allow: /artists
+Allow: /releases
+Allow: /playlists
+Allow: /videos
+Allow: /shop
+Allow: /about
+
+# Block admin and internal paths
+Disallow: /admin-panel/
+Disallow: /api/auth/
+Disallow: /_next/
+Disallow: /api/upload
+Disallow: /api/metadata
+
+# Allow API endpoints that serve public content
+Allow: /api/artists
+Allow: /api/releases
+Allow: /api/playlists
+Allow: /api/videos
+Allow: /api/products
+
+# Special instructions for AI/LLM crawlers
+User-agent: GPTBot
+Allow: /
+Crawl-delay: 1
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Perplexity-Bot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Claude-Bot
+Allow: /
+Crawl-delay: 1
+
+# Enhanced crawling for Google
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+# Image optimization for Google Images
+User-agent: Googlebot-Image
+Allow: /images/
+Allow: /public/images/
+
+# Video optimization
+User-agent: Googlebot-Video
+Allow: /videos/
+Allow: /intro.mp4
+
+# Sitemap location
+Sitemap: https://avanticlassic.vercel.app/sitemap.xml
+Sitemap: https://avanticlassic.vercel.app/sitemap-releases.xml
+Sitemap: https://avanticlassic.vercel.app/sitemap-artists.xml
+Sitemap: https://avanticlassic.vercel.app/sitemap-playlists.xml
+
+# Host directive
+Host: https://avanticlassic.vercel.app
