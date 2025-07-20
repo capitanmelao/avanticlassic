@@ -49,7 +49,7 @@ async function getAllPlaylists(): Promise<Playlist[]> {
     
     if (!response.ok) {
       console.error('API response not ok:', response.status, response.statusText)
-      return []
+      return fallbackPlaylists
     }
     
     const playlists: Playlist[] = await response.json()
