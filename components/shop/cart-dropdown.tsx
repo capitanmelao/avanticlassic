@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { ShoppingCart, Trash2, Plus, Minus } from 'lucide-react'
 
 import { useCart } from '@/contexts/cart-context'
+import { useLanguage } from '@/contexts/language-context'
+import { useTranslations } from '@/lib/translations'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { 
@@ -26,6 +28,8 @@ export function CartDropdown() {
     getTotalPrice, 
     getItemCount 
   } = useCart()
+  const { language } = useLanguage()
+  const t = useTranslations(language)
 
   const itemCount = getItemCount()
   const total = getTotalPrice()
@@ -39,7 +43,7 @@ export function CartDropdown() {
           className="relative hidden md:inline-flex text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
         >
           <ShoppingCart className="h-5 w-5" />
-          <span className="sr-only">Shopping Cart</span>
+          <span className="sr-only">{t.cart.title}</span>
           {itemCount > 0 && (
             <Badge 
               variant="destructive" 
@@ -52,20 +56,20 @@ export function CartDropdown() {
       </SheetTrigger>
       <SheetContent side="right" className="w-full sm:max-w-md">
         <SheetHeader>
-          <SheetTitle className="font-playfair">Shopping Cart</SheetTitle>
+          <SheetTitle className="font-playfair">{t.cart.title}</SheetTitle>
         </SheetHeader>
         
         <div className="mt-6 flex-1 overflow-y-auto">
           {state.items.length === 0 ? (
             <div className="text-center py-8">
               <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">Your cart is empty</p>
+              <p className="text-gray-500">{t.cart.empty}</p>
               <Button 
                 asChild 
                 className="mt-4" 
                 onClick={() => setCartOpen(false)}
               >
-                <Link href="/shop">Continue Shopping</Link>
+                <Link href="/shop">{t.cart.continueShopping}</Link>
               </Button>
             </div>
           ) : (
@@ -127,7 +131,7 @@ export function CartDropdown() {
                       €{(item.price * item.quantity).toFixed(2)}
                     </p>
                     <p className="text-xs text-gray-500">
-                      €{item.price.toFixed(2)} each
+                      €{item.price.toFixed(2)} {t.cart.each}
                     </p>
                   </div>
                 </div>
@@ -137,16 +141,16 @@ export function CartDropdown() {
               
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Subtotal</span>
+                  <span className="text-sm text-gray-600">{t.cart.subtotal}</span>
                   <span className="text-sm">€{total.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Shipping</span>
-                  <span className="text-sm">Calculated at checkout</span>
+                  <span className="text-sm text-gray-600">{t.cart.shipping}</span>
+                  <span className="text-sm">{t.cart.calculatedAtCheckout}</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between items-center">
-                  <span className="font-medium">Total</span>
+                  <span className="font-medium">{t.cart.total}</span>
                   <span className="font-medium text-lg">€{total.toFixed(2)}</span>
                 </div>
               </div>
@@ -158,7 +162,7 @@ export function CartDropdown() {
                   onClick={() => setCartOpen(false)}
                 >
                   <Link href="/shop/checkout">
-                    Proceed to Checkout
+                    {t.cart.proceedToCheckout}
                   </Link>
                 </Button>
                 <Button 
@@ -168,7 +172,7 @@ export function CartDropdown() {
                   onClick={() => setCartOpen(false)}
                 >
                   <Link href="/shop/cart">
-                    View Cart
+                    {t.cart.viewCart}
                   </Link>
                 </Button>
                 <Button 
@@ -176,7 +180,7 @@ export function CartDropdown() {
                   className="w-full text-red-500 hover:text-red-600"
                   onClick={clearCart}
                 >
-                  Clear Cart
+                  {t.cart.clearCart}
                 </Button>
               </div>
             </div>
@@ -190,6 +194,8 @@ export function CartDropdown() {
 // Simple cart button for mobile
 export function CartButton() {
   const { setCartOpen, getItemCount } = useCart()
+  const { language } = useLanguage()
+  const t = useTranslations(language)
   const itemCount = getItemCount()
 
   return (
@@ -200,7 +206,7 @@ export function CartButton() {
       onClick={() => setCartOpen(true)}
     >
       <ShoppingCart className="h-5 w-5" />
-      <span className="sr-only">Shopping Cart</span>
+      <span className="sr-only">{t.cart.title}</span>
       {itemCount > 0 && (
         <Badge 
           variant="destructive" 

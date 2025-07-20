@@ -4,6 +4,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Menu, Search, User, ShoppingCart, Facebook, Youtube } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
+import { useTranslations } from "@/lib/translations"
 
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
@@ -12,6 +13,7 @@ import { CartDropdown, CartButton } from "@/components/shop/cart-dropdown"
 
 export default function NewHeader() {
   const { language, setLanguage } = useLanguage()
+  const t = useTranslations(language)
 
   const languageMap = {
     en: 'EN',
@@ -22,7 +24,7 @@ export default function NewHeader() {
     <header className="sticky top-0 z-50 w-full bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800">
       {/* Top Bar */}
       <div className="hidden md:flex justify-end items-center h-10 px-6 border-b border-gray-200 dark:border-gray-800 text-sm text-gray-600 dark:text-gray-400">
-        <span className="mr-4">FOLLOW US</span>
+        <span className="mr-4">{t.navigation.followUs}</span>
         <div className="flex gap-3 mr-4">
           <Link href="#" aria-label="Facebook">
             <Facebook className="h-4 w-4 hover:text-primary transition-colors" />
@@ -43,13 +45,13 @@ export default function NewHeader() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={() => setLanguage('en')}>
-              English {language === 'en' && '✓'}
+              {t.navigation.language.english} {language === 'en' && '✓'}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setLanguage('de')}>
-              Deutsch {language === 'de' && '✓'}
+              {t.navigation.language.deutsch} {language === 'de' && '✓'}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setLanguage('fr')}>
-              Français {language === 'fr' && '✓'}
+              {t.navigation.language.francais} {language === 'fr' && '✓'}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -72,37 +74,37 @@ export default function NewHeader() {
             href="/releases"
             className="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors font-playfair"
           >
-            RELEASES
+            {t.navigation.releases}
           </Link>
           <Link
             href="/artists"
             className="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors font-playfair"
           >
-            ARTISTS
+            {t.navigation.artists}
           </Link>
           <Link
             href="/playlists"
             className="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors font-playfair"
           >
-            PLAYLISTS
+            {t.navigation.playlists}
           </Link>
           <Link
             href="/shop"
             className="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors font-playfair"
           >
-            SHOP
+            {t.navigation.shop}
           </Link>
           <Link
             href="/videos"
             className="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors font-playfair"
           >
-            VIDEOS
+            {t.navigation.videos}
           </Link>
           <Link
             href="/about"
             className="text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors font-playfair"
           >
-            ABOUT US
+            {t.navigation.aboutUs}
           </Link>
         </nav>
         <div className="flex items-center gap-2 md:gap-4">
@@ -112,7 +114,7 @@ export default function NewHeader() {
             className="text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
           >
             <Search className="h-5 w-5" />
-            <span className="sr-only">Search</span>
+            <span className="sr-only">{t.navigation.search}</span>
           </Button>
           <Button
             variant="ghost"
@@ -120,7 +122,7 @@ export default function NewHeader() {
             className="hidden md:inline-flex text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
           >
             <User className="h-5 w-5" />
-            <span className="sr-only">My Account</span>
+            <span className="sr-only">{t.navigation.myAccount}</span>
           </Button>
           <CartDropdown />
           <Sheet>
@@ -133,7 +135,7 @@ export default function NewHeader() {
                   className="md:hidden text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
                 >
                   <Menu className="h-6 w-6" />
-                  <span className="sr-only">Toggle navigation menu</span>
+                  <span className="sr-only">{t.navigation.toggleMenu}</span>
                 </Button>
               </div>
             </SheetTrigger>
@@ -143,37 +145,37 @@ export default function NewHeader() {
                   href="/releases"
                   className="text-lg font-semibold text-gray-800 hover:text-primary dark:text-gray-200 dark:hover:text-primary font-playfair"
                 >
-                  RELEASES
+                  {t.navigation.releases}
                 </Link>
                 <Link
                   href="/artists"
                   className="text-lg font-semibold text-gray-800 hover:text-primary dark:text-gray-200 dark:hover:text-primary font-playfair"
                 >
-                  ARTISTS
+                  {t.navigation.artists}
                 </Link>
                 <Link
                   href="/playlists"
                   className="text-lg font-semibold text-gray-800 hover:text-primary dark:text-gray-200 dark:hover:text-primary font-playfair"
                 >
-                  PLAYLISTS
+                  {t.navigation.playlists}
                 </Link>
                 <Link
                   href="/shop"
                   className="text-lg font-semibold text-gray-800 hover:text-primary dark:text-gray-200 dark:hover:text-primary font-playfair"
                 >
-                  SHOP
+                  {t.navigation.shop}
                 </Link>
                 <Link
                   href="/videos"
                   className="text-lg font-semibold text-gray-800 hover:text-primary dark:text-gray-200 dark:hover:text-primary font-playfair"
                 >
-                  VIDEOS
+                  {t.navigation.videos}
                 </Link>
                 <Link
                   href="/about"
                   className="text-lg font-semibold text-gray-800 hover:text-primary dark:text-gray-200 dark:hover:text-primary font-playfair"
                 >
-                  ABOUT US
+                  {t.navigation.aboutUs}
                 </Link>
                 <div className="flex gap-4 mt-4 justify-center">
                   <Link href="#" aria-label="Facebook">
