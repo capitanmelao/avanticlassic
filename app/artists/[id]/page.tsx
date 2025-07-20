@@ -249,10 +249,19 @@ const fallbackArtists: Artist[] = [
     facebook: "https://www.facebook.com/kasparas.uinskas"
   },
   {
+    id: "25",
+    name: "Dora Schwarzberg - Polina Leschenko",
+    instrument: "Piano Duo",
+    imageUrl: "/placeholder.svg",
+    url: "Dora-Schwarzberg---Polina-Leschenko",
+    bio: "Dora Schwarzberg and Polina Leschenko form an exceptional piano duo, bringing together their individual virtuosity and musical sensitivity to create memorable performances. Their collaboration showcases the rich tradition of piano duet repertoire while exploring contemporary interpretations of classical works.",
+    facebook: "https://www.facebook.com/dora.polina.duo"
+  },
+  {
     id: "49",
     name: "Bireli Lagrene",
     instrument: "Guitar",
-    imageUrl: "/images/artists/49-800.jpeg",
+    imageUrl: "/placeholder.svg",
     url: "Bireli-Lagrene",
     bio: "Biréli Lagrène is a French jazz guitarist who rose to fame in the 1980s for his Django Reinhardt-influenced style. Born into a gypsy family in Saverne, Alsace, France, he started playing guitar at the age of four. Lagrène has become one of the most acclaimed jazz guitarists in the world, known for his virtuosic technique and ability to blend traditional gypsy jazz with modern styles. His collaboration with various artists and his solo career have established him as a master of the genre.",
     facebook: "https://www.facebook.com/bireli.lagrene"
@@ -261,7 +270,7 @@ const fallbackArtists: Artist[] = [
     id: "70",
     name: "Matt Herskovitz Trio",
     instrument: "Jazz Ensemble",
-    imageUrl: "/images/artists/70-800.jpeg",
+    imageUrl: "/placeholder.svg",
     url: "Matt-Herskovitz-Trio",
     bio: "The Matt Herskovitz Trio is a distinguished jazz ensemble known for their innovative interpretations of classical and contemporary repertoire. Led by pianist Matt Herskovitz, the trio brings a fresh perspective to the jazz tradition while maintaining the highest standards of musical excellence. Their performances showcase exceptional musicianship and creative collaboration.",
     facebook: "https://www.facebook.com/matth.trio"
@@ -270,7 +279,7 @@ const fallbackArtists: Artist[] = [
     id: "76",
     name: "Dr L. Subramaniam",
     instrument: "Violin",
-    imageUrl: "/images/artists/76-800.jpeg",
+    imageUrl: "/placeholder.svg",
     url: "Dr-L.-Subramaniam",
     bio: "Dr. L. Subramaniam is an acclaimed Indian violinist and composer who has revolutionized the art of violin playing in Indian classical music. Born into a musical family, he has achieved international recognition for his innovative approach to blending Indian classical music with Western classical and world music traditions. His virtuosic technique and creative vision have made him one of the most respected musicians in the world music scene.",
     facebook: "https://www.facebook.com/drlsubramaniam"
