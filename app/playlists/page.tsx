@@ -40,6 +40,7 @@ const fallbackPlaylists: Playlist[] = [
 
 // Fetch all playlists from API
 async function getAllPlaylists(): Promise<Playlist[]> {
+  console.log('getAllPlaylists called')
   try {
     console.log('Fetching playlists from /api/playlists?lang=en')
     // Use relative URL for API calls to work in all environments
@@ -47,16 +48,21 @@ async function getAllPlaylists(): Promise<Playlist[]> {
       cache: 'no-store'
     })
     
+    console.log('Response received:', response.status, response.ok)
+    
     if (!response.ok) {
       console.error('API response not ok:', response.status, response.statusText)
+      console.log('Returning fallback playlists due to bad response')
       return fallbackPlaylists
     }
     
     const playlists: Playlist[] = await response.json()
     console.log('Raw API response:', playlists)
+    console.log('Returning playlists, length:', playlists.length)
     return playlists.length > 0 ? playlists : fallbackPlaylists
   } catch (error) {
     console.error('Error fetching playlists:', error)
+    console.log('Returning fallback playlists due to error')
     return fallbackPlaylists
   }
 }
@@ -151,14 +157,22 @@ export default function PlaylistsPage() {
   
   // Fetch all playlists
   const fetchPlaylists = useCallback(async () => {
+    console.log('fetchPlaylists called')
     try {
+      console.log('Setting loading to true')
       setLoading(true)
+      console.log('Calling getAllPlaylists')
       const playlists = await getAllPlaylists()
-      console.log('Fetched playlists:', playlists.length, playlists)
+      console.log('getAllPlaylists returned:', playlists.length, playlists)
+      console.log('Setting allPlaylists')
       setAllPlaylists(playlists)
+      console.log('allPlaylists set')
     } catch (error) {
-      console.error('Error fetching playlists:', error)
+      console.error('Error in fetchPlaylists:', error)
+      console.log('Setting fallback playlists due to error')
+      setAllPlaylists(fallbackPlaylists)
     } finally {
+      console.log('Setting loading to false')
       setLoading(false)
     }
   }, [])
