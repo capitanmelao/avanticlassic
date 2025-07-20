@@ -95,12 +95,6 @@ function PlaylistCard({ playlist }: { playlist: Playlist }) {
             </p>
           )}
           
-          {/* Track count */}
-          <div className="text-center mb-3">
-            <span className="text-xs text-muted-foreground">
-              {playlist.track_count > 0 ? `${playlist.track_count} tracks` : 'No tracks'}
-            </span>
-          </div>
           
           {/* Streaming service buttons */}
           <div className="flex justify-center gap-2">

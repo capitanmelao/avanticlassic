@@ -192,14 +192,6 @@ export default function VideosPage() {
   if (loading) {
     return (
       <div className="container px-4 md:px-6 py-12 md:py-20">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl md:text-7xl font-bold mb-4 text-gray-900 dark:text-gray-50 tracking-tight">
-            Our Videos
-          </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
-            Discover the artistry and passion of classical music through our curated video collection
-          </p>
-        </div>
         <div className="flex items-center justify-center py-20">
           <Loader2 className="h-8 w-8 animate-spin" />
           <span className="ml-2 text-lg">Loading videos...</span>
@@ -210,11 +202,6 @@ export default function VideosPage() {
 
   return (
     <div className="container px-4 md:px-6 py-12 md:py-20">
-      <div className="text-center mb-12">
-        <h1 className="text-5xl md:text-7xl font-bold mb-4 text-gray-900 dark:text-gray-50 tracking-tight">
-          Videos
-        </h1>
-      </div>
       
       <VideoSearchFilter
         videos={allVideos}
