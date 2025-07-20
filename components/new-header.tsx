@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { Menu, Search, User, ShoppingCart, Facebook, Twitter, Instagram, Youtube } from "lucide-react"
+import { Menu, Search, User, ShoppingCart, Facebook, Youtube } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 
 import { Button } from "@/components/ui/button"
@@ -26,12 +26,6 @@ export default function NewHeader() {
         <div className="flex gap-3 mr-4">
           <Link href="#" aria-label="Facebook">
             <Facebook className="h-4 w-4 hover:text-primary transition-colors" />
-          </Link>
-          <Link href="#" aria-label="Twitter">
-            <Twitter className="h-4 w-4 hover:text-primary transition-colors" />
-          </Link>
-          <Link href="#" aria-label="Instagram">
-            <Instagram className="h-4 w-4 hover:text-primary transition-colors" />
           </Link>
           <Link href="#" aria-label="YouTube">
             <Youtube className="h-4 w-4 hover:text-primary transition-colors" />
@@ -184,12 +178,6 @@ export default function NewHeader() {
                 <div className="flex gap-4 mt-4 justify-center">
                   <Link href="#" aria-label="Facebook">
                     <Facebook className="h-6 w-6 text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary" />
-                  </Link>
-                  <Link href="#" aria-label="Twitter">
-                    <Twitter className="h-6 w-6 text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary" />
-                  </Link>
-                  <Link href="#" aria-label="Instagram">
-                    <Instagram className="h-6 w-6 text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary" />
                   </Link>
                   <Link href="#" aria-label="YouTube">
                     <Youtube className="h-6 w-6 text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary" />

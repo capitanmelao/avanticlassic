@@ -1,9 +1,13 @@
+"use client"
+
 import Image from "next/image"
 import Link from "next/link"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ChevronLeft, ExternalLink } from "lucide-react"
-import { Facebook, Instagram, Twitter, Youtube, Globe } from "lucide-react"
+import { Facebook, Youtube, Globe } from "lucide-react"
+import { useLanguage } from "@/contexts/language-context"
 
 interface Artist {
   id: string
@@ -13,8 +17,6 @@ interface Artist {
   bio: string
   url?: string
   facebook?: string
-  instagram?: string
-  twitter?: string
   youtube?: string
   website?: string
 }
@@ -28,13 +30,33 @@ interface Release {
   url?: string
 }
 
-async function getArtist(id: string) {
-  // Skip API call for now, use fallback data directly
+async function getArtist(id: string, language: string) {
+  try {
+    // First try the API for real database data
+    const response = await fetch(`/api/artists/${encodeURIComponent(id)}?lang=${language}`, {
+      cache: 'no-store'
+    })
+    if (response.ok) {
+      return await response.json()
+    }
+  } catch (error) {
+    console.error('Error fetching artist from API:', error)
+  }
   return null
 }
 
 async function getArtistReleases(artistName: string) {
-  // Skip API call for now, use fallback data directly
+  try {
+    const response = await fetch(`/api/releases/by-artist/${encodeURIComponent(artistName)}`, {
+      cache: 'no-store'
+    })
+    if (response.ok) {
+      const data = await response.json()
+      return { releases: data.releases || [] }
+    }
+  } catch (error) {
+    console.error('Error fetching artist releases:', error)
+  }
   return { releases: [] }
 }
 
@@ -607,13 +629,46 @@ const artistReleases: Record<string, Release[]> = {
   ]
 }
 
-export default async function ArtistDetailPage({ params }: { params: { id: string } }) {
-  // Try to get artist from API
-  let artist = await getArtist(params.id)
-  
-  // If API fails, try to find in fallback data by ID or URL
-  if (!artist) {
-    artist = fallbackArtists.find((a) => a.id === params.id || a.url === params.id)
+export default function ArtistDetailPage({ params }: { params: { id: string } }) {
+  const { language } = useLanguage()
+  const [artist, setArtist] = useState<Artist | null>(null)
+  const [releases, setReleases] = useState<Release[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchArtistData() {
+      setLoading(true)
+      
+      // Try to get artist from API with current language
+      let artistData = await getArtist(params.id, language)
+      
+      // If API fails, try to find in fallback data by ID or URL
+      if (!artistData) {
+        artistData = fallbackArtists.find((a) => a.id === params.id || a.url === params.id)
+      }
+
+      setArtist(artistData)
+
+      if (artistData) {
+        // Get artist releases
+        const { releases: artistReleases } = await getArtistReleases(artistData.name)
+        const fallbackReleases = artistReleases[artistData.url || artistData.name] || []
+        const displayReleases = artistReleases.length > 0 ? artistReleases : fallbackReleases
+        setReleases(displayReleases)
+      }
+      
+      setLoading(false)
+    }
+
+    fetchArtistData()
+  }, [params.id, language]) // Re-fetch when language changes
+
+  if (loading) {
+    return (
+      <div className="container px-4 md:px-6 py-12 md:py-24 text-center">
+        <div className="animate-pulse">Loading artist...</div>
+      </div>
+    )
   }
 
   if (!artist) {
@@ -627,11 +682,6 @@ export default async function ArtistDetailPage({ params }: { params: { id: strin
       </div>
     )
   }
-
-  // Get artist releases
-  const { releases } = await getArtistReleases(artist.name)
-  const fallbackReleases = artistReleases[artist.url || artist.name] || []
-  const displayReleases = releases.length > 0 ? releases : fallbackReleases
 
   return (
     <div className="container px-4 md:px-6 py-12 md:py-16">
@@ -677,13 +727,13 @@ export default async function ArtistDetailPage({ params }: { params: { id: strin
       </div>
 
       {/* Artist Releases Section */}
-      {displayReleases.length > 0 && (
+      {releases.length > 0 && (
         <div className="border-t pt-12">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-50 mb-8">
             Releases by {artist.name}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {displayReleases.map((release) => (
+            {releases.map((release) => (
               <Link key={release.id} href={`/releases/${release.url || release.id}`} className="block">
                 <Card className="group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800 cursor-pointer hover:scale-105">
                   <CardContent className="p-0">
@@ -714,8 +764,6 @@ export default async function ArtistDetailPage({ params }: { params: { id: strin
 function SocialMediaLinks({ artist }: { artist: Artist }) {
   const socialLinks = [
     { url: artist.facebook, icon: Facebook, label: "Facebook", color: "hover:text-blue-600" },
-    { url: artist.instagram, icon: Instagram, label: "Instagram", color: "hover:text-pink-600" },
-    { url: artist.twitter, icon: Twitter, label: "Twitter", color: "hover:text-blue-400" },
     { url: artist.youtube, icon: Youtube, label: "YouTube", color: "hover:text-red-600" },
     { url: artist.website, icon: Globe, label: "Website", color: "hover:text-green-600" },
   ].filter(link => link.url) // Only show links that exist
