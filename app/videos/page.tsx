@@ -316,6 +316,10 @@ function VideoCard({ video }: { video: any }) {
           width={400}
           height={225}
           className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = "/placeholder.svg";
+          }}
         />
         <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors flex items-center justify-center">
           <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center group-hover:scale-110 transition-transform">
