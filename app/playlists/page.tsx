@@ -228,7 +228,7 @@ export default function PlaylistsPage() {
       <div className="container px-4 md:px-6 py-12 md:py-16">
         <div className="flex items-center justify-center py-20">
           <Loader2 className="h-8 w-8 animate-spin" />
-          <span className="ml-2 text-lg">Loading playlists...</span>
+          <span className="ml-2 text-lg">Loading playlists... (Debug: allPlaylists.length = {allPlaylists.length})</span>
         </div>
       </div>
     )
@@ -236,6 +236,9 @@ export default function PlaylistsPage() {
 
   return (
     <div className="container px-4 md:px-6 py-12 md:py-16">
+      <div className="mb-4 p-4 bg-yellow-100 border border-yellow-300 rounded">
+        DEBUG: loading={loading ? 'true' : 'false'}, allPlaylists.length={allPlaylists.length}, displayedPlaylists.length={displayedPlaylists.length}
+      </div>
       <section className="py-8">
         {displayedPlaylists.length > 0 ? (
           <>
