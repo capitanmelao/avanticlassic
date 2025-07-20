@@ -1,15 +1,53 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft, Calendar, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 async function getVideo(id: string) {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/videos/${encodeURIComponent(id)}`, {
-      next: { revalidate: 3600 }
-    })
-    if (!response.ok) throw new Error('Video not found')
-    return await response.json()
+    // Direct database query for better performance and reliability
+    const { supabase } = await import('@/lib/supabase')
+    
+    const isNumeric = !isNaN(parseInt(id))
+    
+    const { data: video, error } = await supabase
+      .from('videos')
+      .select(`
+        *,
+        video_translations(
+          language,
+          description
+        ),
+        video_artists(
+          artist:artists(
+            id,
+            name,
+            url
+          )
+        )
+      `)
+      .eq(isNumeric ? 'id' : 'youtube_id', id)
+      .single()
+
+    if (error || !video) {
+      console.error('Error fetching video:', error)
+      return null
+    }
+
+    const artists = video.video_artists?.map((va: any) => va.artist?.name).join(', ') || 'Various Artists'
+    const translation = video.video_translations?.find((t: any) => t.language === 'en') || video.video_translations?.[0]
+
+    return {
+      id: video.id.toString(),
+      title: video.title || `Video ${video.id}`,
+      artist: artists,
+      artistName: artists,
+      youtubeId: video.youtube_id,
+      youtubeUrl: video.youtube_url,
+      description: translation?.description || '',
+      createdAt: video.created_at
+    }
   } catch (error) {
     console.error('Error fetching video:', error)
     return null
@@ -18,12 +56,37 @@ async function getVideo(id: string) {
 
 async function getRelatedVideos(currentId: string) {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/videos?limit=4`, {
-      next: { revalidate: 3600 }
-    })
-    if (!response.ok) throw new Error('Failed to fetch related videos')
-    const videos = await response.json()
-    return videos.filter((video: any) => video.id !== currentId)
+    // Direct database query for related videos
+    const { supabase } = await import('@/lib/supabase')
+    
+    const { data: videos, error } = await supabase
+      .from('videos')
+      .select(`
+        id,
+        title,
+        youtube_id,
+        video_artists(
+          artist:artists(
+            name
+          )
+        )
+      `)
+      .neq('id', parseInt(currentId))
+      .order('featured', { ascending: false })
+      .order('sort_order')
+      .limit(4)
+
+    if (error) {
+      console.error('Error fetching related videos:', error)
+      return []
+    }
+
+    return videos?.map(video => ({
+      id: video.id.toString(),
+      title: video.title,
+      youtubeId: video.youtube_id,
+      artistName: video.video_artists?.map((va: any) => va.artist?.name).join(', ') || 'Various Artists'
+    })) || []
   } catch (error) {
     console.error('Error fetching related videos:', error)
     return []
@@ -52,9 +115,9 @@ export default async function VideoDetailPage({ params }: { params: { id: string
       {/* Header */}
       <div className="bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-700">
         <div className="container px-4 md:px-6 py-6">
-          <Link href="/news-and-more" className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-50 mb-4">
+          <Link href="/videos" className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-50 mb-4">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Videos & More
+            Back to Videos
           </Link>
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-50">
             {video.title}
@@ -122,9 +185,11 @@ export default async function VideoDetailPage({ params }: { params: { id: string
                     >
                       <div className="flex gap-3">
                         <div className="flex-shrink-0">
-                          <img
+                          <Image
                             src={getThumbnail(relatedVideo.youtubeId)}
                             alt={relatedVideo.title}
+                            width={96}
+                            height={64}
                             className="w-24 h-16 object-cover rounded group-hover:opacity-80 transition-opacity"
                           />
                         </div>
