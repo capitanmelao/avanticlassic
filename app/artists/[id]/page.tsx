@@ -639,12 +639,20 @@ export default function ArtistDetailPage({ params }: { params: { id: string } })
     async function fetchArtistData() {
       setLoading(true)
       
-      // Try to get artist from API with current language
-      let artistData = await getArtist(params.id, language)
+      // Always start with fallback English data
+      let artistData = fallbackArtists.find((a) => a.id === params.id || a.url === params.id)
       
-      // If API fails, try to find in fallback data by ID or URL
-      if (!artistData) {
-        artistData = fallbackArtists.find((a) => a.id === params.id || a.url === params.id)
+      // Only try API for non-English languages (when translations exist)
+      if (language !== 'en' && artistData) {
+        try {
+          const apiData = await getArtist(params.id, language)
+          if (apiData && apiData.bio) {
+            // Merge API translation with fallback data
+            artistData = { ...artistData, bio: apiData.bio }
+          }
+        } catch (error) {
+          console.log('No translation available for', language, '- using English')
+        }
       }
 
       setArtist(artistData)
