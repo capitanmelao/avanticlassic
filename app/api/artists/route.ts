@@ -52,6 +52,7 @@ export async function GET(request: NextRequest) {
     // Transform data to match template format
     const transformedArtists = artists?.map(artist => ({
       id: artist.id.toString(),
+      url: artist.url,
       name: artist.name,
       instrument: artist.instrument || 'Performer',
       imageUrl: `/images/artists/${artist.id}-800.jpeg`,

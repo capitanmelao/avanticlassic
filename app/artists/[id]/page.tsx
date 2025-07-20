@@ -30,6 +30,21 @@ interface Release {
   url?: string
 }
 
+async function getArtistTranslation(artistUrl: string, language: string) {
+  // For now, return null since we need to determine the old SSG site structure
+  // This would fetch from the old multilingual site
+  try {
+    // This would be something like:
+    // const response = await fetch(`https://old-site.com/${language}/artists/${artistUrl}`)
+    // For now, just return null to use English fallback
+    console.log(`Translation for ${artistUrl} in ${language} not implemented yet`)
+    return null
+  } catch (error) {
+    console.error('Error fetching translation:', error)
+    return null
+  }
+}
+
 async function getArtist(id: string, language: string) {
   try {
     // First try the API for real database data
@@ -642,13 +657,19 @@ export default function ArtistDetailPage({ params }: { params: { id: string } })
       // Always start with fallback English data
       let artistData = fallbackArtists.find((a) => a.id === params.id || a.url === params.id)
       
-      // Only try API for non-English languages (when translations exist)
-      if (language !== 'en' && artistData) {
+      // Try to get translations for non-English languages
+      if (language !== 'en' && artistData && artistData.url) {
         try {
+          // First try the new API
           const apiData = await getArtist(params.id, language)
           if (apiData && apiData.bio) {
-            // Merge API translation with fallback data
             artistData = { ...artistData, bio: apiData.bio }
+          } else {
+            // Try the old SSG site translation
+            const translation = await getArtistTranslation(artistData.url, language)
+            if (translation && translation.bio) {
+              artistData = { ...artistData, bio: translation.bio }
+            }
           }
         } catch (error) {
           console.log('No translation available for', language, '- using English')
