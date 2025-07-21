@@ -739,7 +739,7 @@ export default function EditProductPage() {
                       const newMetadata: ProductMetadata = {
                         ...formData.metadata,
                         shipping_override: {
-                          ...formData.metadata.shipping_override,
+                          amount: formData.metadata.shipping_override?.amount || 0,
                           enabled: e.target.checked
                         }
                       }
@@ -768,7 +768,7 @@ export default function EditProductPage() {
                         const newMetadata: ProductMetadata = {
                           ...formData.metadata,
                           shipping_override: {
-                            ...formData.metadata.shipping_override,
+                            enabled: formData.metadata.shipping_override?.enabled || false,
                             amount: amount
                           }
                         }
@@ -795,7 +795,7 @@ export default function EditProductPage() {
                       const newMetadata: ProductMetadata = {
                         ...formData.metadata,
                         tax_override: {
-                          ...formData.metadata.tax_override,
+                          amount: formData.metadata.tax_override?.amount || 0,
                           enabled: e.target.checked
                         }
                       }
@@ -824,7 +824,7 @@ export default function EditProductPage() {
                         const newMetadata: ProductMetadata = {
                           ...formData.metadata,
                           tax_override: {
-                            ...formData.metadata.tax_override,
+                            enabled: formData.metadata.tax_override?.enabled || false,
                             amount: amount
                           }
                         }
