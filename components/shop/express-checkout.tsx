@@ -102,6 +102,9 @@ function ExpressCheckoutForm({ onSuccess, onError }: ExpressCheckoutProps) {
         status: 'success'
       })
     },
+    onReady: () => {
+      console.log('Express Checkout ready - handlers registered')
+    },
     paymentMethods: {
       applePay: 'auto',
       googlePay: 'auto', 
@@ -169,13 +172,21 @@ export default function ExpressCheckout({ onSuccess, onError }: ExpressCheckoutP
     item.metadata?.tax_override?.enabled
   )
   
-  // Debug logging
-  console.log('Cart items for override check:', state.items.map(item => ({
+  // Debug logging with detailed override values
+  console.log('EXPRESS CHECKOUT - Cart items for override check:', state.items.map(item => ({
     name: item.name,
-    metadata: item.metadata
+    metadata: item.metadata,
+    shippingOverride: item.metadata?.shipping_override,
+    taxOverride: item.metadata?.tax_override
   })))
-  console.log('Has shipping override:', hasShippingOverride)
-  console.log('Has tax override:', hasTaxOverride)
+  console.log('EXPRESS CHECKOUT - Override detection:', {
+    hasShippingOverride,
+    hasTaxOverride,
+    calculatedShipping: shipping,
+    calculatedTax: tax,
+    subtotal,
+    total
+  })
   
   if (hasShippingOverride) {
     // Use the override shipping amount (should be 0 for test products)
