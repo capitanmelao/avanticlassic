@@ -95,7 +95,8 @@ function ProductCard({ product }: { product: Product }) {
       format: product.format,
       image: release.image_url || '/images/placeholder-album.jpg',
       price: defaultPrice.amount / 100, // Convert from cents
-      catalog: release.catalog_number
+      catalog: release.catalog_number,
+      metadata: product.metadata // Include product metadata for tax/shipping overrides
     })
   }
   

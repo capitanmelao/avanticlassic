@@ -239,7 +239,8 @@ function RelatedProducts({ products }: { products: Product[] }) {
                 format: product.format,
                 image: release.image_url || '/images/placeholder-album.jpg',
                 price: defaultPrice.amount / 100,
-                catalog: release.catalog_number
+                catalog: release.catalog_number,
+                metadata: product.metadata // Include product metadata for tax/shipping overrides
               })
             }
             
@@ -328,7 +329,8 @@ export default function ProductDetailPage() {
       format: product.format,
       image: product.releases.image_url || '/images/placeholder-album.jpg',
       price: selectedPrice.amount / 100,
-      catalog: product.releases.catalog_number
+      catalog: product.releases.catalog_number,
+      metadata: product.metadata // Include product metadata for tax/shipping overrides
     })
   }
   
