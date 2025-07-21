@@ -22,6 +22,7 @@ function ExpressCheckoutForm({ onSuccess, onError }: ExpressCheckoutProps) {
   const elements = useElements()
   const { state } = useCart()
   const [loading, setLoading] = useState(false)
+  const [hasError, setHasError] = useState(false)
 
   const handleExpressCheckout = async (event: any) => {
     if (!stripe || !elements) {
@@ -92,10 +93,9 @@ function ExpressCheckoutForm({ onSuccess, onError }: ExpressCheckoutProps) {
       console.log('Shipping rate changed:', event.shippingRate)
     },
     paymentMethods: {
-      applePay: 'always',
-      googlePay: 'always',
-      paypal: 'always',
-      link: 'always',
+      applePay: 'auto',
+      googlePay: 'auto',
+      link: 'auto',
     },
   }
 
@@ -104,12 +104,28 @@ function ExpressCheckoutForm({ onSuccess, onError }: ExpressCheckoutProps) {
     return null
   }
 
+  // Show fallback if Express Checkout has errors
+  if (hasError) {
+    return (
+      <div className="w-full p-4 bg-gray-50 rounded-lg">
+        <p className="text-sm text-gray-600">
+          Express checkout temporarily unavailable. Please use the checkout form below.
+        </p>
+      </div>
+    )
+  }
+
   return (
     <div className="w-full">
       <ExpressCheckoutElement 
         options={expressCheckoutOptions}
         onLoadError={(error) => {
           console.error('Express Checkout Element failed to load:', error)
+          setHasError(true)
+          onError?.(`Express checkout failed to load: ${error.message}`)
+        }}
+        onReady={() => {
+          console.log('Express Checkout Element ready')
         }}
       />
       {loading && (
@@ -147,7 +163,6 @@ export default function ExpressCheckout({ onSuccess, onError }: ExpressCheckoutP
     mode: 'payment' as const,
     currency: 'eur',
     amount: amountInCents > 0 ? amountInCents : 1000, // Use actual cart amount
-    payment_method_creation: 'manual' as const,
     ...(clientSecret && { clientSecret }),
   }
 
