@@ -1194,9 +1194,10 @@ export default function ReleaseDetailPage({ params }: { params: { id: string } }
           <p className="text-xl text-primary font-semibold">{release.artists}</p>
           <p className="text-lg text-gray-700 dark:text-gray-300">{release.format}</p>
           <div className="prose prose-lg dark:prose-invert max-w-none">
-            <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
-              {release.description}
-            </p>
+            <div 
+              className="text-lg leading-relaxed text-gray-700 dark:text-gray-300"
+              dangerouslySetInnerHTML={{ __html: release.description }}
+            />
           </div>
 
           {release.totalTime && (
