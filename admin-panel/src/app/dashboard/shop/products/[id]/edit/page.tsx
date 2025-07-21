@@ -210,7 +210,7 @@ export default function EditProductPage() {
     }
   }, [params.id, loadProduct, loadReleases])
 
-  const handleInputChange = (field: keyof ProductForm, value: string | number | boolean | null) => {
+  const handleInputChange = (field: keyof ProductForm, value: string | number | boolean | null | ProductMetadata) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
