@@ -147,8 +147,8 @@ export default function ExpressCheckout({ onSuccess, onError }: ExpressCheckoutP
   const subtotal = state.total
   
   // Check if any items have shipping overrides in metadata
-  let shipping = subtotal > 25 ? 0 : 0.50 // Default: €0.50 shipping for testing
-  let tax = subtotal * 0.05 // Default: 5% tax for testing
+  let shipping = subtotal > 25 ? 0 : 5.99 // Default: €5.99 shipping 
+  let tax = subtotal * 0.21 // Default: 21% VAT
   
   // Check for product-specific overrides in cart items
   const hasShippingOverride = state.items.some(item => 
@@ -157,6 +157,14 @@ export default function ExpressCheckout({ onSuccess, onError }: ExpressCheckoutP
   const hasTaxOverride = state.items.some(item => 
     item.metadata?.tax_override?.enabled
   )
+  
+  // Debug logging
+  console.log('Cart items for override check:', state.items.map(item => ({
+    name: item.name,
+    metadata: item.metadata
+  })))
+  console.log('Has shipping override:', hasShippingOverride)
+  console.log('Has tax override:', hasTaxOverride)
   
   if (hasShippingOverride) {
     // Use the override shipping amount (should be 0 for test products)

@@ -26,8 +26,29 @@ export default function CheckoutPage() {
   const [emailError, setEmailError] = useState('')
   
   const subtotal = state.total
-  const shipping = subtotal > 25 ? 0 : 5.99
-  const tax = subtotal * 0.21 // 21% VAT
+  
+  // Check for product-specific overrides in cart items
+  const hasShippingOverride = state.items.some(item => 
+    item.metadata?.shipping_override?.enabled
+  )
+  const hasTaxOverride = state.items.some(item => 
+    item.metadata?.tax_override?.enabled
+  )
+  
+  // Calculate shipping with overrides
+  let shipping = subtotal > 25 ? 0 : 5.99
+  if (hasShippingOverride) {
+    const overrideItem = state.items.find(item => item.metadata?.shipping_override?.enabled)
+    shipping = (overrideItem?.metadata?.shipping_override?.amount || 0) / 100
+  }
+  
+  // Calculate tax with overrides
+  let tax = subtotal * 0.21 // 21% VAT
+  if (hasTaxOverride) {
+    const overrideItem = state.items.find(item => item.metadata?.tax_override?.enabled)
+    tax = (overrideItem?.metadata?.tax_override?.amount || 0) / 100
+  }
+  
   const total = subtotal + shipping + tax
 
   // Redirect to cart if empty
