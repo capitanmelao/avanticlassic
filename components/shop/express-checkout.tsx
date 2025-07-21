@@ -145,8 +145,8 @@ export default function ExpressCheckout({ onSuccess, onError }: ExpressCheckoutP
 
   // Calculate total amount including shipping and tax
   const subtotal = state.total
-  const shipping = subtotal > 25 ? 0 : 5.99
-  const tax = subtotal * 0.21 // 21% VAT
+  const shipping = subtotal > 25 ? 0 : 0.50 // €0.50 shipping for testing
+  const tax = subtotal * 0.05 // 5% tax for testing (instead of 21%)
   const total = subtotal + shipping + tax
   const amountInCents = Math.round(total * 100)
 
