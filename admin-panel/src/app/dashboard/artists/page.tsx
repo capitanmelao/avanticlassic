@@ -123,7 +123,7 @@ export default function ArtistsPage() {
               minWidth: 100,
               render: (value) => value ? (
                 <a
-                  href={value}
+                  href={String(value)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300"
