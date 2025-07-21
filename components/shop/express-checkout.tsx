@@ -190,14 +190,14 @@ export default function ExpressCheckout({ onSuccess, onError }: ExpressCheckoutP
   
   if (hasShippingOverride) {
     // Use the override shipping amount (should be 0 for test products)
-    const overrideItem = state.items.find(item => item.metadata?.shipping_override?.enabled)
-    shipping = (overrideItem?.metadata?.shipping_override?.amount || 0) / 100
+    const shippingOverrideItem = state.items.find(item => item.metadata?.shipping_override?.enabled)
+    shipping = (shippingOverrideItem?.metadata?.shipping_override?.amount || 0) / 100
   }
   
   if (hasTaxOverride) {
     // Use the override tax rate (should be 0 for test products)
-    const overrideItem = state.items.find(item => item.metadata?.tax_override?.enabled)
-    const overrideRate = overrideItem?.metadata?.tax_override?.rate || 0
+    const taxOverrideItem = state.items.find(item => item.metadata?.tax_override?.enabled)
+    const overrideRate = taxOverrideItem?.metadata?.tax_override?.rate || 0
     tax = subtotal * overrideRate
   }
   

@@ -29,15 +29,15 @@ export default function CartPage() {
   // Calculate shipping with overrides
   let shipping = subtotal > 25 ? 0 : 5.99
   if (hasShippingOverride) {
-    const overrideItem = state.items.find(item => item.metadata?.shipping_override?.enabled)
-    shipping = (overrideItem?.metadata?.shipping_override?.amount || 0) / 100
+    const shippingOverrideItem = state.items.find(item => item.metadata?.shipping_override?.enabled)
+    shipping = (shippingOverrideItem?.metadata?.shipping_override?.amount || 0) / 100
   }
   
   // Calculate tax with overrides
   let tax = subtotal * 0.21 // 21% VAT
   if (hasTaxOverride) {
-    const overrideItem = state.items.find(item => item.metadata?.tax_override?.enabled)
-    tax = (overrideItem?.metadata?.tax_override?.amount || 0) / 100
+    const taxOverrideItem = state.items.find(item => item.metadata?.tax_override?.enabled)
+    tax = (taxOverrideItem?.metadata?.tax_override?.amount || 0) / 100
   }
   
   const total = subtotal + shipping + tax
