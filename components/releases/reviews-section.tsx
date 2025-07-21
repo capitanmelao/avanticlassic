@@ -1,8 +1,6 @@
 "use client"
 
-import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 
 interface Review {
   id: string
@@ -22,19 +20,11 @@ interface ReviewsSectionProps {
 }
 
 function ReviewCard({ review }: { review: Review }) {
-  const [showFullText, setShowFullText] = useState(false)
-  const maxCharacters = 300 // Higher limit like template
-  
   const reviewDate = new Date(review.reviewDate).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
   })
-
-  const isLongText = review.reviewText.length > maxCharacters
-  const displayedText = showFullText ? review.reviewText : review.reviewText.length > maxCharacters 
-    ? `${review.reviewText.substring(0, maxCharacters)}...` 
-    : review.reviewText
 
   return (
     <Card className="rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
@@ -44,15 +34,15 @@ function ReviewCard({ review }: { review: Review }) {
           <p className="text-sm text-muted-foreground">{reviewDate}</p>
         </div>
         {review.reviewerName && <p className="text-sm text-muted-foreground mb-2">By {review.reviewerName}</p>}
-        <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">{displayedText}</p>
-        {isLongText && (
-          <Button
-            variant="link"
-            onClick={() => setShowFullText(!showFullText)}
-            className="p-0 h-auto mt-2 text-primary hover:underline"
-          >
-            {showFullText ? "Show Less" : "Show More"}
-          </Button>
+        <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">{review.reviewText}</p>
+        {review.rating && (
+          <div className="flex items-center mt-3">
+            <span className="text-yellow-500 mr-2">
+              {"★".repeat(Math.floor(review.rating))}
+              {review.rating % 1 !== 0 && "☆"}
+            </span>
+            <span className="text-sm text-muted-foreground">{review.rating}/5</span>
+          </div>
         )}
       </CardContent>
     </Card>
