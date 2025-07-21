@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
 
     // Validate items and get product data from database
     const lineItems = []
+    let hasOverrides = false
     
     for (const item of items) {
       const { productId, priceId, quantity } = item
@@ -67,6 +68,12 @@ export async function POST(request: NextRequest) {
       }
 
       const productPrice = product.product_prices[0]
+      
+      // Check if product has tax or shipping overrides
+      if (product.metadata?.shipping_override?.enabled || product.metadata?.tax_override?.enabled) {
+        hasOverrides = true
+        console.log('Product has overrides:', product.name, product.metadata)
+      }
       
       // Create or get Stripe product
       let stripeProduct
@@ -135,7 +142,7 @@ export async function POST(request: NextRequest) {
       shipping_rate: rate.id,
     }))
 
-    // Create checkout session
+    // Create checkout session - disable automatic tax/shipping if overrides are present
     const session = await stripeUtils.createCheckoutSession({
       customer_email,
       line_items: lineItems,
@@ -144,10 +151,11 @@ export async function POST(request: NextRequest) {
       metadata: {
         source: 'avanti_classic_shop',
         timestamp: new Date().toISOString(),
+        has_overrides: hasOverrides.toString(),
       },
       shipping_address_collection: true,
-      automatic_tax: true,
-      shipping_options: shippingOptions.length > 0 ? shippingOptions : undefined,
+      automatic_tax: !hasOverrides, // Disable automatic tax if we have overrides
+      shipping_options: hasOverrides ? undefined : (shippingOptions.length > 0 ? shippingOptions : undefined),
     })
 
     return NextResponse.json({
