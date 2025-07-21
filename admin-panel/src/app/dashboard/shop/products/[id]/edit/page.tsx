@@ -736,7 +736,7 @@ export default function EditProductPage() {
                     type="checkbox"
                     checked={formData.metadata.shipping_override?.enabled || false}
                     onChange={(e) => {
-                      const newMetadata = {
+                      const newMetadata: ProductMetadata = {
                         ...formData.metadata,
                         shipping_override: {
                           ...formData.metadata.shipping_override,
@@ -765,7 +765,7 @@ export default function EditProductPage() {
                       value={((formData.metadata.shipping_override?.amount || 0) / 100).toFixed(2)}
                       onChange={(e) => {
                         const amount = Math.round(parseFloat(e.target.value || '0') * 100)
-                        const newMetadata = {
+                        const newMetadata: ProductMetadata = {
                           ...formData.metadata,
                           shipping_override: {
                             ...formData.metadata.shipping_override,
@@ -792,7 +792,7 @@ export default function EditProductPage() {
                     type="checkbox"
                     checked={formData.metadata.tax_override?.enabled || false}
                     onChange={(e) => {
-                      const newMetadata = {
+                      const newMetadata: ProductMetadata = {
                         ...formData.metadata,
                         tax_override: {
                           ...formData.metadata.tax_override,
@@ -821,7 +821,7 @@ export default function EditProductPage() {
                       value={((formData.metadata.tax_override?.amount || 0) / 100).toFixed(2)}
                       onChange={(e) => {
                         const amount = Math.round(parseFloat(e.target.value || '0') * 100)
-                        const newMetadata = {
+                        const newMetadata: ProductMetadata = {
                           ...formData.metadata,
                           tax_override: {
                             ...formData.metadata.tax_override,
