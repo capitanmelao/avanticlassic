@@ -7,6 +7,7 @@ import { Loader2, ArrowUp } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import SearchFilter from "@/components/shared/search-filter"
+import { useLanguage } from "@/contexts/language-context"
 
 interface Artist {
   id: string
@@ -22,13 +23,13 @@ interface Artist {
   website?: string
 }
 
-async function getArtists() {
+async function getArtists(language: string = 'en') {
   try {
     // Use relative URL to avoid port issues
     const baseUrl = process.env.NODE_ENV === 'production' 
       ? process.env.NEXT_PUBLIC_SITE_URL || ''
       : '';
-    const res = await fetch(`${baseUrl}/api/artists?limit=100`, {
+    const res = await fetch(`${baseUrl}/api/artists?limit=100&lang=${language}`, {
       cache: 'no-store'
     })
     if (!res.ok) {
@@ -217,6 +218,8 @@ const fallbackArtists: Artist[] = [
 ]
 
 export default function ArtistsPage() {
+  const { language } = useLanguage()
+  
   // State management
   const [allArtists, setAllArtists] = useState<Artist[]>([])
   const [filteredArtists, setFilteredArtists] = useState<Artist[]>([])
@@ -235,7 +238,7 @@ export default function ArtistsPage() {
   const fetchArtists = useCallback(async () => {
     try {
       setLoading(true)
-      const { artists: apiArtists } = await getArtists()
+      const { artists: apiArtists } = await getArtists(language)
       const artistsToUse = apiArtists.length > 0 ? apiArtists : fallbackArtists
       setAllArtists(artistsToUse)
     } catch (error) {
@@ -244,7 +247,7 @@ export default function ArtistsPage() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [language])
 
   // Filter artists based on search
   useEffect(() => {

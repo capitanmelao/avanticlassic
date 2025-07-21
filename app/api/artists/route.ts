@@ -22,12 +22,11 @@ export async function GET(request: NextRequest) {
         image_url,
         instrument,
         featured,
-        artist_translations!inner(
+        artist_translations(
           language,
           description
         )
       `, { count: 'exact' })
-      .eq('artist_translations.language', lang)
       .order('featured', { ascending: false })
       .order('sort_order')
       .order('name')
@@ -50,14 +49,21 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform data to match template format
-    const transformedArtists = artists?.map(artist => ({
-      id: artist.id.toString(),
-      url: artist.url,
-      name: artist.name,
-      instrument: artist.instrument || 'Performer',
-      imageUrl: `/images/artists/${artist.id}-800.jpeg`,
-      bio: artist.artist_translations?.[0]?.description || ''
-    })) || []
+    const transformedArtists = artists?.map(artist => {
+      // Get translation for the requested language, fallback to English, then any available
+      const translation = artist.artist_translations?.find((t: any) => t.language === lang) ||
+                         artist.artist_translations?.find((t: any) => t.language === 'en') ||
+                         artist.artist_translations?.[0]
+      
+      return {
+        id: artist.id.toString(),
+        url: artist.url,
+        name: artist.name,
+        instrument: artist.instrument || 'Performer',
+        imageUrl: `/images/artists/${artist.id}-800.jpeg`,
+        bio: translation?.description || ''
+      }
+    }) || []
 
     return NextResponse.json({
       artists: transformedArtists,

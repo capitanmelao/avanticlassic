@@ -7,6 +7,7 @@ import { Loader2, ArrowUp } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import SearchFilter from "@/components/shared/search-filter"
+import { useLanguage } from "@/contexts/language-context"
 
 interface Release {
   id: string
@@ -18,13 +19,13 @@ interface Release {
   url?: string
 }
 
-async function getReleases() {
+async function getReleases(language: string = 'en') {
   try {
     // Use relative URL to avoid port issues
     const baseUrl = process.env.NODE_ENV === 'production' 
       ? process.env.NEXT_PUBLIC_SITE_URL || ''
       : '';
-    const res = await fetch(`${baseUrl}/api/releases?limit=100`, {
+    const res = await fetch(`${baseUrl}/api/releases?limit=100&lang=${language}`, {
       cache: 'no-store'
     })
     if (!res.ok) {
@@ -377,6 +378,8 @@ const fallbackReleases: Release[] = [
 ]
 
 export default function ReleasesPage() {
+  const { language } = useLanguage()
+  
   // State management
   const [allReleases, setAllReleases] = useState<Release[]>([])
   const [filteredReleases, setFilteredReleases] = useState<Release[]>([])
@@ -410,7 +413,7 @@ export default function ReleasesPage() {
   const fetchReleases = useCallback(async () => {
     try {
       setLoading(true)
-      const { releases: apiReleases } = await getReleases()
+      const { releases: apiReleases } = await getReleases(language)
       const releasesToUse = apiReleases.length > 0 ? apiReleases : fallbackReleases
       setAllReleases(releasesToUse)
     } catch (error) {
@@ -419,7 +422,7 @@ export default function ReleasesPage() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [language])
 
   // Filter releases based on search and artist
   useEffect(() => {

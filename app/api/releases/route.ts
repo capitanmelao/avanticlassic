@@ -65,20 +65,27 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform data to match template format
-    const transformedReleases = releases?.map(release => ({
-      id: release.id.toString(),
-      url: release.url,
-      title: release.title,
-      artists: release.release_artists?.map((ra: any) => ra.artist?.name).join(', ') || 'Various Artists',
-      format: release.format || 'CD',
-      imageUrl: `/images/releases/${release.id}.jpeg`,
-      description: release.release_translations?.[0]?.description || '',
-      releaseDate: release.release_date,
-      catalogNumber: release.catalog_number,
-      shopUrl: release.shop_url,
-      spotifyUrl: release.spotify_url,
-      appleMusicUrl: release.apple_music_url
-    })) || []
+    const transformedReleases = releases?.map(release => {
+      // Get translation for the requested language, fallback to English, then any available
+      const translation = release.release_translations?.find((t: any) => t.language === lang) ||
+                         release.release_translations?.find((t: any) => t.language === 'en') ||
+                         release.release_translations?.[0]
+      
+      return {
+        id: release.id.toString(),
+        url: release.url,
+        title: release.title,
+        artists: release.release_artists?.map((ra: any) => ra.artist?.name).join(', ') || 'Various Artists',
+        format: release.format || 'CD',
+        imageUrl: `/images/releases/${release.id}.jpeg`,
+        description: translation?.description || '',
+        releaseDate: release.release_date,
+        catalogNumber: release.catalog_number,
+        shopUrl: release.shop_url,
+        spotifyUrl: release.spotify_url,
+        appleMusicUrl: release.apple_music_url
+      }
+    }) || []
 
     return NextResponse.json({
       releases: transformedReleases,
