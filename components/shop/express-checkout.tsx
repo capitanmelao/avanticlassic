@@ -94,8 +94,9 @@ function ExpressCheckoutForm({ onSuccess, onError }: ExpressCheckoutProps) {
     },
     paymentMethods: {
       applePay: 'auto',
-      googlePay: 'auto',
+      googlePay: 'auto', 
       link: 'auto',
+      // Remove other payment methods to prioritize Apple Pay
     },
   }
 
