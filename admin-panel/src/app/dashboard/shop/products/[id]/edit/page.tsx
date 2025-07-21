@@ -707,6 +707,131 @@ export default function EditProductPage() {
           </div>
         </div>
 
+        {/* Tax & Shipping Overrides */}
+        <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+          <div className="px-4 py-5 sm:px-6">
+            <h3 className="text-lg leading-6 font-medium text-gray-900">Tax & Shipping Overrides</h3>
+            <p className="mt-1 text-sm text-gray-500">
+              Override default tax and shipping calculations for this product. Leave disabled to use site defaults.
+            </p>
+          </div>
+          <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
+            <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+              {/* Shipping Override */}
+              <div className="space-y-4">
+                <div className="flex items-center">
+                  <input
+                    id="shipping_override_enabled"
+                    type="checkbox"
+                    checked={formData.metadata?.shipping_override?.enabled || false}
+                    onChange={(e) => {
+                      const newMetadata = {
+                        ...formData.metadata,
+                        shipping_override: {
+                          ...formData.metadata?.shipping_override,
+                          enabled: e.target.checked
+                        }
+                      }
+                      handleInputChange('metadata', newMetadata)
+                    }}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="shipping_override_enabled" className="ml-2 block text-sm text-gray-900">
+                    Override shipping cost
+                  </label>
+                </div>
+                
+                {formData.metadata?.shipping_override?.enabled && (
+                  <div>
+                    <label htmlFor="shipping_amount" className="block text-sm font-medium text-gray-700">
+                      Shipping Amount (€)
+                    </label>
+                    <input
+                      type="number"
+                      id="shipping_amount"
+                      step="0.01"
+                      min="0"
+                      value={((formData.metadata?.shipping_override?.amount || 0) / 100).toFixed(2)}
+                      onChange={(e) => {
+                        const amount = Math.round(parseFloat(e.target.value || '0') * 100)
+                        const newMetadata = {
+                          ...formData.metadata,
+                          shipping_override: {
+                            ...formData.metadata?.shipping_override,
+                            amount: amount
+                          }
+                        }
+                        handleInputChange('metadata', newMetadata)
+                      }}
+                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      placeholder="0.00"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">
+                      Set to 0.00 for free shipping on this product
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Tax Override */}
+              <div className="space-y-4">
+                <div className="flex items-center">
+                  <input
+                    id="tax_override_enabled"
+                    type="checkbox"
+                    checked={formData.metadata?.tax_override?.enabled || false}
+                    onChange={(e) => {
+                      const newMetadata = {
+                        ...formData.metadata,
+                        tax_override: {
+                          ...formData.metadata?.tax_override,
+                          enabled: e.target.checked
+                        }
+                      }
+                      handleInputChange('metadata', newMetadata)
+                    }}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="tax_override_enabled" className="ml-2 block text-sm text-gray-900">
+                    Override tax/VAT
+                  </label>
+                </div>
+                
+                {formData.metadata?.tax_override?.enabled && (
+                  <div>
+                    <label htmlFor="tax_amount" className="block text-sm font-medium text-gray-700">
+                      Tax Amount (€)
+                    </label>
+                    <input
+                      type="number"
+                      id="tax_amount"
+                      step="0.01"
+                      min="0"
+                      value={((formData.metadata?.tax_override?.amount || 0) / 100).toFixed(2)}
+                      onChange={(e) => {
+                        const amount = Math.round(parseFloat(e.target.value || '0') * 100)
+                        const newMetadata = {
+                          ...formData.metadata,
+                          tax_override: {
+                            ...formData.metadata?.tax_override,
+                            amount: amount
+                          }
+                        }
+                        handleInputChange('metadata', newMetadata)
+                      }}
+                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      placeholder="0.00"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">
+                      Set to 0.00 for tax-free on this product
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Images */}
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
           <div className="px-4 py-5 sm:px-6">
