@@ -14,6 +14,7 @@ import { useCart } from '@/contexts/cart-context'
 import { useLanguage } from '@/contexts/language-context'
 import { useTranslations } from '@/lib/translations'
 import ExpressCheckout from '@/components/shop/express-checkout'
+import ApplePayDebug from '@/components/shop/apple-pay-debug'
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -162,6 +163,7 @@ export default function CheckoutPage() {
                         alert(`Payment error: ${error}`)
                       }}
                     />
+                    <ApplePayDebug />
                     <div className="relative">
                       <div className="absolute inset-0 flex items-center">
                         <span className="w-full border-t" />

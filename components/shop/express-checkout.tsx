@@ -91,6 +91,12 @@ function ExpressCheckoutForm({ onSuccess, onError }: ExpressCheckoutProps) {
       // Handle shipping rate changes if needed
       console.log('Shipping rate changed:', event.shippingRate)
     },
+    paymentMethods: {
+      applePay: 'always',
+      googlePay: 'always',
+      paypal: 'always',
+      link: 'always',
+    },
   }
 
   // Don't render if cart is empty
@@ -117,7 +123,15 @@ function ExpressCheckoutForm({ onSuccess, onError }: ExpressCheckoutProps) {
 }
 
 export default function ExpressCheckout({ onSuccess, onError }: ExpressCheckoutProps) {
+  const { state } = useCart()
   const [clientSecret, setClientSecret] = useState<string>('')
+
+  // Calculate total amount including shipping and tax
+  const subtotal = state.total
+  const shipping = subtotal > 25 ? 0 : 5.99
+  const tax = subtotal * 0.21 // 21% VAT
+  const total = subtotal + shipping + tax
+  const amountInCents = Math.round(total * 100)
 
   useEffect(() => {
     // Create a payment intent for express checkout if needed
@@ -132,7 +146,7 @@ export default function ExpressCheckout({ onSuccess, onError }: ExpressCheckoutP
   const elementsOptions = {
     mode: 'payment' as const,
     currency: 'eur',
-    amount: 1000, // This will be updated dynamically
+    amount: amountInCents > 0 ? amountInCents : 1000, // Use actual cart amount
     payment_method_creation: 'manual' as const,
     ...(clientSecret && { clientSecret }),
   }
