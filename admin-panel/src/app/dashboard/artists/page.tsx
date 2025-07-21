@@ -137,7 +137,7 @@ export default function ArtistsPage() {
               title: 'Updated',
               width: 120,
               minWidth: 100,
-              render: (value) => value ? new Date(value).toLocaleDateString() : '—'
+              render: (value) => value ? new Date(String(value)).toLocaleDateString() : '—'
             },
             {
               key: 'actions',
