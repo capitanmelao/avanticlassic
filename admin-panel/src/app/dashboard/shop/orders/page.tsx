@@ -53,6 +53,7 @@ interface Order {
 export default function OrdersPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  // ESLint fixes applied for deployment
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
