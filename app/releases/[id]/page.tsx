@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { ChevronLeft, ExternalLink, ShoppingCart } from "lucide-react"
 import { useCart } from '@/contexts/cart-context'
 import ReviewsSection from '@/components/releases/reviews-section'
+import { useLanguage } from '@/contexts/language-context'
 
 interface Review {
   id: string
@@ -35,13 +36,13 @@ interface Release {
   reviews?: Review[]
 }
 
-async function getRelease(id: string) {
+async function getRelease(id: string, language: string = 'en') {
   try {
     // Check if we're on the server or client
     const isServer = typeof window === 'undefined'
     const baseUrl = isServer ? 'https://avanticlassic.vercel.app' : ''
     
-    const res = await fetch(`${baseUrl}/api/releases/${encodeURIComponent(id)}`, {
+    const res = await fetch(`${baseUrl}/api/releases/${encodeURIComponent(id)}?lang=${language}`, {
       cache: 'no-store'
     })
     
@@ -1090,6 +1091,7 @@ function BuySection({ releaseId, releaseTitle, releaseArtist, releaseImage, rele
 export default function ReleaseDetailPage({ params }: { params: { id: string } }) {
   const [release, setRelease] = useState<Release | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const { language } = useLanguage()
 
   useEffect(() => {
     async function loadRelease() {
@@ -1097,7 +1099,7 @@ export default function ReleaseDetailPage({ params }: { params: { id: string } }
         setIsLoading(true)
         
         // Try to get release from API
-        let releaseData = await getRelease(params.id)
+        let releaseData = await getRelease(params.id, language)
         
         // If API fails, try to find in fallback data by ID or URL, but also try to fetch reviews separately
         if (!releaseData) {
@@ -1134,7 +1136,7 @@ export default function ReleaseDetailPage({ params }: { params: { id: string } }
     }
     
     loadRelease()
-  }, [params.id])
+  }, [params.id, language])
 
   if (isLoading) {
     return (
