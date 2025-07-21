@@ -27,6 +27,7 @@ function ExpressCheckoutForm({ onSuccess, onError }: ExpressCheckoutProps) {
   const handleExpressCheckout = async (event: any) => {
     if (!stripe || !elements) {
       console.error('Stripe not loaded')
+      event.complete('fail')
       return
     }
 
@@ -61,12 +62,13 @@ function ExpressCheckoutForm({ onSuccess, onError }: ExpressCheckoutProps) {
 
       const { url } = await response.json()
 
-      // Complete the express checkout
+      // Complete the express checkout successfully
+      event.complete('success')
+
+      // Redirect to Stripe Checkout
       if (url) {
         window.location.href = url
       } else {
-        // Handle direct payment confirmation
-        event.complete('success')
         onSuccess?.()
       }
 
@@ -87,16 +89,25 @@ function ExpressCheckoutForm({ onSuccess, onError }: ExpressCheckoutProps) {
     onShippingAddressChange: (event: any) => {
       // Handle shipping address changes if needed
       console.log('Shipping address changed:', event.address)
+      // Update event to continue
+      event.resolve({
+        status: 'success'
+      })
     },
     onShippingRateChange: (event: any) => {
       // Handle shipping rate changes if needed
       console.log('Shipping rate changed:', event.shippingRate)
+      // Update event to continue
+      event.resolve({
+        status: 'success'
+      })
     },
     paymentMethods: {
       applePay: 'auto',
       googlePay: 'auto', 
       link: 'auto',
-      // Remove other payment methods to prioritize Apple Pay
+      // Disable Amazon Pay to prevent 500 errors
+      amazonPay: 'never'
     },
   }
 
