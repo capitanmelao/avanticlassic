@@ -723,12 +723,12 @@ export default function EditProductPage() {
                   <input
                     id="shipping_override_enabled"
                     type="checkbox"
-                    checked={formData.metadata?.shipping_override?.enabled || false}
+                    checked={(formData.metadata as any)?.shipping_override?.enabled || false}
                     onChange={(e) => {
                       const newMetadata = {
                         ...formData.metadata,
                         shipping_override: {
-                          ...formData.metadata?.shipping_override,
+                          ...(formData.metadata as any)?.shipping_override,
                           enabled: e.target.checked
                         }
                       }
@@ -741,7 +741,7 @@ export default function EditProductPage() {
                   </label>
                 </div>
                 
-                {formData.metadata?.shipping_override?.enabled && (
+                {(formData.metadata as any)?.shipping_override?.enabled && (
                   <div>
                     <label htmlFor="shipping_amount" className="block text-sm font-medium text-gray-700">
                       Shipping Amount (€)
@@ -751,13 +751,13 @@ export default function EditProductPage() {
                       id="shipping_amount"
                       step="0.01"
                       min="0"
-                      value={((formData.metadata?.shipping_override?.amount || 0) / 100).toFixed(2)}
+                      value={(((formData.metadata as any)?.shipping_override?.amount || 0) / 100).toFixed(2)}
                       onChange={(e) => {
                         const amount = Math.round(parseFloat(e.target.value || '0') * 100)
                         const newMetadata = {
                           ...formData.metadata,
                           shipping_override: {
-                            ...formData.metadata?.shipping_override,
+                            ...(formData.metadata as any)?.shipping_override,
                             amount: amount
                           }
                         }
@@ -779,12 +779,12 @@ export default function EditProductPage() {
                   <input
                     id="tax_override_enabled"
                     type="checkbox"
-                    checked={formData.metadata?.tax_override?.enabled || false}
+                    checked={(formData.metadata as any)?.tax_override?.enabled || false}
                     onChange={(e) => {
                       const newMetadata = {
                         ...formData.metadata,
                         tax_override: {
-                          ...formData.metadata?.tax_override,
+                          ...(formData.metadata as any)?.tax_override,
                           enabled: e.target.checked
                         }
                       }
@@ -797,7 +797,7 @@ export default function EditProductPage() {
                   </label>
                 </div>
                 
-                {formData.metadata?.tax_override?.enabled && (
+                {(formData.metadata as any)?.tax_override?.enabled && (
                   <div>
                     <label htmlFor="tax_amount" className="block text-sm font-medium text-gray-700">
                       Tax Amount (€)
@@ -807,13 +807,13 @@ export default function EditProductPage() {
                       id="tax_amount"
                       step="0.01"
                       min="0"
-                      value={((formData.metadata?.tax_override?.amount || 0) / 100).toFixed(2)}
+                      value={(((formData.metadata as any)?.tax_override?.amount || 0) / 100).toFixed(2)}
                       onChange={(e) => {
                         const amount = Math.round(parseFloat(e.target.value || '0') * 100)
                         const newMetadata = {
                           ...formData.metadata,
                           tax_override: {
-                            ...formData.metadata?.tax_override,
+                            ...(formData.metadata as any)?.tax_override,
                             amount: amount
                           }
                         }
