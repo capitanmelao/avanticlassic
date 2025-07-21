@@ -1,5 +1,4 @@
 import Link from "next/link"
-import { Facebook, Youtube, Mail, Twitter, Instagram } from "lucide-react" // Added Twitter and Instagram
 
 export default function Footer() {
   return (
@@ -22,51 +21,6 @@ export default function Footer() {
             Terms of Service
           </Link>
         </nav>
-        <div className="flex gap-4">
-          <Link
-            href="https://www.facebook.com/avanticlassic"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors"
-          >
-            <Facebook className="h-6 w-6" />
-            <span className="sr-only">Facebook</span>
-          </Link>
-          <Link
-            href="#"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors"
-          >
-            <Twitter className="h-6 w-6" />
-            <span className="sr-only">Twitter</span>
-          </Link>
-          <Link
-            href="#"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors"
-          >
-            <Instagram className="h-6 w-6" />
-            <span className="sr-only">Instagram</span>
-          </Link>
-          <Link
-            href="https://www.youtube.com/avanticlassic"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors"
-          >
-            <Youtube className="h-6 w-6" />
-            <span className="sr-only">YouTube</span>
-          </Link>
-          <Link
-            href="mailto:info@avanticlassic.com"
-            className="text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors"
-          >
-            <Mail className="h-6 w-6" />
-            <span className="sr-only">Email</span>
-          </Link>
-        </div>
       </div>
     </footer>
   )
