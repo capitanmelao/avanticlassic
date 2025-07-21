@@ -92,7 +92,8 @@ export async function POST(request: NextRequest) {
     const { data: finalReviews, error: finalError } = await supabase
       .from('reviews')
       .select('id, release_id, publication, reviewer_name, rating')
-      .order('release_id, sort_order desc')
+      .order('release_id')
+      .order('sort_order', { ascending: false })
     
     if (finalError) {
       console.error('Error verifying:', finalError)
