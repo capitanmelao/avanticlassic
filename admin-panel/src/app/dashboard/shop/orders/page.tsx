@@ -107,7 +107,7 @@ export default function OrdersPage() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const updateOrderStatus = async (orderId: number, field: string, value: string) => {
     try {
-      const updates: Record<string, string> = { [field]: value }
+      const updates: Record<string, any> = { [field]: value }
       
       // Auto-update related fields
       if (field === 'fulfillment_status' && value === 'fulfilled') {
@@ -142,8 +142,8 @@ export default function OrdersPage() {
       const updates = {
         tracking_number: trackingNumber,
         tracking_url: trackingUrl,
-        status: 'shipped',
-        fulfillment_status: 'partial',
+        status: 'shipped' as const,
+        fulfillment_status: 'partial' as const,
         shipped_at: new Date().toISOString()
       }
 
