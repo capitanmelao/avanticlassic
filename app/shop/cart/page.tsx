@@ -42,12 +42,33 @@ export default function CartPage() {
   
   const total = subtotal + shipping + tax
   
-  // Debug logging for cart overrides
-  console.log('CART PAGE - Items metadata:', state.items.map(item => ({
+  // Enhanced debug logging for cart overrides
+  console.log('🛒 CART DEBUG - Full cart state:', state)
+  console.log('🛒 CART DEBUG - Items with metadata:', state.items.map(item => ({
+    id: item.id,
     name: item.name,
-    metadata: item.metadata
+    productId: item.productId,
+    priceId: item.priceId,
+    metadata: item.metadata,
+    hasMetadata: !!item.metadata,
+    hasShippingOverride: !!item.metadata?.shipping_override?.enabled,
+    hasTaxOverride: !!item.metadata?.tax_override?.enabled,
+    shippingOverrideAmount: item.metadata?.shipping_override?.amount,
+    taxOverrideAmount: item.metadata?.tax_override?.amount
   })))
-  console.log('CART PAGE - Calculated values:', { shipping, tax, hasShippingOverride, hasTaxOverride })
+  console.log('🛒 CART DEBUG - Override flags:', { 
+    hasShippingOverride, 
+    hasTaxOverride,
+    subtotal,
+    calculatedShipping: shipping,
+    calculatedTax: tax,
+    total: subtotal + shipping + tax
+  })
+  
+  // Alert user if items are missing metadata
+  if (state.items.length > 0 && state.items.some(item => !item.metadata)) {
+    console.warn('⚠️ WARNING: Some cart items are missing metadata! Clear cart and re-add products.')
+  }
   
   const handleQuantityChange = (itemId: string, newQuantity: number) => {
     if (newQuantity < 1) {
