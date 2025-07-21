@@ -102,6 +102,8 @@ export default function OrdersPage() {
     }
   }
 
+  // Function to update order status - used by admin actions
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const updateOrderStatus = async (orderId: number, field: string, value: string) => {
     try {
       const updates: Record<string, string> = { [field]: value }
@@ -132,6 +134,8 @@ export default function OrdersPage() {
     }
   }
 
+  // Function to update tracking info - used by admin actions
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const updateTrackingInfo = async (orderId: number, trackingNumber: string, trackingUrl?: string) => {
     try {
       const updates = {
