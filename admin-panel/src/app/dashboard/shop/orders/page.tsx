@@ -177,15 +177,20 @@ export default function OrdersPage() {
 
       const { session } = await response.json()
       
-      const updates = {
-        payment_status: session.payment_status === 'paid' ? 'paid' : session.payment_status,
-        status: session.payment_status === 'paid' && orders.find(o => o.id === orderId)?.status === 'pending' ? 'processing' : undefined
+      const updates: Partial<Pick<Order, 'payment_status' | 'status'>> = {}
+      
+      // Set payment status
+      if (session.payment_status === 'paid') {
+        updates.payment_status = 'paid'
+      } else if (session.payment_status) {
+        updates.payment_status = session.payment_status as Order['payment_status']
       }
-
-      // Remove undefined values
-      Object.keys(updates).forEach(key => 
-        updates[key as keyof typeof updates] === undefined && delete updates[key as keyof typeof updates]
-      )
+      
+      // Set order status if payment is paid and current status is pending
+      const currentOrder = orders.find(o => o.id === orderId)
+      if (session.payment_status === 'paid' && currentOrder?.status === 'pending') {
+        updates.status = 'processing'
+      }
 
       if (Object.keys(updates).length > 0) {
         const { error } = await supabase
