@@ -46,10 +46,10 @@ export default function DashboardLayout({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
-          <p className="mt-4 text-gray-600">Loading admin panel...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black dark:border-white"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">Loading admin panel...</p>
         </div>
       </div>
     )
@@ -62,28 +62,28 @@ export default function DashboardLayout({
   return (
     <AdminSidebar>
       {/* Top header bar */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Content Management</h1>
-            <p className="text-sm text-gray-600">Manage your Avanti Classic website content</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Content Management</h1>
+            <p className="text-sm text-gray-600 dark:text-gray-300">Manage your Avanti Classic website content</p>
           </div>
           
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-3">
-              <div className="h-8 w-8 bg-black rounded-full flex items-center justify-center">
+              <div className="h-8 w-8 bg-gray-900 dark:bg-gray-600 rounded-full flex items-center justify-center">
                 <span className="text-white text-sm font-medium">
                   {user.name.charAt(0).toUpperCase()}
                 </span>
               </div>
               <div className="hidden md:block">
-                <p className="text-sm font-medium text-gray-700">{user.name}</p>
-                <p className="text-xs text-gray-500">{user.email}</p>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-200">{user.name}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
               </div>
             </div>
             <button
               onClick={handleSignOut}
-              className="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+              className="bg-gray-900 hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
             >
               Sign Out
             </button>

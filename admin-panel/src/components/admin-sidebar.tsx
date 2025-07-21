@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { usePermissions } from '@/lib/permissions'
 import { useNavCounts } from '@/hooks/use-nav-counts'
+import { ThemeToggle } from './theme-toggle'
 import { 
   HomeIcon,
   UserGroupIcon,
@@ -88,7 +89,7 @@ export default function AdminSidebar({ children }: AdminSidebarProps) {
 
       {/* Sidebar */}
       <div className={`
-        fixed inset-y-0 left-0 z-50 flex flex-col bg-black text-white transition-all duration-300 lg:static lg:z-auto
+        fixed inset-y-0 left-0 z-50 flex flex-col bg-gray-900 dark:bg-gray-950 text-white transition-all duration-300 lg:static lg:z-auto border-r border-gray-800 dark:border-gray-700
         ${sidebarOpen ? 'w-64' : 'w-0 lg:w-auto'}
         ${collapsed ? 'lg:w-16' : 'lg:w-64'}
       `}>
@@ -139,15 +140,15 @@ export default function AdminSidebar({ children }: AdminSidebarProps) {
                 className={`
                   group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors
                   ${isActive 
-                    ? 'bg-white text-black' 
-                    : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                    ? 'bg-white dark:bg-gray-700 text-black dark:text-white' 
+                    : 'text-gray-300 dark:text-gray-400 hover:bg-gray-800 dark:hover:bg-gray-700 hover:text-white dark:hover:text-white'
                   }
                 `}
                 title={collapsed ? item.name : undefined}
               >
                 <item.icon className={`
                   flex-shrink-0 h-5 w-5
-                  ${isActive ? 'text-black' : 'text-gray-400 group-hover:text-white'}
+                  ${isActive ? 'text-black dark:text-white' : 'text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-white'}
                   ${collapsed ? '' : 'mr-3'}
                 `} />
                 
@@ -158,8 +159,8 @@ export default function AdminSidebar({ children }: AdminSidebarProps) {
                       <span className={`
                         ml-auto inline-block py-0.5 px-2 text-xs rounded-full
                         ${isActive 
-                          ? 'bg-black text-white' 
-                          : 'bg-gray-800 text-gray-300 group-hover:bg-gray-700'
+                          ? 'bg-black dark:bg-gray-600 text-white dark:text-white' 
+                          : 'bg-gray-800 dark:bg-gray-700 text-gray-300 dark:text-gray-400 group-hover:bg-gray-700 dark:group-hover:bg-gray-600'
                         }
                       `}>
                         {countsLoading ? '...' : counts[item.countKey]}
@@ -173,30 +174,35 @@ export default function AdminSidebar({ children }: AdminSidebarProps) {
         </nav>
 
         {/* Footer */}
-        <div className="border-t border-gray-800 p-4">
-          {!collapsed && (
-            <div className="text-xs text-gray-400">
-              <p>Avanti Classic CMS</p>
-              <p>v2.0.0</p>
+        <div className="border-t border-gray-800 dark:border-gray-700 p-4">
+          <div className="flex items-center justify-between">
+            {!collapsed && (
+              <div className="text-xs text-gray-400 dark:text-gray-500">
+                <p>Avanti Classic CMS</p>
+                <p>v2.0.0</p>
+              </div>
+            )}
+            <div className={collapsed ? 'mx-auto' : 'ml-auto'}>
+              <ThemeToggle />
             </div>
-          )}
+          </div>
         </div>
       </div>
 
       {/* Main content area */}
       <div className="flex flex-col flex-1 min-w-0">
         {/* Mobile header */}
-        <div className="lg:hidden bg-white border-b border-gray-200 px-4 py-2">
+        <div className="lg:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-2">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-md hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >
-            <Bars3Icon className="h-6 w-6 text-gray-600" />
+            <Bars3Icon className="h-6 w-6 text-gray-600 dark:text-gray-300" />
           </button>
         </div>
 
         {/* Main content */}
-        <main className="flex-1 overflow-y-auto bg-gray-50">
+        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
           {children}
         </main>
       </div>
