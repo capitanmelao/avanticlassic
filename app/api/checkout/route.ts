@@ -127,6 +127,14 @@ export async function POST(request: NextRequest) {
       })
     }
 
+    // Get shipping rates
+    const shippingRates = await stripeUtils.getShippingRates()
+    
+    // Create shipping options
+    const shippingOptions = shippingRates.map(rate => ({
+      shipping_rate: rate.id,
+    }))
+
     // Create checkout session
     const session = await stripeUtils.createCheckoutSession({
       customer_email,
@@ -139,6 +147,7 @@ export async function POST(request: NextRequest) {
       },
       shipping_address_collection: true,
       automatic_tax: true,
+      shipping_options: shippingOptions.length > 0 ? shippingOptions : undefined,
     })
 
     return NextResponse.json({

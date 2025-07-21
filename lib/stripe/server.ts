@@ -25,6 +25,9 @@ export const STRIPE_CONFIG = {
     'eps',
     'p24',
     'sofort',
+    'apple_pay',
+    'google_pay',
+    'link',
   ],
   // Webhook endpoint secret
   webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || '',
@@ -143,6 +146,7 @@ export const stripeUtils = {
     metadata?: Record<string, string>;
     shipping_address_collection?: boolean;
     automatic_tax?: boolean;
+    shipping_options?: Stripe.Checkout.SessionCreateParams.ShippingOption[];
   }): Promise<Stripe.Checkout.Session> => {
     const params: Stripe.Checkout.SessionCreateParams = {
       payment_method_types: STRIPE_CONFIG.paymentMethodTypes,
@@ -180,6 +184,11 @@ export const stripeUtils = {
     // Add automatic tax if enabled
     if (sessionData.automatic_tax && STRIPE_CONFIG.tax.enabled) {
       params.automatic_tax = { enabled: true };
+    }
+
+    // Add shipping options if provided
+    if (sessionData.shipping_options && sessionData.shipping_options.length > 0) {
+      params.shipping_options = sessionData.shipping_options;
     }
 
     return await stripe.checkout.sessions.create(params);
@@ -231,6 +240,78 @@ export const stripeUtils = {
     });
 
     return customers.data.length > 0 ? customers.data[0] : null;
+  },
+
+  /**
+   * Create shipping rates
+   */
+  createShippingRate: async (rateData: {
+    display_name: string;
+    type: 'fixed_amount';
+    fixed_amount: {
+      amount: number;
+      currency: string;
+    };
+    delivery_estimate?: {
+      minimum?: {
+        unit: 'business_day' | 'day' | 'hour' | 'month' | 'week';
+        value: number;
+      };
+      maximum?: {
+        unit: 'business_day' | 'day' | 'hour' | 'month' | 'week';
+        value: number;
+      };
+    };
+    metadata?: Record<string, string>;
+    tax_behavior?: 'inclusive' | 'exclusive' | 'unspecified';
+  }): Promise<Stripe.ShippingRate> => {
+    return await stripe.shippingRates.create({
+      display_name: rateData.display_name,
+      type: rateData.type,
+      fixed_amount: rateData.fixed_amount,
+      delivery_estimate: rateData.delivery_estimate,
+      metadata: rateData.metadata || {},
+      tax_behavior: rateData.tax_behavior || 'exclusive',
+      tax_code: 'txcd_92010001', // General shipping tax code
+    });
+  },
+
+  /**
+   * Get default shipping rates for regions
+   */
+  getShippingRates: async (): Promise<Stripe.ShippingRate[]> => {
+    const { data } = await stripe.shippingRates.list({ 
+      active: true,
+      limit: 10 
+    });
+    return data;
+  },
+
+  /**
+   * Calculate tax using Stripe Tax API
+   */
+  calculateTax: async (params: {
+    currency: string;
+    line_items: Array<{
+      amount: number;
+      reference: string;
+      tax_code?: string;
+    }>;
+    customer_details?: {
+      address?: Stripe.Address;
+      address_source?: 'billing' | 'shipping';
+    };
+    shipping_cost?: {
+      amount: number;
+      tax_code?: string;
+    };
+  }): Promise<Stripe.Tax.Calculation> => {
+    return await stripe.tax.calculations.create({
+      currency: params.currency,
+      line_items: params.line_items,
+      customer_details: params.customer_details,
+      shipping_cost: params.shipping_cost,
+    });
   },
 };
 

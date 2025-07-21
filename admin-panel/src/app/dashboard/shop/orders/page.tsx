@@ -11,7 +11,9 @@ import {
   TruckIcon,
   ExclamationTriangleIcon,
   FunnelIcon,
-  MagnifyingGlassIcon
+  MagnifyingGlassIcon,
+  ArrowPathIcon,
+  CreditCardIcon
 } from '@heroicons/react/24/outline'
 
 interface Order {
@@ -36,6 +38,8 @@ interface Order {
   shipping_address?: Record<string, unknown>
   customer_notes?: string
   notes?: string
+  stripe_checkout_session_id?: string
+  stripe_payment_intent_id?: string
   order_items: {
     id: number
     product_name: string
@@ -98,61 +102,103 @@ export default function OrdersPage() {
     }
   }
 
-  // const updateOrderStatus = async (orderId: number, field: string, value: string) => {
-  //   try {
-  //     const updates: Record<string, string> = { [field]: value }
+  const updateOrderStatus = async (orderId: number, field: string, value: string) => {
+    try {
+      const updates: Record<string, string> = { [field]: value }
       
-  //     // Auto-update related fields
-  //     if (field === 'fulfillment_status' && value === 'fulfilled') {
-  //       updates.status = 'delivered'
-  //       updates.delivered_at = new Date().toISOString()
-  //     } else if (field === 'status' && value === 'shipped') {
-  //       updates.fulfillment_status = 'partial'
-  //       updates.shipped_at = new Date().toISOString()
-  //     }
+      // Auto-update related fields
+      if (field === 'fulfillment_status' && value === 'fulfilled') {
+        updates.status = 'delivered'
+        updates.delivered_at = new Date().toISOString()
+      } else if (field === 'status' && value === 'shipped') {
+        updates.fulfillment_status = 'partial'
+        updates.shipped_at = new Date().toISOString()
+      }
 
-  //     const { error } = await supabase
-  //       .from('orders')
-  //       .update(updates)
-  //       .eq('id', orderId)
+      const { error } = await supabase
+        .from('orders')
+        .update(updates)
+        .eq('id', orderId)
 
-  //     if (error) throw error
+      if (error) throw error
 
-  //     // Update local state
-  //     setOrders(orders.map(order => 
-  //       order.id === orderId ? { ...order, ...updates } : order
-  //     ))
-  //   } catch (err) {
-  //     console.error('Error updating order:', err)
-  //     setError(err instanceof Error ? err.message : 'Failed to update order')
-  //   }
-  // }
+      // Update local state
+      setOrders(orders.map(order => 
+        order.id === orderId ? { ...order, ...updates } : order
+      ))
+    } catch (err) {
+      console.error('Error updating order:', err)
+      setError(err instanceof Error ? err.message : 'Failed to update order')
+    }
+  }
 
-  // const updateTrackingInfo = async (orderId: number, trackingNumber: string, trackingUrl?: string) => {
-  //   try {
-  //     const updates = {
-  //       tracking_number: trackingNumber,
-  //       tracking_url: trackingUrl,
-  //       status: 'shipped',
-  //       fulfillment_status: 'partial',
-  //       shipped_at: new Date().toISOString()
-  //     }
+  const updateTrackingInfo = async (orderId: number, trackingNumber: string, trackingUrl?: string) => {
+    try {
+      const updates = {
+        tracking_number: trackingNumber,
+        tracking_url: trackingUrl,
+        status: 'shipped',
+        fulfillment_status: 'partial',
+        shipped_at: new Date().toISOString()
+      }
 
-  //     const { error } = await supabase
-  //       .from('orders')
-  //       .update(updates)
-  //       .eq('id', orderId)
+      const { error } = await supabase
+        .from('orders')
+        .update(updates)
+        .eq('id', orderId)
 
-  //     if (error) throw error
+      if (error) throw error
 
-  //     setOrders(orders.map(order => 
-  //       order.id === orderId ? { ...order, ...updates } : order
-  //     ))
-  //   } catch (err) {
-  //     console.error('Error updating tracking info:', err)
-  //     setError(err instanceof Error ? err.message : 'Failed to update tracking info')
-  //   }
-  // }
+      setOrders(orders.map(order => 
+        order.id === orderId ? { ...order, ...updates } : order
+      ))
+    } catch (err) {
+      console.error('Error updating tracking info:', err)
+      setError(err instanceof Error ? err.message : 'Failed to update tracking info')
+    }
+  }
+
+  const syncStripePaymentStatus = async (orderId: number, stripeSessionId?: string) => {
+    try {
+      if (!stripeSessionId) {
+        setError('No Stripe session ID found for this order')
+        return
+      }
+
+      const response = await fetch(`/api/checkout?session_id=${stripeSessionId}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch Stripe session data')
+      }
+
+      const { session } = await response.json()
+      
+      const updates = {
+        payment_status: session.payment_status === 'paid' ? 'paid' : session.payment_status,
+        status: session.payment_status === 'paid' && orders.find(o => o.id === orderId)?.status === 'pending' ? 'processing' : undefined
+      }
+
+      // Remove undefined values
+      Object.keys(updates).forEach(key => 
+        updates[key as keyof typeof updates] === undefined && delete updates[key as keyof typeof updates]
+      )
+
+      if (Object.keys(updates).length > 0) {
+        const { error } = await supabase
+          .from('orders')
+          .update(updates)
+          .eq('id', orderId)
+
+        if (error) throw error
+
+        setOrders(orders.map(order => 
+          order.id === orderId ? { ...order, ...updates } : order
+        ))
+      }
+    } catch (err) {
+      console.error('Error syncing Stripe payment status:', err)
+      setError(err instanceof Error ? err.message : 'Failed to sync payment status')
+    }
+  }
 
   const filteredOrders = orders.filter(order => {
     const matchesSearch = order.order_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -435,6 +481,26 @@ export default function OrdersPage() {
                           title="Track Package"
                         >
                           <TruckIcon className="h-4 w-4" />
+                        </a>
+                      )}
+                      {order.stripe_checkout_session_id && (
+                        <button
+                          onClick={() => syncStripePaymentStatus(order.id, order.stripe_checkout_session_id)}
+                          className="text-green-600 hover:text-green-900"
+                          title="Sync Payment Status"
+                        >
+                          <ArrowPathIcon className="h-4 w-4" />
+                        </button>
+                      )}
+                      {order.stripe_payment_intent_id && (
+                        <a
+                          href={`https://dashboard.stripe.com/payments/${order.stripe_payment_intent_id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-indigo-600 hover:text-indigo-900"
+                          title="View in Stripe Dashboard"
+                        >
+                          <CreditCardIcon className="h-4 w-4" />
                         </a>
                       )}
                     </div>

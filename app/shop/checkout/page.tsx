@@ -13,6 +13,7 @@ import { Separator } from '@/components/ui/separator'
 import { useCart } from '@/contexts/cart-context'
 import { useLanguage } from '@/contexts/language-context'
 import { useTranslations } from '@/lib/translations'
+import ExpressCheckout from '@/components/shop/express-checkout'
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -139,6 +140,40 @@ export default function CheckoutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Checkout Form */}
             <div className="space-y-6">
+              {/* Express Checkout */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CreditCard className="h-5 w-5" />
+                    Express Checkout
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <p className="text-sm text-gray-600">
+                      Pay quickly with Apple Pay, Google Pay, PayPal, or Link
+                    </p>
+                    <ExpressCheckout 
+                      onSuccess={() => {
+                        console.log('Express checkout successful')
+                      }}
+                      onError={(error) => {
+                        console.error('Express checkout error:', error)
+                        alert(`Payment error: ${error}`)
+                      }}
+                    />
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t" />
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-gray-50 px-2 text-gray-500">Or continue with email</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
               {/* Contact Information */}
               <Card>
                 <CardHeader>
