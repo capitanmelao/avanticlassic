@@ -1049,7 +1049,8 @@ function BuySection({ releaseId, releaseTitle, releaseArtist, releaseImage, rele
       format: format.format,
       image: releaseImage,
       price: format.price / 100, // Convert from cents
-      catalog: releaseCatalog
+      catalog: releaseCatalog,
+      metadata: format.metadata || {} // Include metadata for tax/shipping overrides
     })
   }
 

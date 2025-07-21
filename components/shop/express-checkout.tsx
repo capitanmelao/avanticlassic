@@ -143,10 +143,34 @@ export default function ExpressCheckout({ onSuccess, onError }: ExpressCheckoutP
   const { state } = useCart()
   const [clientSecret, setClientSecret] = useState<string>('')
 
-  // Calculate total amount including shipping and tax
+  // Calculate total amount including shipping and tax with product overrides
   const subtotal = state.total
-  const shipping = subtotal > 25 ? 0 : 0.50 // €0.50 shipping for testing
-  const tax = subtotal * 0.05 // 5% tax for testing (instead of 21%)
+  
+  // Check if any items have shipping overrides in metadata
+  let shipping = subtotal > 25 ? 0 : 0.50 // Default: €0.50 shipping for testing
+  let tax = subtotal * 0.05 // Default: 5% tax for testing
+  
+  // Check for product-specific overrides in cart items
+  const hasShippingOverride = state.items.some(item => 
+    item.metadata?.shipping_override?.enabled
+  )
+  const hasTaxOverride = state.items.some(item => 
+    item.metadata?.tax_override?.enabled
+  )
+  
+  if (hasShippingOverride) {
+    // Use the override shipping amount (should be 0 for test products)
+    const overrideItem = state.items.find(item => item.metadata?.shipping_override?.enabled)
+    shipping = (overrideItem?.metadata?.shipping_override?.amount || 0) / 100
+  }
+  
+  if (hasTaxOverride) {
+    // Use the override tax rate (should be 0 for test products)
+    const overrideItem = state.items.find(item => item.metadata?.tax_override?.enabled)
+    const overrideRate = overrideItem?.metadata?.tax_override?.rate || 0
+    tax = subtotal * overrideRate
+  }
+  
   const total = subtotal + shipping + tax
   const amountInCents = Math.round(total * 100)
 

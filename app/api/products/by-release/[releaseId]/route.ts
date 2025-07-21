@@ -23,6 +23,7 @@ export async function GET(
         status,
         inventory_quantity,
         inventory_tracking,
+        metadata,
         product_prices (
           id,
           amount,
@@ -78,7 +79,8 @@ export async function GET(
         currency: physicalPrice?.currency || 'EUR',
         priceId: physicalPrice?.id, // Include actual price ID
         inventory_quantity: product.inventory_quantity || 0,
-        available
+        available,
+        metadata: product.metadata || {} // Include metadata for tax/shipping overrides
       }
     }) || []
 

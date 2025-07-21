@@ -14,6 +14,7 @@ interface CartItem {
   price: number
   quantity: number
   catalog: string
+  metadata?: any // For tax/shipping overrides and other product metadata
 }
 
 interface CartState {
