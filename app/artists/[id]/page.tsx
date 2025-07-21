@@ -662,8 +662,8 @@ export default function ArtistDetailPage({ params }: { params: { id: string } })
         try {
           // First try the new API
           const apiData = await getArtist(params.id, language)
-          if (apiData && apiData.bio) {
-            artistData = { ...artistData, bio: apiData.bio }
+          if (apiData && apiData.description) {
+            artistData = { ...artistData, bio: apiData.description }
           } else {
             // Try the old SSG site translation
             const translation = await getArtistTranslation(artistData.url, language)
