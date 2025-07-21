@@ -2,31 +2,31 @@
 
 import { useState, useRef, useEffect, ReactNode } from 'react'
 
-interface Column {
+interface Column<T = Record<string, unknown>> {
   key: string
   title: string
   width?: number
   minWidth?: number
-  render?: (value: any, item: any) => ReactNode
+  render?: (value: unknown, item: T) => ReactNode
 }
 
-interface ResponsiveTableProps {
-  columns: Column[]
-  data: any[]
+interface ResponsiveTableProps<T = Record<string, unknown>> {
+  columns: Column<T>[]
+  data: T[]
   loading?: boolean
   emptyMessage?: string
   className?: string
-  onRowClick?: (item: any) => void
+  onRowClick?: (item: T) => void
 }
 
-export function ResponsiveTable({
+export function ResponsiveTable<T = Record<string, unknown>>({
   columns,
   data,
   loading = false,
   emptyMessage = 'No data available',
   className = '',
   onRowClick
-}: ResponsiveTableProps) {
+}: ResponsiveTableProps<T>) {
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({})
   const [isResizing, setIsResizing] = useState<string | null>(null)
   const tableRef = useRef<HTMLTableElement>(null)
@@ -76,7 +76,7 @@ export function ResponsiveTable({
     document.removeEventListener('mouseup', handleMouseUp)
   }
 
-  const handleRowClick = (item: any) => {
+  const handleRowClick = (item: T) => {
     if (onRowClick) {
       onRowClick(item)
     }
@@ -145,8 +145,8 @@ export function ResponsiveTable({
                       className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-700 last:border-r-0"
                       style={{ width: columnWidths[column.key] || 'auto' }}
                     >
-                      <div className="truncate" title={item[column.key]?.toString()}>
-                        {column.render ? column.render(item[column.key], item) : item[column.key]}
+                      <div className="truncate" title={String((item as Record<string, unknown>)[column.key] || '')}>
+                        {column.render ? column.render((item as Record<string, unknown>)[column.key], item) : String((item as Record<string, unknown>)[column.key] || '')}
                       </div>
                     </td>
                   ))}
