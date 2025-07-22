@@ -13,6 +13,7 @@ import { useCart } from '@/contexts/cart-context'
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
 interface ExpressCheckoutProps {
+  items?: any[]
   onSuccess?: () => void
   onError?: (error: string) => void
 }
@@ -153,7 +154,7 @@ function ExpressCheckoutForm({ onSuccess, onError }: ExpressCheckoutProps) {
   )
 }
 
-export default function ExpressCheckout({ onSuccess, onError }: ExpressCheckoutProps) {
+export default function ExpressCheckout({ items, onSuccess, onError }: ExpressCheckoutProps) {
   const { state } = useCart()
   const [clientSecret, setClientSecret] = useState<string>('')
 

@@ -13,7 +13,7 @@ import { Separator } from '@/components/ui/separator'
 import { useCart } from '@/contexts/cart-context'
 import { useLanguage } from '@/contexts/language-context'
 import { useTranslations } from '@/lib/translations'
-// Removed Express Checkout imports for now to fix compilation issues
+import ExpressCheckout from '@/components/shop/express-checkout'
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -200,6 +200,31 @@ export default function CheckoutPage() {
                     {emailError && (
                       <p className="text-sm text-red-500 mt-1">{emailError}</p>
                     )}
+                  </div>
+
+                  {/* Express Checkout */}
+                  <div className="mb-4">
+                    <ExpressCheckout 
+                      items={state.items}
+                      onSuccess={() => {
+                        console.log('Express checkout success')
+                        clearCart()
+                        router.push('/shop/success')
+                      }}
+                      onError={(error) => {
+                        console.error('Express checkout error:', error)
+                      }}
+                    />
+                  </div>
+
+                  {/* Or divider */}
+                  <div className="relative my-6">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                      <span className="bg-white px-2 text-gray-500">Or pay with card</span>
+                    </div>
                   </div>
 
                   {/* Checkout Button */}
