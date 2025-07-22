@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create Supabase client
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Validate items and get product data from database
     const lineItems = []

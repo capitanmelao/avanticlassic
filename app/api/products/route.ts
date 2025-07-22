@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     const format = searchParams.get('format')
     const featured = searchParams.get('featured')
 
-    const supabase = createClient()
+    const supabase = await createClient()
 
     let query = supabase
       .from('products')

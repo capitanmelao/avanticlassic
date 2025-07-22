@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server-client'
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     
     console.log('🔍 DEBUG: Checking all products for override metadata...')
     
