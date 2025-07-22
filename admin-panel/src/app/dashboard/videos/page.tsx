@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState, useCallback } from 'react'
 import { supabase, type Video } from '@/lib/supabase'
 import Link from 'next/link'
+import { ResponsiveTable } from '@/components/responsive-table'
 
 export default function VideosPage() {
   const { data: session, status } = useSession()
@@ -160,151 +161,91 @@ export default function VideosPage() {
         </div>
       )}
 
-      {/* Desktop Table View */}
-      <div className="mt-8 hidden lg:block">
-        <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-          <table className="min-w-full divide-y divide-gray-300">
-            <thead className="bg-gray-50">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Video
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Artist
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  URL Slug
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  YouTube ID
-                </th>
-                <th scope="col" className="relative px-6 py-3">
-                  <span className="sr-only">Actions</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {videos.map((video) => (
-                <tr key={video.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-16 w-28">
-                        <img
-                          className="h-16 w-28 rounded-md object-cover border border-gray-200"
-                          src={getYouTubeThumbnail(video.youtube_id)}
-                          alt={video.title}
-                        />
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">
-                          {video.title}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          <a
-                            href={getYouTubeUrl(video.youtube_id)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-purple-600 hover:text-purple-900"
-                          >
-                            Watch on YouTube
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {video.artist_name}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {video.url}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <code className="bg-gray-100 px-2 py-1 rounded text-xs">
-                      {video.youtube_id}
-                    </code>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <Link
-                      href={`/dashboard/videos/${video.id}/edit`}
-                      className="text-purple-600 hover:text-purple-900 mr-4"
-                    >
-                      Edit
-                    </Link>
-                    <button
-                      onClick={() => deleteVideo(video.id)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Mobile Card View */}
-      <div className="mt-8 lg:hidden">
-        <div className="space-y-4">
-          {videos.map((video) => (
-            <div key={video.id} className="bg-white shadow rounded-lg border border-gray-200">
-              <div className="p-4">
-                <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0">
+      {/* Responsive Table */}
+      <div className="mt-8">
+        <ResponsiveTable
+          columns={[
+            {
+              key: 'video',
+              title: 'Video',
+              width: 300,
+              minWidth: 250,
+              render: (_, video) => (
+                <div className="flex items-center">
+                  <div className="flex-shrink-0 h-16 w-28">
                     <img
-                      className="h-20 w-32 rounded-lg object-cover border border-gray-200"
+                      className="h-16 w-28 rounded-md object-cover border border-gray-200"
                       src={getYouTubeThumbnail(video.youtube_id)}
                       alt={video.title}
                     />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className="text-sm font-medium text-gray-900 truncate">
-                          {video.title}
-                        </h3>
-                        <p className="text-xs text-gray-500 mt-1">
-                          Artist: {video.artist_name}
-                        </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          URL: {video.url}
-                        </p>
-                        <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-500">
-                          <code className="bg-gray-100 px-2 py-1 rounded">
-                            {video.youtube_id}
-                          </code>
-                          <a
-                            href={getYouTubeUrl(video.youtube_id)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="bg-purple-100 text-purple-800 px-2 py-1 rounded hover:bg-purple-200"
-                          >
-                            Watch on YouTube
-                          </a>
-                        </div>
-                      </div>
+                  <div className="ml-4">
+                    <div className="text-sm font-medium text-gray-900">
+                      {video.title}
                     </div>
-                    <div className="mt-3 flex space-x-2">
-                      <Link
-                        href={`/dashboard/videos/${video.id}/edit`}
-                        className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-purple-700 bg-purple-100 hover:bg-purple-200"
+                    <div className="text-sm text-gray-500">
+                      <a
+                        href={getYouTubeUrl(video.youtube_id)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-purple-600 hover:text-purple-900"
                       >
-                        Edit
-                      </Link>
-                      <button
-                        onClick={() => deleteVideo(video.id)}
-                        className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-red-700 bg-red-100 hover:bg-red-200"
-                      >
-                        Delete
-                      </button>
+                        Watch on YouTube
+                      </a>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
+              )
+            },
+            {
+              key: 'artist_name',
+              title: 'Artist',
+              width: 150,
+              minWidth: 120
+            },
+            {
+              key: 'url',
+              title: 'URL Slug',
+              width: 120,
+              minWidth: 100
+            },
+            {
+              key: 'youtube_id',
+              title: 'YouTube ID',
+              width: 120,
+              minWidth: 100,
+              render: (value) => (
+                <code className="bg-gray-100 px-2 py-1 rounded text-xs">
+                  {String(value)}
+                </code>
+              )
+            },
+            {
+              key: 'actions',
+              title: 'Actions',
+              width: 120,
+              minWidth: 100,
+              render: (_, video) => (
+                <div className="flex space-x-2">
+                  <Link
+                    href={`/dashboard/videos/${video.id}/edit`}
+                    className="inline-flex items-center px-2 py-1 text-xs font-medium rounded text-purple-700 bg-purple-100 hover:bg-purple-200"
+                  >
+                    Edit
+                  </Link>
+                  <button
+                    onClick={() => deleteVideo(video.id)}
+                    className="inline-flex items-center px-2 py-1 text-xs font-medium rounded text-red-700 bg-red-100 hover:bg-red-200"
+                  >
+                    Delete
+                  </button>
+                </div>
+              )
+            }
+          ]}
+          data={videos}
+          loading={loading}
+        />
       </div>
 
       {videos.length === 0 && !loading && (
