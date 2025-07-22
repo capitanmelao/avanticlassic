@@ -48,6 +48,14 @@ export function ResponsiveTable<T = Record<string, unknown>>({
     }
   }, [columns])
 
+  // Cleanup event listeners on unmount
+  useEffect(() => {
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [])
+
   const handleMouseDown = (e: React.MouseEvent, columnKey: string) => {
     e.preventDefault()
     setIsResizing(columnKey)
@@ -62,7 +70,9 @@ export function ResponsiveTable<T = Record<string, unknown>>({
     if (!isResizing) return
     
     const diff = e.clientX - startXRef.current
-    const newWidth = Math.max(80, startWidthRef.current + diff)
+    const column = columns.find(col => col.key === isResizing)
+    const minWidth = column?.minWidth || 80
+    const newWidth = Math.max(minWidth, startWidthRef.current + diff)
     
     setColumnWidths(prev => ({
       ...prev,
@@ -111,8 +121,9 @@ export function ResponsiveTable<T = Record<string, unknown>>({
                     <span className="truncate">{column.title}</span>
                     {index < columns.length - 1 && (
                       <div
-                        className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-blue-500 dark:hover:bg-blue-400 opacity-0 hover:opacity-100 transition-opacity"
+                        className="absolute right-0 top-0 bottom-0 w-2 cursor-col-resize bg-gray-300 dark:bg-gray-600 hover:bg-blue-500 dark:hover:bg-blue-400 opacity-30 hover:opacity-100 transition-all"
                         onMouseDown={(e) => handleMouseDown(e, column.key)}
+                        title="Drag to resize column"
                       />
                     )}
                   </div>
