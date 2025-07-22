@@ -27,34 +27,27 @@ export default function CheckoutPage() {
   
   const subtotal = state.total
   
-  // Calculate shipping and tax with overrides
-  const calculateShippingAndTax = () => {
-    // Check for product-specific overrides in cart items
-    const hasShippingOverride = state.items.some(item => 
-      item.metadata?.shipping_override?.enabled
-    )
-    const hasTaxOverride = state.items.some(item => 
-      item.metadata?.tax_override?.enabled
-    )
-    
-    // Calculate shipping with overrides
-    let shippingAmount = subtotal > 25 ? 0 : 5.99
-    if (hasShippingOverride) {
-      const shippingOverrideItem = state.items.find(item => item.metadata?.shipping_override?.enabled)
-      shippingAmount = (shippingOverrideItem?.metadata?.shipping_override?.amount || 0) / 100
+  // Simple calculation approach to avoid hoisting issues
+  const getShippingAmount = () => {
+    const hasOverride = state.items.some(item => item.metadata?.shipping_override?.enabled)
+    if (hasOverride) {
+      const item = state.items.find(item => item.metadata?.shipping_override?.enabled)
+      return (item?.metadata?.shipping_override?.amount || 0) / 100
     }
-    
-    // Calculate tax with overrides
-    let taxAmount = subtotal * 0.21 // 21% VAT
-    if (hasTaxOverride) {
-      const taxOverrideItem = state.items.find(item => item.metadata?.tax_override?.enabled)
-      taxAmount = (taxOverrideItem?.metadata?.tax_override?.amount || 0) / 100
-    }
-    
-    return { shipping: shippingAmount, tax: taxAmount }
+    return subtotal > 25 ? 0 : 5.99
   }
-  
-  const { shipping, tax } = calculateShippingAndTax()
+
+  const getTaxAmount = () => {
+    const hasOverride = state.items.some(item => item.metadata?.tax_override?.enabled)
+    if (hasOverride) {
+      const item = state.items.find(item => item.metadata?.tax_override?.enabled)
+      return (item?.metadata?.tax_override?.amount || 0) / 100
+    }
+    return subtotal * 0.21
+  }
+
+  const shipping = getShippingAmount()
+  const tax = getTaxAmount()
   const total = subtotal + shipping + tax
 
   // Redirect to cart if empty
@@ -127,7 +120,7 @@ export default function CheckoutPage() {
       window.location.href = url
     } catch (error) {
       console.error('Checkout error:', error)
-      alert(`There was an error processing your order: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again.`)
+      alert('There was an error processing your order. Please try again.')
     } finally {
       setIsProcessing(false)
     }
@@ -135,10 +128,14 @@ export default function CheckoutPage() {
 
   if (state.items.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600 mb-4">Redirecting to cart...</p>
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center py-12">
+            <h1 className="text-2xl font-bold mb-4">Your cart is empty</h1>
+            <Button asChild>
+              <Link href="/shop">Continue Shopping</Link>
+            </Button>
+          </div>
         </div>
       </div>
     )
@@ -166,238 +163,157 @@ export default function CheckoutPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Checkout Form */}
-            <div className="space-y-6">
-              {/* Express Checkout */}
+            {/* Payment Section */}
+            <div>
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <CreditCard className="h-5 w-5" />
-                    Express Checkout
-                  </CardTitle>
+                  <CardTitle>Payment Details</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <p className="text-sm text-gray-600">
-                      Pay quickly with Apple Pay, Google Pay, PayPal, or Link
-                    </p>
-                    <ExpressCheckout 
+                <CardContent className="space-y-6">
+                  {/* Express Checkout */}
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3">Express Checkout</h3>
+                    <ExpressCheckout
                       onSuccess={() => {
-                        console.log('Express checkout successful')
+                        console.log('Express checkout success')
                       }}
                       onError={(error) => {
                         console.error('Express checkout error:', error)
-                        alert(`Payment error: ${error}`)
                       }}
                     />
                     <ApplePayDebug />
-                    <div className="relative">
-                      <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t" />
-                      </div>
-                      <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-gray-50 px-2 text-gray-500">Or continue with email</span>
-                      </div>
+                  </div>
+
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-white px-2 text-gray-500">Or</span>
+                    </div>
+                  </div>
+
+                  {/* Email Field */}
+                  <div>
+                    <Label htmlFor="email">Email Address</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="your@email.com"
+                      value={customerEmail}
+                      onChange={handleEmailChange}
+                      className={emailError ? 'border-red-500' : ''}
+                    />
+                    {emailError && (
+                      <p className="text-sm text-red-500 mt-1">{emailError}</p>
+                    )}
+                  </div>
+
+                  {/* Checkout Button */}
+                  <Button
+                    size="lg"
+                    className="w-full"
+                    onClick={handleCheckout}
+                    disabled={isProcessing || !customerEmail}
+                  >
+                    {isProcessing ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        <CreditCard className="h-5 w-5 mr-2" />
+                        Proceed to Payment
+                      </>
+                    )}
+                  </Button>
+
+                  {/* Trust Indicators */}
+                  <div className="flex items-center justify-center space-x-6 text-sm text-gray-500">
+                    <div className="flex items-center">
+                      <ShieldCheck className="h-4 w-4 mr-1" />
+                      Secure
+                    </div>
+                    <div className="flex items-center">
+                      <Truck className="h-4 w-4 mr-1" />
+                      Fast Shipping
+                    </div>
+                    <div className="flex items-center">
+                      <Clock className="h-4 w-4 mr-1" />
+                      24/7 Support
                     </div>
                   </div>
                 </CardContent>
               </Card>
-
-              {/* Contact Information */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <CreditCard className="h-5 w-5" />
-                    Contact Information
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email Address *</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="your@email.com"
-                        value={customerEmail}
-                        onChange={handleEmailChange}
-                        className={emailError ? 'border-red-500' : ''}
-                        required
-                      />
-                      {emailError && (
-                        <p className="text-sm text-red-500">{emailError}</p>
-                      )}
-                      <p className="text-xs text-gray-500">
-                        We'll send order confirmation and tracking info to this email
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Security Features */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <ShieldCheck className="h-5 w-5" />
-                    Secure Checkout
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                        <ShieldCheck className="h-4 w-4 text-green-600" />
-                      </div>
-                      <div>
-                        <p className="font-medium">SSL Encrypted</p>
-                        <p className="text-sm text-gray-600">Your payment information is secure</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                        <CreditCard className="h-4 w-4 text-blue-600" />
-                      </div>
-                      <div>
-                        <p className="font-medium">Multiple Payment Methods</p>
-                        <p className="text-sm text-gray-600">Card, PayPal, SEPA, and more</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                        <Truck className="h-4 w-4 text-purple-600" />
-                      </div>
-                      <div>
-                        <p className="font-medium">Worldwide Shipping</p>
-                        <p className="text-sm text-gray-600">Fast and reliable delivery</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Checkout Button */}
-              <Button
-                size="lg"
-                className="w-full"
-                onClick={handleCheckout}
-                disabled={isProcessing || !customerEmail || !!emailError}
-              >
-                {isProcessing ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Creating secure checkout...
-                  </>
-                ) : (
-                  <>
-                    <CreditCard className="h-5 w-5 mr-2" />
-                    Continue to Payment
-                  </>
-                )}
-              </Button>
-
-              <div className="text-center">
-                <p className="text-xs text-gray-600">
-                  Powered by <span className="font-semibold">Stripe</span> - 
-                  Industry-leading payment security
-                </p>
-              </div>
             </div>
 
             {/* Order Summary */}
-            <div className="lg:sticky lg:top-4">
-              <Card>
+            <div>
+              <Card className="sticky top-4">
                 <CardHeader>
                   <CardTitle>Order Summary</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    {/* Order Items */}
-                    <div className="space-y-3">
-                      {state.items.map((item) => (
-                        <div key={item.id} className="flex gap-3">
-                          <div className="w-16 h-16 flex-shrink-0">
-                            <img
-                              src={item.image}
-                              alt={item.name}
-                              className="w-full h-full object-cover rounded"
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-medium text-sm line-clamp-2">
-                              {item.name}
-                            </h4>
-                            <p className="text-xs text-gray-600">{item.artist}</p>
-                            <div className="flex items-center justify-between mt-1">
-                              <span className="text-xs text-gray-500">
-                                {item.format} • Qty: {item.quantity}
-                              </span>
-                              <span className="text-sm font-medium">
-                                €{(item.price * item.quantity).toFixed(2)}
-                              </span>
-                            </div>
-                          </div>
+                  {/* Cart Items */}
+                  <div className="space-y-4 mb-4">
+                    {state.items.map((item) => (
+                      <div key={item.id} className="flex gap-3">
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-16 h-16 object-cover rounded border"
+                        />
+                        <div className="flex-1">
+                          <h4 className="font-medium text-sm">{item.name}</h4>
+                          <p className="text-xs text-gray-600">{item.artist}</p>
+                          <p className="text-xs text-gray-500">
+                            {item.format} • Qty: {item.quantity}
+                          </p>
+                          <p className="text-sm font-semibold">
+                            €{(item.price * item.quantity).toFixed(2)}
+                          </p>
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    ))}
+                  </div>
 
+                  <Separator className="my-4" />
+
+                  {/* Order Totals */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span>Subtotal</span>
+                      <span>€{subtotal.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Shipping</span>
+                      <span>
+                        {shipping === 0 ? (
+                          <span className="text-green-600">Free</span>
+                        ) : (
+                          `€${shipping.toFixed(2)}`
+                        )}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>VAT (21%)</span>
+                      <span>€{tax.toFixed(2)}</span>
+                    </div>
                     <Separator />
-
-                    {/* Price Breakdown */}
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Subtotal</span>
-                        <span>€{subtotal.toFixed(2)}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>Shipping</span>
-                        <span>
-                          {shipping === 0 ? (
-                            <span className="text-green-600">Free</span>
-                          ) : (
-                            `€${shipping.toFixed(2)}`
-                          )}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>VAT (21%)</span>
-                        <span>€{tax.toFixed(2)}</span>
-                      </div>
-                      <Separator />
-                      <div className="flex justify-between text-lg font-semibold">
-                        <span>Total</span>
-                        <span>€{total.toFixed(2)}</span>
-                      </div>
-                    </div>
-
-                    {shipping > 0 && (
-                      <div className="p-3 bg-blue-50 rounded-lg">
-                        <p className="text-sm text-blue-800">
-                          Add €{(25 - subtotal).toFixed(2)} more for free shipping!
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Delivery Info */}
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Clock className="h-4 w-4 text-gray-600" />
-                        <span className="text-sm font-medium">Estimated Delivery</span>
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        3-7 business days for most locations
-                      </p>
-                    </div>
-
-                    {/* Continue Shopping */}
-                    <div className="pt-2">
-                      <Button asChild variant="outline" className="w-full">
-                        <Link href="/shop">
-                          Continue Shopping
-                        </Link>
-                      </Button>
+                    <div className="flex justify-between text-lg font-semibold">
+                      <span>Total</span>
+                      <span>€{total.toFixed(2)}</span>
                     </div>
                   </div>
+
+                  {shipping > 0 && subtotal < 25 && (
+                    <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                      <p className="text-sm text-blue-800">
+                        Add €{(25 - subtotal).toFixed(2)} more for free shipping!
+                      </p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
