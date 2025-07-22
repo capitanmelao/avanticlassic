@@ -2,12 +2,29 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## 🎉 **MAJOR UPDATE - JULY 21, 2025**
+## 🎉 **MAJOR UPDATE - JULY 22, 2025**
 
-**✅ COMPLETE CONTENT INTEGRITY & USER EXPERIENCE OPTIMIZATION**  
-Comprehensive content authenticity restoration with real reviews from classical music critics, complete global distributors network, optimized multilingual system, and enhanced user experience across the entire platform.
+**✅ CODEBASE CLEANUP & EXPRESS CHECKOUT RESTORATION**  
+Complete codebase cleanup removing all test files and unused migrations, plus successful restoration of Express Checkout with Apple Pay and Link payment options while maintaining admin panel override functionality.
 
-### ✅ Latest Session Achievements (July 21, 2025)
+### ✅ Latest Session Achievements (July 22, 2025)
+
+#### **🧹 COMPREHENSIVE CODEBASE CLEANUP - Complete**
+- **Status**: ✅ Production Ready 
+- **Focus**: Remove all test files, unused migrations, obsolete documentation
+- **Files Removed**: 50+ test/migration JS files, 10+ SQL migration scripts, outdated documentation directories
+- **Directories Cleaned**: `/documentation/shop`, `/admin-panel/documentation`, `/admin-panel/scripts`, `/avanti-classic-template`, `/old-astro-site`
+- **Result**: Clean, maintainable codebase with only production-necessary files
+
+#### **💳 EXPRESS CHECKOUT RESTORATION - Production Ready**
+- **Status**: ✅ Complete with Apple Pay and Link support
+- **Features Restored**: Apple Pay buttons, Google Pay, Link payment options
+- **Admin Integration**: Shipping/tax overrides from admin panel working correctly
+- **Error Handling**: Proper fallback for failed payment methods (Amazon Pay disabled)
+- **UX Enhancement**: "Or pay with card" divider between express and manual checkout
+- **API Compatibility**: Works seamlessly with corrected Stripe Checkout API
+
+### ✅ Previous Content Integrity Achievements (July 21, 2025)
 
 #### **CONTENT INTEGRITY RESTORATION - Production Ready**
 - **Status**: ✅ Production Ready and Deployed
