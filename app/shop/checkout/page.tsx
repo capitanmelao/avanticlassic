@@ -27,28 +27,34 @@ export default function CheckoutPage() {
   
   const subtotal = state.total
   
-  // Check for product-specific overrides in cart items
-  const hasShippingOverride = state.items.some(item => 
-    item.metadata?.shipping_override?.enabled
-  )
-  const hasTaxOverride = state.items.some(item => 
-    item.metadata?.tax_override?.enabled
-  )
-  
-  // Calculate shipping with overrides
-  let shipping = subtotal > 25 ? 0 : 5.99
-  if (hasShippingOverride) {
-    const shippingOverrideItem = state.items.find(item => item.metadata?.shipping_override?.enabled)
-    shipping = (shippingOverrideItem?.metadata?.shipping_override?.amount || 0) / 100
+  // Calculate shipping and tax with overrides
+  const calculateShippingAndTax = () => {
+    // Check for product-specific overrides in cart items
+    const hasShippingOverride = state.items.some(item => 
+      item.metadata?.shipping_override?.enabled
+    )
+    const hasTaxOverride = state.items.some(item => 
+      item.metadata?.tax_override?.enabled
+    )
+    
+    // Calculate shipping with overrides
+    let shippingAmount = subtotal > 25 ? 0 : 5.99
+    if (hasShippingOverride) {
+      const shippingOverrideItem = state.items.find(item => item.metadata?.shipping_override?.enabled)
+      shippingAmount = (shippingOverrideItem?.metadata?.shipping_override?.amount || 0) / 100
+    }
+    
+    // Calculate tax with overrides
+    let taxAmount = subtotal * 0.21 // 21% VAT
+    if (hasTaxOverride) {
+      const taxOverrideItem = state.items.find(item => item.metadata?.tax_override?.enabled)
+      taxAmount = (taxOverrideItem?.metadata?.tax_override?.amount || 0) / 100
+    }
+    
+    return { shipping: shippingAmount, tax: taxAmount }
   }
   
-  // Calculate tax with overrides
-  let tax = subtotal * 0.21 // 21% VAT
-  if (hasTaxOverride) {
-    const taxOverrideItem = state.items.find(item => item.metadata?.tax_override?.enabled)
-    tax = (taxOverrideItem?.metadata?.tax_override?.amount || 0) / 100
-  }
-  
+  const { shipping, tax } = calculateShippingAndTax()
   const total = subtotal + shipping + tax
 
   // Redirect to cart if empty
