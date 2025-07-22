@@ -13,8 +13,7 @@ import { Separator } from '@/components/ui/separator'
 import { useCart } from '@/contexts/cart-context'
 import { useLanguage } from '@/contexts/language-context'
 import { useTranslations } from '@/lib/translations'
-import ExpressCheckout from '@/components/shop/express-checkout'
-import ApplePayDebug from '@/components/shop/apple-pay-debug'
+// Removed Express Checkout imports for now to fix compilation issues
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -74,7 +73,7 @@ export default function CheckoutPage() {
   }
 
   const handleCheckout = async () => {
-    // Validate email
+    // Validate email first
     if (!customerEmail) {
       setEmailError('Email is required')
       return
@@ -88,14 +87,16 @@ export default function CheckoutPage() {
     setIsProcessing(true)
     
     try {
-      // Prepare items for checkout
+      // Prepare items for checkout - simple structure
       const checkoutItems = state.items.map(item => ({
         productId: item.productId,
         priceId: item.priceId,
         quantity: item.quantity
       }))
       
-      // Create checkout session
+      console.log('Creating checkout session with items:', checkoutItems)
+      
+      // Create Stripe Checkout Session
       const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: {
@@ -110,17 +111,25 @@ export default function CheckoutPage() {
       })
       
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to create checkout session')
+        const errorText = await response.text()
+        console.error('Checkout API error:', response.status, errorText)
+        throw new Error(`Failed to create checkout session: ${response.status}`)
       }
       
-      const { url } = await response.json()
+      const result = await response.json()
+      console.log('Checkout session created:', result)
       
-      // Redirect to Stripe Checkout
-      window.location.href = url
+      // Redirect to Stripe Checkout page
+      if (result.url) {
+        console.log('Redirecting to:', result.url)
+        window.location.href = result.url
+      } else {
+        throw new Error('No checkout URL received')
+      }
     } catch (error) {
       console.error('Checkout error:', error)
-      alert('There was an error processing your order. Please try again.')
+      const message = error instanceof Error ? error.message : 'Unknown error occurred'
+      alert(`There was an error processing your order: ${message}. Please try again.`)
     } finally {
       setIsProcessing(false)
     }
@@ -170,27 +179,11 @@ export default function CheckoutPage() {
                   <CardTitle>Payment Details</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  {/* Express Checkout */}
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Express Checkout</h3>
-                    <ExpressCheckout
-                      onSuccess={() => {
-                        console.log('Express checkout success')
-                      }}
-                      onError={(error) => {
-                        console.error('Express checkout error:', error)
-                      }}
-                    />
-                    <ApplePayDebug />
-                  </div>
-
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-white px-2 text-gray-500">Or</span>
-                    </div>
+                  {/* Checkout Description */}
+                  <div className="text-center p-4 bg-blue-50 rounded-lg">
+                    <p className="text-sm text-blue-800">
+                      You will be redirected to Stripe's secure payment page to complete your purchase.
+                    </p>
                   </div>
 
                   {/* Email Field */}
