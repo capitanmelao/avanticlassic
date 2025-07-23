@@ -1,0 +1,165 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import type { Language } from '../../../types';
+import { videos } from '../../../utils/data';
+import { paginate } from '../../../utils/data';
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'en' } },
+    { params: { lang: 'fr' } },
+    { params: { lang: 'de' } },
+  ];
+}
+
+const { lang } = Astro.params as { lang: Language };
+const currentPage = 1;
+const itemsPerPage = 8;
+
+const paginatedVideos = paginate(videos, currentPage, itemsPerPage);
+
+// Helper function to extract YouTube video ID from embed URL
+function getYouTubeId(url: string): string {
+  const match = url.match(/\/embed\/([^?]+)/);
+  return match ? match[1] : '';
+}
+---
+
+<BaseLayout lang={lang} selectedMenu="videos" title="Videos - Avanticlassic">
+  <div class="container mx-auto px-4">
+    <h1 class="text-4xl font-bold mb-8 text-center">Our Videos</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+      {paginatedVideos.items.map((video) => {
+        const youtubeId = getYouTubeId(video.url);
+        const thumbnailUrl = `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`;
+        
+        return (
+          <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow group cursor-pointer">
+            <div 
+              class="aspect-video relative bg-gray-100"
+              onclick={`openVideo('${video.url}')`}
+            >
+              <img 
+                src={thumbnailUrl}
+                alt={`Video ${video.id}`}
+                class="w-full h-full object-cover group-hover:opacity-80 transition-opacity"
+                loading="lazy"
+              />
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div class="bg-red-600 text-white rounded-full w-16 h-16 flex items-center justify-center group-hover:bg-red-700 transition-colors">
+                  <svg class="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <div class="p-4">
+              <p class="text-gray-600 text-sm">Video {video.id}</p>
+              <p class="text-blue-600 hover:text-blue-800 font-medium text-sm">Watch Video →</p>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+
+    <!-- Pagination -->
+    {paginatedVideos.totalPages > 1 && (
+      <nav class="flex justify-center items-center space-x-4 mb-8">
+        {paginatedVideos.hasPrev && (
+          <a 
+            href={`/${lang}/videos/page/${paginatedVideos.currentPage - 1}/`}
+            class="px-4 py-2 text-blue-600 hover:text-blue-800 border border-blue-600 rounded hover:bg-blue-50"
+          >
+            ← Previous
+          </a>
+        )}
+        
+        {Array.from({ length: paginatedVideos.totalPages }, (_, i) => i + 1).map((pageNum) => (
+          <a 
+            href={pageNum === 1 ? `/${lang}/videos/` : `/${lang}/videos/page/${pageNum}/`}
+            class={`px-4 py-2 rounded ${
+              pageNum === paginatedVideos.currentPage 
+                ? 'bg-blue-600 text-white' 
+                : 'text-blue-600 hover:text-blue-800 hover:bg-blue-50'
+            }`}
+          >
+            {pageNum}
+          </a>
+        ))}
+        
+        {paginatedVideos.hasNext && (
+          <a 
+            href={`/${lang}/videos/page/${paginatedVideos.currentPage + 1}/`}
+            class="px-4 py-2 text-blue-600 hover:text-blue-800 border border-blue-600 rounded hover:bg-blue-50"
+          >
+            Next →
+          </a>
+        )}
+      </nav>
+    )}
+  </div>
+
+  <!-- Video Modal -->
+  <div 
+    id="video-modal" 
+    class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-50"
+    onclick="closeVideo(event)"
+  >
+    <div class="bg-white rounded-lg p-4 max-w-4xl w-full mx-4">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold">Video Player</h3>
+        <button 
+          onclick="closeVideo()"
+          class="text-gray-500 hover:text-gray-700 text-2xl"
+        >
+          ×
+        </button>
+      </div>
+      <div class="aspect-video">
+        <iframe
+          id="video-iframe"
+          src=""
+          class="w-full h-full rounded"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openVideo(url: string) {
+      const modal = document.getElementById('video-modal');
+      const iframe = document.getElementById('video-iframe') as HTMLIFrameElement;
+      
+      if (modal && iframe) {
+        iframe.src = url + '?autoplay=1';
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeVideo(event?: Event) {
+      if (event && (event.target as Element).id !== 'video-modal') {
+        return;
+      }
+      
+      const modal = document.getElementById('video-modal');
+      const iframe = document.getElementById('video-iframe') as HTMLIFrameElement;
+      
+      if (modal && iframe) {
+        iframe.src = '';
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+      }
+    }
+
+    // Make functions globally available
+    (window as any).openVideo = openVideo;
+    (window as any).closeVideo = closeVideo;
+  </script>
+</BaseLayout>

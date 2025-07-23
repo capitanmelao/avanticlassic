@@ -1,0 +1,216 @@
+---
+import type { Language } from '../types';
+import { translate } from '../utils/data';
+import '../styles/global.css';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  lang: Language;
+  selectedMenu?: string;
+  ogImages?: Array<{ path: string; width: number; height: number }>;
+}
+
+const { title = 'Avanticlassic', description = '', lang, selectedMenu, ogImages } = Astro.props;
+const { pathname } = Astro.url;
+
+const t = (key: string) => translate(lang, key);
+
+// Clean description for meta tags
+const cleanDescription = description 
+  ? description.slice(0, 150).replace(/<br>/g, ' ').replace(/\s+/g, ' ').trim() + '...' 
+  : '';
+---
+
+<!DOCTYPE html>
+<html lang={lang}>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={cleanDescription}>
+  
+  {ogImages ? (
+    ogImages.map(ogImage => (
+      <meta property="og:image" content={`https://avanticlassic.com${ogImage.path}`}>
+      <meta property="og:image:width" content={ogImage.width.toString()}>
+      <meta property="og:image:height" content={ogImage.height.toString()}>
+    ))
+  ) : (
+    <meta property="og:image" content="https://avanticlassic.com/images/carousel1.jpg">
+  )}
+
+  <!-- Hreflang for multilingual SEO -->
+  <link rel="alternate" hreflang="en" href={`https://avanticlassic.com/en${pathname.replace(/^\/[a-z]{2}/, '')}`}>
+  <link rel="alternate" hreflang="fr" href={`https://avanticlassic.com/fr${pathname.replace(/^\/[a-z]{2}/, '')}`}>
+  <link rel="alternate" hreflang="de" href={`https://avanticlassic.com/de${pathname.replace(/^\/[a-z]{2}/, '')}`}>
+  <link rel="alternate" hreflang="x-default" href={`https://avanticlassic.com/en${pathname.replace(/^\/[a-z]{2}/, '')}`}>
+
+  <title>{title}</title>
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+</head>
+
+<body class="flex flex-col min-h-screen font-helvetica container mx-auto px-4 selection:bg-sky-400 selection:text-white bg-white">
+  <header class="my-10 text-xl">
+    <nav class="flex justify-between items-center">
+      <a href={`/${lang}/`}>
+        <img class="w-32" src="/images/logo.jpeg" alt="Avanticlassic Logo">
+      </a>
+
+      <button class="cursor-pointer sm:hidden" onclick="burgerClick()">
+        <svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="#000000">
+          <path d="M3 5H21" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="M3 12H21" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="M3 19H21" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </button>
+
+      <div class="hidden sm:flex gap-5 items-center decoration-sky-400">
+        <a 
+          href={`/${lang}/artists/`} 
+          class={`${selectedMenu === 'artists' ? 'underline' : ''} hover:text-sky-400`}
+        >
+          {t('menu.ourArtists')}
+        </a>
+        <a 
+          href={`/${lang}/releases/`} 
+          class={`${selectedMenu === 'releases' ? 'underline' : ''} hover:text-sky-400`}
+        >
+          {t('menu.releases')}
+        </a>
+        <a 
+          href={`/${lang}/videos/`} 
+          class={`${selectedMenu === 'videos' ? 'underline' : ''} hover:text-sky-400`}
+        >
+          {t('menu.videos')}
+        </a>
+        <a 
+          href={`/${lang}/about/`} 
+          class={`${selectedMenu === 'about' ? 'underline' : ''} hover:text-sky-400`}
+        >
+          {t('menu.about')}
+        </a>
+        
+        <!-- Language Selector -->
+        <div class="relative">
+          <button 
+            onclick="toggleDropdown(event)"
+            class="flex items-center gap-1 hover:text-sky-400 cursor-pointer"
+          >
+            {lang.toUpperCase()}
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+            </svg>
+          </button>
+          
+          <div class="langs-wrapper grid grid-rows-[0fr] transition-all ease-in-out absolute top-full right-0 bg-white border border-gray-200 rounded-md shadow-lg min-w-20 z-10">
+            <div class="overflow-hidden">
+              <div class="flex flex-col p-2">
+                {['en', 'fr', 'de'].map(locale => {
+                  const newPath = pathname.startsWith('/en') || pathname.startsWith('/fr') || pathname.startsWith('/de')
+                    ? pathname.replace(/^\/[a-z]{2}/, `/${locale}`)
+                    : `/${locale}${pathname}`;
+                  return (
+                    <a 
+                      href={newPath}
+                      class={`px-2 py-1 hover:bg-gray-100 rounded ${lang === locale ? 'font-bold' : ''}`}
+                    >
+                      {locale.toUpperCase()}
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="grid sm:hidden grid-rows-[0fr] transition-all ease-in-out">
+      <div class="overflow-hidden">
+        <div class="flex flex-col decoration-sky-400 space-y-2 pt-4">
+          <a 
+            href={`/${lang}/artists/`} 
+            class={`${selectedMenu === 'artists' ? 'underline' : ''} hover:text-sky-400 w-fit`}
+          >
+            {t('menu.ourArtists')}
+          </a>
+          <a 
+            href={`/${lang}/releases/`} 
+            class={`${selectedMenu === 'releases' ? 'underline' : ''} hover:text-sky-400 w-fit`}
+          >
+            {t('menu.releases')}
+          </a>
+          <a 
+            href={`/${lang}/videos/`} 
+            class={`${selectedMenu === 'videos' ? 'underline' : ''} hover:text-sky-400 w-fit`}
+          >
+            {t('menu.videos')}
+          </a>
+          <a 
+            href={`/${lang}/about/`} 
+            class={`${selectedMenu === 'about' ? 'underline' : ''} hover:text-sky-400 w-fit`}
+          >
+            {t('menu.about')}
+          </a>
+          
+          <!-- Mobile Language Selector -->
+          <div class="pt-2 border-t border-gray-200">
+            {['en', 'fr', 'de'].map(locale => {
+              const newPath = pathname.startsWith('/en') || pathname.startsWith('/fr') || pathname.startsWith('/de')
+                ? pathname.replace(/^\/[a-z]{2}/, `/${locale}`)
+                : `/${locale}${pathname}`;
+              return (
+                <a 
+                  href={newPath}
+                  class={`block py-1 hover:text-sky-400 ${lang === locale ? 'font-bold' : ''}`}
+                >
+                  {locale.toUpperCase()}
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex-1">
+    <slot />
+  </div>
+
+  <footer class="mt-16 py-8 border-t border-gray-200 text-center text-gray-400 text-sm">
+    <p>&copy; 2024 Avanticlassic. All rights reserved.</p>
+  </footer>
+
+  <script>
+    function burgerClick() {
+      const element = document.getElementById("mobile-menu");
+      if (element) {
+        element.classList.toggle("grid-rows-[1fr]");
+      }
+    }
+
+    function toggleDropdown(event: Event) {
+      event.stopPropagation();
+      const dropdowns = document.getElementsByClassName("langs-wrapper");
+      Array.from(dropdowns).forEach(d => d.classList.toggle("grid-rows-[1fr]"));
+    }
+
+    document.addEventListener('click', (event) => {
+      const target = event.target as Element;
+      const clickedOutside = !target.closest('.langs-wrapper');
+
+      if (clickedOutside) {
+        const dropdowns = document.getElementsByClassName("langs-wrapper");
+        Array.from(dropdowns).forEach(d => d.classList.remove("grid-rows-[1fr]"));
+      }
+    });
+
+    // Make functions globally available
+    (window as any).burgerClick = burgerClick;
+    (window as any).toggleDropdown = toggleDropdown;
+  </script>
+</body>
+</html>
