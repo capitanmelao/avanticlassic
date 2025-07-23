@@ -1,27 +1,11 @@
 # CLAUDE.md - Admin Panel
 
-This file provides guidance to Claude Code when working with the **Admin Panel** portion of the Avanti Classic project.
+Admin-specific guidance for the Avanticlassic admin panel. See main CLAUDE.md for general deployment info.
 
-## ⚠️ IMPORTANT DEPLOYMENT INFORMATION
+## 🎯 Admin Panel Specific Info
 
-### **Production Setup**
-- **Production URL**: https://avanticlassic-admin.vercel.app
-- **Vercel Project**: `avanticlassic-admin` (EXISTING PROJECT - DO NOT CREATE NEW)
-- **Database**: Production Supabase PostgreSQL (shared with main site)
-- **Authentication**: Simple username/password system
-  - **Super Admin**: leinso@gmail.com / Naviondo123.1
-
-### **Development vs Production**
-- **Local Development**: Only for testing code changes before deployment
-- **Production Testing**: Use https://avanticlassic-admin.vercel.app directly
-- **Database**: ALWAYS production Supabase (no local database)
-- **Environment**: All testing should be done on the live admin panel
-
-### **Deployment Process**
-1. **NEVER create a new Vercel project**
-2. **ALWAYS use existing**: `avanticlassic-admin` project in Vercel
-3. **Git workflow**: Push to main branch → Auto-deploys to production
-4. **Testing**: Use production URL for all functionality testing
+- **URL**: https://avanticlassic-admin.vercel.app
+- **Login**: leinso@gmail.com / Naviondo123.1
 
 ## Project Structure
 
