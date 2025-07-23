@@ -173,21 +173,6 @@ export default function ExpressCheckout({ items, onSuccess, onError }: ExpressCh
     item.metadata?.tax_override?.enabled
   )
   
-  // Debug logging with detailed override values
-  console.log('EXPRESS CHECKOUT - Cart items for override check:', state.items.map(item => ({
-    name: item.name,
-    metadata: item.metadata,
-    shippingOverride: item.metadata?.shipping_override,
-    taxOverride: item.metadata?.tax_override
-  })))
-  console.log('EXPRESS CHECKOUT - Override detection:', {
-    hasShippingOverride,
-    hasTaxOverride,
-    calculatedShipping: shipping,
-    calculatedTax: tax,
-    subtotal,
-    total
-  })
   
   if (hasShippingOverride) {
     // Use the override shipping amount (should be 0 for test products)

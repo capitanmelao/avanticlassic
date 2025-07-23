@@ -4,56 +4,45 @@ Secure admin dashboard for managing the Avanticlassic website content.
 
 ## 🔐 Features
 
-- **Google OAuth Authentication** - Secure login with Fred's Google account
-- **Content Management** - Manage artists, releases, and videos
+- **Simple Authentication** - Secure login with username/password system
+- **Content Management** - Manage artists, releases, videos, playlists, and reviews
 - **Image Upload** - Easy image management with optimization
-- **Live Publishing** - One-click updates to the main website
+- **Two-Tier Permissions** - Company admin and Super admin roles
+- **Real-time Updates** - Instant content updates to the main website
 - **Responsive Design** - Works on desktop and mobile
 
-## 🚀 Setup
+## 🚀 Production Access
 
-### 1. Environment Variables
+**Live Admin Panel**: https://avanticlassic-admin.vercel.app
 
-Copy `.env.example` to `.env.local` and fill in the values:
+**Super Admin Login**:
+- Username: leinso@gmail.com
+- Password: Naviondo123.1
 
-```bash
-cp .env.example .env.local
-```
+## 🛠 Development Setup
 
-### 2. Google OAuth Setup
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select existing one
-3. Enable the Google+ API
-4. Go to "Credentials" → "Create Credentials" → "OAuth 2.0 Client IDs"
-5. Set authorized redirect URIs:
-   - `http://localhost:3001/api/auth/callback/google` (development)
-   - `https://avanticlassic.vercel.app/avantiadmin/api/auth/callback/google` (production)
-6. Copy Client ID and Client Secret to `.env.local`
-
-### 3. Install Dependencies
+### 1. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 4. Run Development Server
+### 2. Run Development Server
 
 ```bash
 npm run dev
 ```
 
-Visit `http://localhost:3001/avantiadmin` and sign in with Fred's Google account.
+Visit `http://localhost:3000` for local development.
 
 ## 🔧 Configuration
 
-### Allowed Admin Email
+### Authentication System
 
-Only Fred's email can access the admin panel. Update this in `.env.local`:
-
-```env
-ADMIN_EMAIL=fred@avanticlassic.com
-```
+The admin panel uses a simple username/password authentication system with:
+- bcrypt password hashing (12 salt rounds)
+- HTTP-only cookies for session management
+- Role-based access control
 
 ### Supabase Integration
 
@@ -73,41 +62,28 @@ Deploy to Vercel:
 2. Set environment variables in Vercel dashboard
 3. Deploy
 
-### Environment Variables for Production
-
-```
-NEXTAUTH_URL=https://admin.avanticlassic.com
-NEXTAUTH_SECRET=your-production-secret
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-NEXT_PUBLIC_SUPABASE_URL=https://cfyndmpjohwtvzljtypr.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-ADMIN_EMAIL=fred@avanticlassic.com
-ASTRO_SITE_URL=https://avanticlassic.com
-VERCEL_DEPLOY_HOOK=your-vercel-deploy-hook
-```
-
 ## 📱 Usage
 
-1. **Sign In** - Use Fred's Google account to authenticate
+1. **Sign In** - Use admin credentials to authenticate
 2. **Dashboard** - Overview of content and quick actions
-3. **Manage Content** - Add/edit artists, releases, videos
+3. **Manage Content** - Add/edit artists, releases, videos, playlists, reviews
 4. **Upload Images** - Drag and drop image upload with optimization
-5. **Publish** - One-click to update the live website
+5. **User Management** - Admin and Super admin role management (Super admin only)
+6. **Real-time Publishing** - Changes appear instantly on the main website
 
 ## 🔒 Security
 
-- **Single Admin Access** - Only Fred's email can sign in
-- **Google OAuth** - Secure authentication via Google
+- **Role-based Access** - Company admin and Super admin permissions
+- **Simple Authentication** - Secure username/password system
 - **Protected Routes** - All admin routes require authentication
-- **Session Management** - Automatic logout after inactivity
+- **Session Management** - HTTP-only cookies with 24-hour expiration
+- **Audit Logging** - Complete audit trail for all admin actions
 
 ## 🛠 Tech Stack
 
 - **Next.js 15** - React framework with App Router
-- **Auth.js v5** - Authentication with Google OAuth
-- **Tailwind CSS** - Styling
-- **Supabase** - Database and file storage
-- **TypeScript** - Type safety
-- **@dnd-kit** - Drag and drop functionality
+- **TypeScript** - Type safety throughout
+- **Tailwind CSS** - Modern styling system
+- **Supabase** - PostgreSQL database and file storage
+- **bcrypt** - Password hashing and security
+- **@dnd-kit** - Drag and drop functionality for reordering

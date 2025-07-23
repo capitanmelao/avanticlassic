@@ -2,269 +2,193 @@
 
 ## Overview
 
-This document outlines the deployment process for the Avanticlassic website, covering both the current SSG implementation and future deployment strategies.
+This document outlines the deployment process for the Avanticlassic website using Next.js 15 with automatic Vercel deployment.
 
-## Current Deployment Architecture
+## Current Production Architecture
 
-### Static Site Generation
-- **Framework**: Custom Deno-based SSG
-- **Build Process**: `deno run --allow-read --allow-write main.ts`
-- **Output**: Static HTML files in `_site/` directory
-- **Hosting**: Vercel (https://ssg-eta.vercel.app/)
+### Next.js Application
+- **Framework**: Next.js 15 with App Router
+- **Build Process**: `npm run build`
+- **Runtime**: Node.js with React Server Components
+- **Hosting**: Vercel (https://avanticlassic.vercel.app)
 
-### Build Pipeline
-1. **Data Loading**: JSON files from `data/` directory
-2. **Translation Loading**: i18n files from `i18n/` directory
-3. **Template Rendering**: Eta templates generate HTML
-4. **Asset Processing**: Images and CSS copied to output
-5. **Multi-language Generation**: Separate directories for each language
+### Tech Stack
+- **Frontend**: React 18 + TypeScript
+- **Database**: Supabase PostgreSQL
+- **Payments**: Stripe with Express Checkout
+- **Authentication**: Simple username/password (admin panel)
+- **Styling**: Tailwind CSS v4
 
-## Vercel Deployment
+## Production URLs
 
-### Current Configuration
+### Main Website
+- **URL**: https://avanticlassic.vercel.app
+- **Vercel Project**: `avanticlassic`
+- **Git Branch**: `main` (auto-deploy)
+
+### Admin Panel
+- **URL**: https://avanticlassic-admin.vercel.app
+- **Vercel Project**: `avanticlassic-admin`
+- **Git Branch**: `main` (auto-deploy)
+- **Login**: leinso@gmail.com / Naviondo123.1
+
+## Deployment Process
+
+### Automatic Deployment
+1. **Code Push**: Push changes to `main` branch
+2. **Automatic Trigger**: Vercel detects changes via GitHub integration
+3. **Build Execution**: Runs `npm run build` for both projects
+4. **Environment Variables**: Loaded from Vercel dashboard
+5. **CDN Distribution**: Content distributed globally via Vercel Edge Network
+6. **Live Update**: Sites automatically updated (no manual intervention)
+
+### Build Configuration
 ```json
 {
-  "buildCommand": "deno run --allow-read --allow-write main.ts",
-  "outputDirectory": "_site",
-  "installCommand": "echo 'Using Deno runtime'",
-  "framework": null
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "installCommand": "npm install",
+  "nodeVersion": "18.x"
 }
 ```
 
-### Deployment Process
-1. **Code Push**: Push changes to GitHub repository
-2. **Automatic Trigger**: Vercel detects changes and triggers build
-3. **Build Execution**: Runs Deno build command
-4. **Asset Optimization**: Vercel optimizes static assets
-5. **CDN Distribution**: Content distributed globally
-6. **DNS Update**: Site available at custom domain
+## Environment Variables
 
-### Environment Variables
-- `DENO_VERSION`: Specify Deno version for consistency
-- `NODE_VERSION`: Required for Vercel compatibility
-- `BUILD_COMMAND`: Custom build command override
+### Main Website (.env)
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://cfyndmpjohwtvzljtypr.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_key
+STRIPE_SECRET_KEY=your_stripe_secret
+NEXT_PUBLIC_APP_URL=https://avanticlassic.vercel.app
+```
+
+### Admin Panel (.env)
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://cfyndmpjohwtvzljtypr.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+SESSION_SECRET=your_session_secret
+NEXT_PUBLIC_MAIN_SITE_URL=https://avanticlassic.vercel.app
+```
 
 ## Local Development
 
 ### Prerequisites
-- Deno runtime installed
-- Git for version control
-- Code editor with TypeScript support
+- Node.js 18+
+- npm or yarn
 
-### Development Commands
-```bash
-# Install Deno (if not already installed)
-curl -fsSL https://deno.land/install.sh | sh
+### Setup Process
+1. **Clone Repository**
+   ```bash
+   git clone https://github.com/your-repo/avanticlassic.git
+   cd avanticlassic
+   ```
 
-# Clone repository
-git clone https://github.com/username/avanticlassic.git
-cd avanticlassic/ssg-eta
+2. **Install Dependencies**
+   ```bash
+   npm install
+   ```
 
-# Build site
-deno run --allow-read --allow-write main.ts
+3. **Environment Setup**
+   ```bash
+   cp .env.example .env.local
+   # Fill in your environment variables
+   ```
 
-# Watch for changes (development mode)
-deno run --allow-read --allow-write watch.ts
+4. **Run Development Server**
+   ```bash
+   npm run dev
+   ```
 
-# Serve locally
-cd _site && python3 -m http.server 8080
-```
+5. **Admin Panel Development**
+   ```bash
+   cd admin-panel
+   npm install
+   npm run dev
+   ```
 
-### Development Workflow
-1. **Edit Content**: Modify JSON files in `data/` directory
-2. **Update Templates**: Edit Eta templates in `eta-files/`
-3. **Add Assets**: Place images in `assets/` directory
-4. **Build Site**: Run build command to generate static files
-5. **Test Locally**: Serve and test generated site
-6. **Commit Changes**: Push to repository for deployment
+### Local URLs
+- **Main Site**: http://localhost:3000
+- **Admin Panel**: http://localhost:3000 (in admin-panel directory)
 
-## Content Deployment
+## Database Management
 
-### JSON Data Updates
-1. **Edit Data Files**: Update `data/*.json` files
-2. **Validate JSON**: Ensure proper JSON syntax
-3. **Update Translations**: Add/update content in `i18n/*.json`
-4. **Build and Test**: Generate site and verify changes
-5. **Deploy**: Commit and push changes
+### Supabase Production
+- **URL**: https://cfyndmpjohwtvzljtypr.supabase.co
+- **Management**: Via admin panel (content) and Supabase dashboard (schema)
+- **Backups**: Automatic daily backups via Supabase
+- **Migrations**: Applied directly via Supabase dashboard SQL editor
 
-### Asset Management
-```bash
-# Add new artist images
-assets/images/artists/
-├── {artistId}-800.jpeg     # Thumbnail
-├── {artistId}-1125.jpeg    # Medium
-└── {artistId}-1500.jpeg    # Full size
-
-# Add new release images
-assets/images/releases/
-├── {releaseId}.jpeg        # Thumbnail
-└── {releaseId}-1200.jpeg   # Full size
-```
-
-### Image Optimization
-- **Format**: JPEG for photos, PNG for graphics
-- **Quality**: 80-90% for optimal balance
-- **Sizes**: Multiple sizes for responsive design
-- **Compression**: Use tools like ImageOptim or TinyPNG
-
-## Production Deployment
-
-### Vercel Production Settings
-- **Domain**: Configure custom domain
-- **SSL**: Automatic HTTPS certificate
-- **CDN**: Global edge network
-- **Caching**: Static asset caching
-- **Performance**: Automatic optimization
-
-### Performance Optimization
-- **Static Generation**: Pre-rendered HTML
-- **Asset Optimization**: Compressed images and CSS
-- **CDN Distribution**: Global content delivery
-- **Caching Headers**: Long-term caching for static assets
+### Schema Updates
+1. **Test in Supabase Dashboard**: SQL editor for schema changes
+2. **Verify via Admin Panel**: Ensure admin functionality works
+3. **Document Changes**: Update CLAUDE.md with schema modifications
 
 ## Monitoring and Maintenance
 
-### Site Health Monitoring
-- **Uptime Monitoring**: Vercel provides basic monitoring
-- **Performance Metrics**: Core Web Vitals tracking
-- **Error Tracking**: Vercel Analytics integration
-- **SSL Certificate**: Automatic renewal
+### Performance Monitoring
+- **Vercel Analytics**: Built-in performance monitoring
+- **Core Web Vitals**: Tracked automatically
+- **Error Tracking**: Vercel Functions logs
 
-### Backup Strategy
-- **Git Repository**: Complete version history
-- **Asset Backup**: Regular backup of images and media
-- **Database Export**: JSON data files in version control
-- **Deployment History**: Vercel maintains deployment history
+### Regular Maintenance
+- **Dependencies**: Monthly `npm audit` and updates
+- **Database**: Monitor Supabase usage and performance
+- **Content**: Regular content updates via admin panel
+
+## Rollback Process
+
+### Emergency Rollback
+1. **Vercel Dashboard**: Revert to previous deployment
+2. **Git Revert**: `git revert <commit>` and push to main
+3. **Database**: Restore from Supabase backup if needed
+
+### Testing Before Rollback
+1. **Check Admin Panel**: Verify admin functionality
+2. **Test E-commerce**: Confirm Stripe payments work
+3. **Content Verification**: Ensure all content displays correctly
 
 ## Security Considerations
 
-### Static Site Security
-- **HTTPS**: Automatic SSL certificate
-- **No Server**: Reduced attack surface
-- **Content Security**: Static files only
-- **Access Control**: Git-based access management
+### Production Security
+- **HTTPS Only**: Enforced via Vercel
+- **Environment Variables**: Stored securely in Vercel dashboard
+- **Database Security**: Row Level Security (RLS) policies active
+- **Admin Authentication**: bcrypt password hashing with HTTP-only cookies
 
-### Asset Security
-- **Image Optimization**: Prevent malicious uploads
-- **File Validation**: Verify file types and sizes
-- **CDN Security**: Vercel security features
-- **Version Control**: Track all changes
+### Regular Security Updates
+- **Dependencies**: Regular security patches via `npm audit fix`
+- **Supabase Updates**: Automatic platform security updates
+- **Environment Rotation**: Regular API key rotation (quarterly)
 
-## Troubleshooting
+## Support and Troubleshooting
 
-### Common Build Issues
-1. **Deno Permission Errors**: Ensure proper `--allow-*` flags
-2. **JSON Syntax Errors**: Validate JSON files before build
-3. **Missing Assets**: Verify all referenced images exist
-4. **Template Errors**: Check Eta template syntax
-5. **Translation Issues**: Ensure all translation keys exist
+### Common Issues
+1. **Build Failures**: Check Vercel build logs
+2. **Database Errors**: Verify Supabase connection and RLS policies
+3. **Payment Issues**: Check Stripe webhook configuration
+4. **Admin Access**: Verify session management and authentication
 
-### Debug Commands
-```bash
-# Check Deno version
-deno --version
+### Getting Help
+- **Vercel Support**: Enterprise support via dashboard
+- **Supabase Support**: Community and documentation
+- **Stripe Support**: Developer documentation and support portal
 
-# Validate JSON files
-deno eval "JSON.parse(await Deno.readTextFile('data/artists.json'))"
+## Current Status (July 2025)
 
-# Check file permissions
-ls -la data/
+✅ **Production Ready**
+- Main website deployed and fully functional
+- Admin panel operational with role-based access
+- E-commerce system with Stripe Express Checkout
+- SEO optimization complete with AI/LLM search support
+- Multilingual system (EN/FR/DE) operational
+- Content management via admin panel working
 
-# Test build process
-deno run --allow-read --allow-write --check main.ts
-```
-
-### Performance Issues
-- **Build Time**: Optimize template rendering
-- **Asset Size**: Compress images and optimize assets
-- **CDN Caching**: Configure appropriate cache headers
-- **Code Splitting**: Separate critical and non-critical assets
-
-## Future Deployment Enhancements
-
-### Automated Testing
-- **Pre-deployment Tests**: Validate content before deployment
-- **Visual Regression**: Screenshot comparison testing
-- **Performance Tests**: Lighthouse CI integration
-- **Link Validation**: Check all external links
-
-### Advanced CI/CD
-```yaml
-# GitHub Actions workflow
-name: Deploy to Vercel
-on:
-  push:
-    branches: [main]
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: v1.x
-      - run: deno run --allow-read --allow-write main.ts
-      - uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-```
-
-### Content Management Integration
-- **CMS Integration**: Headless CMS for content management
-- **Automated Builds**: Trigger builds on content changes
-- **Preview Deployments**: Staging environment for content review
-- **Rollback Capability**: Quick revert to previous versions
-
-## Alternative Hosting Options
-
-### Netlify
-- **Similar Features**: Static site hosting with CDN
-- **Build Process**: Same Deno build command
-- **Cost**: Free tier available
-- **Benefits**: Built-in form handling, edge functions
-
-### GitHub Pages
-- **Free Hosting**: For open-source projects
-- **GitHub Integration**: Direct repository deployment
-- **Custom Domain**: Support for custom domains
-- **Limitations**: No server-side processing
-
-### AWS S3 + CloudFront
-- **S3 Storage**: Static file hosting
-- **CloudFront CDN**: Global content delivery
-- **Cost Control**: Pay-per-use pricing
-- **Scalability**: Handle traffic spikes
-
-## Cost Optimization
-
-### Vercel Pricing
-- **Hobby Plan**: Free for personal projects
-- **Pro Plan**: $20/month for commercial use
-- **Enterprise**: Custom pricing for large organizations
-
-### Resource Optimization
-- **Image Compression**: Reduce storage and bandwidth
-- **Code Minification**: Smaller file sizes
-- **CDN Caching**: Reduce origin requests
-- **Asset Bundling**: Combine resources efficiently
-
-## Disaster Recovery
-
-### Backup Procedures
-1. **Repository Backup**: Git repository with all code and content
-2. **Asset Backup**: Regular backup of images and media files
-3. **Configuration Backup**: Deployment settings and environment variables
-4. **Database Export**: JSON data files in version control
-
-### Recovery Process
-1. **Restore Repository**: Clone from backup location
-2. **Restore Assets**: Upload images and media files
-3. **Rebuild Site**: Generate fresh static files
-4. **Redeploy**: Deploy to hosting platform
-5. **Verify**: Test all functionality after recovery
-
-### Testing Recovery
-- **Regular Tests**: Monthly disaster recovery tests
-- **Documentation**: Keep recovery procedures updated
-- **Automation**: Automate backup and recovery processes
-- **Monitoring**: Alert on backup failures
+✅ **Performance Optimized**
+- Next.js 15 App Router for optimal performance
+- Infinite scroll implemented across all content pages
+- Core Web Vitals optimized
+- CDN distribution via Vercel Edge Network

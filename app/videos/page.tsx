@@ -21,22 +21,6 @@ interface Video {
   description?: string
 }
 
-// Legacy videos from old SSG site
-const legacyVideos: Video[] = [
-  { id: "legacy-1", youtubeId: "aHsF6g6iHy4", title: "Roby Lakatos Biréli Lagrène - Tribute to Stéphane & Django", artistName: "Roby Lakatos" },
-  { id: "legacy-2", youtubeId: "iYSvHYKX4Ms", title: "HOMILIA - New Album! Manu Comté & B'Strings Quintet feat. Tomás Gubitsch", artistName: "Manu Comté" },
-  { id: "legacy-3", youtubeId: "tjGkbx1JA6Q", title: "ROBY LAKATOS plays « Du Schwarzer Zigeuner » from the new album 'LA PASSION'", artistName: "Roby Lakatos" },
-  { id: "legacy-4", youtubeId: "RsJY-BIcLhg", title: "Trailer to the upcoming album of Duo Lechner Tiempo \"Tango Rhapsody\"", artistName: "Sergio Tiempo" },
-  { id: "legacy-5", youtubeId: "rWXaVSD9mwE", title: "Alexander Gurning on Bach's Goldberg Variations", artistName: "Alexander Gurning" },
-  { id: "legacy-6", youtubeId: "u_A7Tgg8zD4", title: "Duo Lechner Tiempo: La Muerte del Ángel by Ástor Piazzolla", artistName: "Sergio Tiempo" },
-  { id: "legacy-7", youtubeId: "pTBbGE5iBEE", title: "Philippe Quint plays Bruch, Mendelssohn and Beethoven", artistName: "Philippe Quint" },
-  { id: "legacy-8", youtubeId: "M7D6tCB9AqA", title: "Roby Lakatos - Romania from the album Klezmer Karma", artistName: "Roby Lakatos" },
-  { id: "legacy-9", youtubeId: "omuZF6oaCnw", title: "Duo Lechner Tiempo: Variations on a Theme by Paganini", artistName: "Sergio Tiempo" },
-  { id: "legacy-10", youtubeId: "wc7Lksz1aBM", title: "Duo Lechner Tiempo: \"Slavonic Dance, Op. 72, No. 2 in E minor\" by Antonin Dvořák", artistName: "Sergio Tiempo" },
-  { id: "legacy-11", youtubeId: "9U3F7yP6Mxk", title: "Roby Lakatos - Hejre Kati from the album Fire Dance", artistName: "Roby Lakatos" },
-  { id: "legacy-12", youtubeId: "8_oIqWuSu5o", title: "WUNDERHORN", artistName: "Dietrich Henschel" },
-  { id: "legacy-13", youtubeId: "-rV5CcK1hd4", title: "RENDEZ-VOUS WITH MARTHA ARGERICH volume 3", artistName: "Martha Argerich" }
-]
 
 export default function VideosPage() {
   // State management
@@ -67,17 +51,14 @@ export default function VideosPage() {
       if (response.ok) {
         const data = await response.json()
         const apiVideos = data.videos || []
-        
-        // Combine API videos with legacy videos
-        const combinedVideos = [...apiVideos, ...legacyVideos]
-        setAllVideos(combinedVideos)
+        setAllVideos(apiVideos)
       } else {
-        // Fallback to legacy videos only
-        setAllVideos(legacyVideos)
+        console.error('Failed to fetch videos from API')
+        setAllVideos([])
       }
     } catch (error) {
       console.error('Error fetching videos:', error)
-      setAllVideos(legacyVideos)
+      setAllVideos([])
     } finally {
       setLoading(false)
     }
