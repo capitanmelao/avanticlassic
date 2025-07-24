@@ -15,7 +15,6 @@ import {
   StarIcon,
   InformationCircleIcon,
   Cog6ToothIcon,
-  UsersIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   Bars3Icon,
