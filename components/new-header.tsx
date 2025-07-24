@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { Menu, Search, User, ShoppingCart, Facebook, Youtube } from "lucide-react"
+import { Menu, Facebook, Youtube } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 import { useTranslations } from "@/lib/translations"
 
@@ -107,22 +107,6 @@ export default function NewHeader() {
           </Link>
         </nav>
         <div className="flex items-center gap-2 md:gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
-          >
-            <Search className="h-5 w-5" />
-            <span className="sr-only">{t.navigation.search}</span>
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="hidden md:inline-flex text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
-          >
-            <User className="h-5 w-5" />
-            <span className="sr-only">{t.navigation.myAccount}</span>
-          </Button>
           <Sheet>
             <SheetTrigger asChild>
               <div className="flex items-center gap-2">
