@@ -103,7 +103,16 @@ export default function EditReleasePage({ params }: { params: { id: string } }) 
     setError(null)
 
     try {
-      const updateData: any = {
+      const updateData: {
+        title: string;
+        url: string;
+        shop_url: string | null;
+        release_date: string | null;
+        catalog_number: string | null;
+        featured: boolean;
+        stripe_payment_link: string | null;
+        price?: number | null;
+      } = {
         title: formData.title,
         url: formData.url,
         shop_url: formData.shop_url || null,
