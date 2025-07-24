@@ -18,11 +18,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   Bars3Icon,
-  XMarkIcon,
-  CubeIcon,
-  ClipboardDocumentListIcon,
-  UserIcon,
-  ChartBarIcon
+  XMarkIcon
 } from '@heroicons/react/24/outline'
 
 interface NavItem {
@@ -41,13 +37,7 @@ const allNavigation: NavItem[] = [
   { name: 'Playlists', href: '/dashboard/playlists', icon: ListBulletIcon, countKey: 'playlists' },
   { name: 'Reviews', href: '/dashboard/reviews', icon: StarIcon, countKey: 'reviews' },
   { name: 'Distributors', href: '/dashboard/distributors', icon: InformationCircleIcon, countKey: 'distributors' },
-  // Shop Section
-  { name: 'Products', href: '/dashboard/shop/products', icon: CubeIcon, countKey: 'products' },
-  { name: 'Orders', href: '/dashboard/shop/orders', icon: ClipboardDocumentListIcon, countKey: 'orders' },
-  { name: 'Customers', href: '/dashboard/shop/customers', icon: UserIcon, countKey: 'customers' },
-  { name: 'Inventory', href: '/dashboard/shop/inventory', icon: ChartBarIcon },
   { name: 'Settings', href: '/dashboard/settings', icon: Cog6ToothIcon, restrictedTo: 'super_admin' },
-  { name: 'Migration', href: '/dashboard/admin/migrate-releases', icon: Cog6ToothIcon, restrictedTo: 'super_admin' },
 ]
 
 interface AdminSidebarProps {

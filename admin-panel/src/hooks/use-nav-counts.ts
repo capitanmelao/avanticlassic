@@ -8,9 +8,6 @@ interface NavCounts {
   playlists: number
   reviews: number
   distributors: number
-  products: number
-  orders: number
-  customers: number
 }
 
 export function useNavCounts() {
@@ -20,10 +17,7 @@ export function useNavCounts() {
     videos: 0,
     playlists: 0,
     reviews: 0,
-    distributors: 0,
-    products: 0,
-    orders: 0,
-    customers: 0
+    distributors: 0
   })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -41,20 +35,14 @@ export function useNavCounts() {
           videosResult,
           playlistsResult,
           reviewsResult,
-          distributorsResult,
-          productsResult,
-          ordersResult,
-          customersResult
+          distributorsResult
         ] = await Promise.all([
           supabase.from('artists').select('id', { count: 'exact', head: true }),
           supabase.from('releases').select('id', { count: 'exact', head: true }),
           supabase.from('videos').select('id', { count: 'exact', head: true }),
           supabase.from('playlists').select('id', { count: 'exact', head: true }),
           supabase.from('reviews').select('id', { count: 'exact', head: true }),
-          supabase.from('distributors').select('id', { count: 'exact', head: true }),
-          supabase.from('products').select('id', { count: 'exact', head: true }),
-          supabase.from('orders').select('id', { count: 'exact', head: true }),
-          supabase.from('customers').select('id', { count: 'exact', head: true })
+          supabase.from('distributors').select('id', { count: 'exact', head: true })
         ])
 
         // Check for any errors
@@ -64,10 +52,7 @@ export function useNavCounts() {
           videosResult.error,
           playlistsResult.error,
           reviewsResult.error,
-          distributorsResult.error,
-          productsResult.error,
-          ordersResult.error,
-          customersResult.error
+          distributorsResult.error
         ].filter(Boolean)
 
         if (errors.length > 0) {
@@ -82,10 +67,7 @@ export function useNavCounts() {
           videos: videosResult.count || 0,
           playlists: playlistsResult.count || 0,
           reviews: reviewsResult.count || 0,
-          distributors: distributorsResult.count || 0,
-          products: productsResult.count || 0,
-          orders: ordersResult.count || 0,
-          customers: customersResult.count || 0
+          distributors: distributorsResult.count || 0
         })
       } catch (err) {
         console.error('Error fetching navigation counts:', err)
