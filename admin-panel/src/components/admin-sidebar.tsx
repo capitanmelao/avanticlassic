@@ -47,7 +47,6 @@ const allNavigation: NavItem[] = [
   { name: 'Orders', href: '/dashboard/shop/orders', icon: ClipboardDocumentListIcon, countKey: 'orders' },
   { name: 'Customers', href: '/dashboard/shop/customers', icon: UserIcon, countKey: 'customers' },
   { name: 'Inventory', href: '/dashboard/shop/inventory', icon: ChartBarIcon },
-  { name: 'Users', href: '/dashboard/users', icon: UsersIcon, countKey: 'users', restrictedTo: 'super_admin' },
   { name: 'Settings', href: '/dashboard/settings', icon: Cog6ToothIcon, restrictedTo: 'super_admin' },
   { name: 'Migration', href: '/dashboard/admin/migrate-releases', icon: Cog6ToothIcon, restrictedTo: 'super_admin' },
 ]

@@ -8,7 +8,6 @@ interface NavCounts {
   playlists: number
   reviews: number
   distributors: number
-  users: number
   products: number
   orders: number
   customers: number
@@ -22,7 +21,6 @@ export function useNavCounts() {
     playlists: 0,
     reviews: 0,
     distributors: 0,
-    users: 0,
     products: 0,
     orders: 0,
     customers: 0
@@ -44,7 +42,6 @@ export function useNavCounts() {
           playlistsResult,
           reviewsResult,
           distributorsResult,
-          usersResult,
           productsResult,
           ordersResult,
           customersResult
@@ -55,7 +52,6 @@ export function useNavCounts() {
           supabase.from('playlists').select('id', { count: 'exact', head: true }),
           supabase.from('reviews').select('id', { count: 'exact', head: true }),
           supabase.from('distributors').select('id', { count: 'exact', head: true }),
-          supabase.from('admin_users').select('id', { count: 'exact', head: true }),
           supabase.from('products').select('id', { count: 'exact', head: true }),
           supabase.from('orders').select('id', { count: 'exact', head: true }),
           supabase.from('customers').select('id', { count: 'exact', head: true })
@@ -69,7 +65,6 @@ export function useNavCounts() {
           playlistsResult.error,
           reviewsResult.error,
           distributorsResult.error,
-          usersResult.error,
           productsResult.error,
           ordersResult.error,
           customersResult.error
@@ -88,7 +83,6 @@ export function useNavCounts() {
           playlists: playlistsResult.count || 0,
           reviews: reviewsResult.count || 0,
           distributors: distributorsResult.count || 0,
-          users: usersResult.count || 0,
           products: productsResult.count || 0,
           orders: ordersResult.count || 0,
           customers: customersResult.count || 0
