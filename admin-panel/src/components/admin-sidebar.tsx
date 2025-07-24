@@ -88,9 +88,8 @@ export default function AdminSidebar({ children }: AdminSidebarProps) {
               <img 
                 src="/images/logo.jpeg" 
                 alt="Avanti Classic" 
-                className="h-8 w-auto"
+                className="h-8 w-auto filter invert dark:invert-0"
               />
-              <span className="ml-2 text-white font-semibold text-lg">Admin</span>
             </div>
           )}
           
