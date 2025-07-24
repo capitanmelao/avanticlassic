@@ -6,7 +6,6 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ChevronLeft, ExternalLink, ShoppingCart } from "lucide-react"
-import { useCart } from '@/contexts/cart-context'
 import ReviewsSection from '@/components/releases/reviews-section'
 import { useLanguage } from '@/contexts/language-context'
 
@@ -1000,35 +999,35 @@ Sebastian Wypych : conductor, artistic director & founder`,
   }
 ]
 
-// Buy Section Component for format selection
-function BuySection({ releaseId, releaseTitle, releaseArtist, releaseImage, releaseCatalog }: { 
-  releaseId: string
-  releaseTitle: string
-  releaseArtist: string
-  releaseImage: string
-  releaseCatalog: string
-}) {
-  const [formats, setFormats] = useState<any[]>([])
+// Buy Section Component with simplified payment links
+function BuySection({ releaseId }: { releaseId: string }) {
+  const [releaseData, setReleaseData] = useState<{ price: number | null; stripe_payment_link: string | null } | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const { addItem } = useCart()
 
   useEffect(() => {
-    async function fetchFormats() {
+    async function fetchReleaseData() {
       try {
         setIsLoading(true)
         setError(null)
         
-        const response = await fetch(`/api/products/by-release/${releaseId}`)
-        if (!response.ok) {
-          throw new Error('Failed to fetch products')
+        // Use Supabase client to get release payment data
+        const { createClient } = await import('@/lib/supabase/browser')
+        const supabase = createClient()
+        
+        const { data, error } = await supabase
+          .from('releases')
+          .select('price, stripe_payment_link')
+          .eq('id', releaseId)
+          .single()
+        
+        if (error) {
+          throw error
         }
         
-        const data = await response.json()
-        console.log('API Response:', data) // Debug log
-        setFormats(data.formats || [])
+        setReleaseData(data)
       } catch (err) {
-        console.error('Error fetching formats:', err)
+        console.error('Error fetching release data:', err)
         setError('Failed to load purchase options')
       } finally {
         setIsLoading(false)
@@ -1036,28 +1035,19 @@ function BuySection({ releaseId, releaseTitle, releaseArtist, releaseImage, rele
     }
 
     if (releaseId) {
-      fetchFormats()
+      fetchReleaseData()
     }
   }, [releaseId])
 
-  const handleAddToCart = (format: any) => {
-    addItem({
-      productId: format.id,
-      priceId: format.priceId || format.id, // Use actual price ID
-      name: releaseTitle,
-      artist: releaseArtist,
-      format: format.format,
-      image: releaseImage,
-      price: format.price / 100, // Convert from cents
-      catalog: releaseCatalog,
-      metadata: format.metadata || {} // Include metadata for tax/shipping overrides
-    })
+  const handleBuyNow = () => {
+    if (releaseData?.stripe_payment_link) {
+      window.open(releaseData.stripe_payment_link, '_blank')
+    }
   }
 
   if (isLoading) {
     return (
       <div className="flex gap-2">
-        <div className="animate-pulse bg-gray-200 h-8 w-20 rounded"></div>
         <div className="animate-pulse bg-gray-200 h-8 w-20 rounded"></div>
       </div>
     )
@@ -1067,24 +1057,21 @@ function BuySection({ releaseId, releaseTitle, releaseArtist, releaseImage, rele
     return <div className="text-red-600 text-sm">{error}</div>
   }
 
-  if (formats.length === 0) {
+  if (!releaseData?.price || !releaseData?.stripe_payment_link) {
     return <div className="text-gray-500 text-sm">No purchase options available</div>
   }
 
   return (
     <div className="flex flex-wrap gap-2">
-      {formats.map((format) => (
-        <Button
-          key={format.id}
-          variant="outline"
-          size="sm"
-          onClick={() => handleAddToCart(format)}
-          disabled={!format.available}
-        >
-          <ShoppingCart className="h-4 w-4 mr-2" />
-          {format.format} - €{(format.price / 100).toFixed(2)}
-        </Button>
-      ))}
+      <Button
+        variant="default"
+        size="sm"
+        onClick={handleBuyNow}
+        className="bg-primary hover:bg-primary/90"
+      >
+        <ShoppingCart className="h-4 w-4 mr-2" />
+        Buy Now - €{releaseData.price.toFixed(2)}
+      </Button>
     </div>
   )
 }
@@ -1208,13 +1195,7 @@ export default function ReleaseDetailPage({ params }: { params: { id: string } }
           )}
           
           <div className="flex flex-wrap gap-2 pt-6">
-            <BuySection 
-              releaseId={release.id}
-              releaseTitle={release.title}
-              releaseArtist={release.artists}
-              releaseImage={release.imageUrl || "/placeholder.svg"}
-              releaseCatalog={release.format || ""}
-            />
+            <BuySection releaseId={release.id} />
             <Button asChild variant="outline" size="sm">
               <Link href="#" target="_blank" rel="noopener noreferrer">
                 <ExternalLink className="h-4 w-4 mr-2" />
