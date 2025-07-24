@@ -36,6 +36,8 @@ interface Release {
   image_url?: string
   featured: boolean
   sort_order: number
+  price?: number
+  stripe_payment_link?: string
   created_at?: string
   updated_at?: string
   video_count?: number
@@ -145,6 +147,28 @@ function SortableItem({ id, release, onDelete }: SortableItemProps) {
         ) : (
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">
             No reviews
+          </span>
+        )}
+      </td>
+      <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+        {release.price ? (
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+            €{release.price.toFixed(2)}
+          </span>
+        ) : (
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">
+            No price
+          </span>
+        )}
+      </td>
+      <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+        {release.stripe_payment_link ? (
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+            Payment Link
+          </span>
+        ) : (
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">
+            No link
           </span>
         )}
       </td>
@@ -379,6 +403,12 @@ export default function ReleasesPage() {
                   </th>
                   <th scope="col" className="w-1/6 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Reviews
+                  </th>
+                  <th scope="col" className="w-1/6 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Price
+                  </th>
+                  <th scope="col" className="w-1/6 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Payment Link
                   </th>
                   <th scope="col" className="w-1/6 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
