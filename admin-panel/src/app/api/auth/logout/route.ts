@@ -1,21 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { logout } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
-    const sessionToken = request.cookies.get('session-token')?.value
-
-    if (sessionToken) {
-      await logout(sessionToken)
-    }
-
     const response = NextResponse.json({ success: true })
     
     // Clear session cookie
-    response.cookies.set('session-token', '', {
+    response.cookies.set('admin-session', '', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: 'strict',
       maxAge: 0
     })
 

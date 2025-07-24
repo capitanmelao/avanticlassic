@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getCurrentUser } from '@/lib/auth'
+import { parseSessionToken } from '@/lib/session'
 
 export async function GET(request: NextRequest) {
   try {
-    const sessionToken = request.cookies.get('session-token')?.value
+    const sessionToken = request.cookies.get('admin-session')?.value
 
     if (!sessionToken) {
       return NextResponse.json(
@@ -12,16 +12,16 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const user = await getCurrentUser(sessionToken)
+    const sessionData = parseSessionToken(sessionToken)
 
-    if (!user) {
+    if (!sessionData) {
       return NextResponse.json(
         { error: 'Invalid session' },
         { status: 401 }
       )
     }
 
-    return NextResponse.json({ user })
+    return NextResponse.json({ user: sessionData.user })
 
   } catch (error) {
     console.error('Get current user error:', error)
