@@ -33,13 +33,14 @@ interface ReleaseFormData {
   stripe_payment_link: string
 }
 
-export default function EditReleasePage({ params }: { params: { id: string } }) {
+export default function EditReleasePage({ params }: { params: Promise<{ id: string }> }) {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [release, setRelease] = useState<Release | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [releaseId, setReleaseId] = useState<string | null>(null)
   const [formData, setFormData] = useState<ReleaseFormData>({
     title: '',
     url: '',
@@ -58,10 +59,16 @@ export default function EditReleasePage({ params }: { params: { id: string } }) 
   }, [status, router])
 
   useEffect(() => {
-    if (params.id) {
+    params.then(({ id }) => {
+      setReleaseId(id)
+    })
+  }, [params])
+
+  useEffect(() => {
+    if (releaseId) {
       loadRelease()
     }
-  }, [params.id])
+  }, [releaseId])
 
   const loadRelease = async () => {
     try {
@@ -70,7 +77,7 @@ export default function EditReleasePage({ params }: { params: { id: string } }) 
       const { data, error } = await supabase
         .from('releases')
         .select('*')
-        .eq('id', params.id)
+        .eq('id', releaseId)
         .single()
 
       if (error) {
@@ -135,7 +142,7 @@ export default function EditReleasePage({ params }: { params: { id: string } }) 
       const { error } = await supabase
         .from('releases')
         .update(updateData)
-        .eq('id', params.id)
+        .eq('id', releaseId)
 
       if (error) {
         throw error
