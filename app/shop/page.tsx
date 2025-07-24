@@ -50,8 +50,6 @@ async function getAllReleases(): Promise<Release[]> {
           )
         )
       `)
-      .not('price', 'is', null) // Only include releases with prices
-      .not('stripe_payment_link', 'is', null) // Only include releases with payment links
       .order('featured', { ascending: false }) // Featured first
       .order('sort_order', { ascending: true })
     
@@ -68,13 +66,48 @@ async function getAllReleases(): Promise<Release[]> {
 }
 
 function ReleaseCard({ release }: { release: Release }) {
-  if (!release.price || !release.stripe_payment_link) {
-    return null
+  const handleBuyNow = () => {
+    if (release.stripe_payment_link) {
+      // Redirect directly to Stripe Payment Link
+      window.open(release.stripe_payment_link, '_blank')
+    }
   }
   
-  const handleBuyNow = () => {
-    // Redirect directly to Stripe Payment Link
-    window.open(release.stripe_payment_link!, '_blank')
+  const renderActionButton = () => {
+    if (release.stripe_payment_link && release.price) {
+      // Has both price and payment link - show Buy Now
+      return (
+        <Button 
+          size="sm" 
+          className="bg-primary hover:bg-primary/90"
+          onClick={handleBuyNow}
+        >
+          Buy Now
+        </Button>
+      )
+    } else if (release.price && !release.stripe_payment_link) {
+      // Has price but no payment link - show Coming Soon
+      return (
+        <Button 
+          size="sm" 
+          variant="outline"
+          disabled
+        >
+          Coming Soon
+        </Button>
+      )
+    } else {
+      // No price set - show Contact Us
+      return (
+        <Button 
+          size="sm" 
+          variant="outline"
+          disabled
+        >
+          Contact Us
+        </Button>
+      )
+    }
   }
   
   return (
@@ -106,17 +139,17 @@ function ReleaseCard({ release }: { release: Release }) {
           <p className="text-xs text-gray-500">{release.catalog_number}</p>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-lg font-bold text-primary">
-                €{release.price!.toFixed(2)}
-              </span>
+              {release.price ? (
+                <span className="text-lg font-bold text-primary">
+                  €{release.price.toFixed(2)}
+                </span>
+              ) : (
+                <span className="text-sm text-gray-500">
+                  Price TBA
+                </span>
+              )}
             </div>
-            <Button 
-              size="sm" 
-              className="bg-primary hover:bg-primary/90"
-              onClick={handleBuyNow}
-            >
-              Buy Now
-            </Button>
+            {renderActionButton()}
           </div>
         </div>
       </CardContent>
@@ -253,9 +286,9 @@ export default function ShopPage() {
             </>
           ) : (
             <div className="text-center py-20">
-              <h3 className="text-2xl font-semibold mb-4">No releases available for purchase</h3>
+              <h3 className="text-2xl font-semibold mb-4">No releases found</h3>
               <p className="text-muted-foreground mb-6">
-                Releases with pricing will appear here when they become available
+                Check back soon for new releases from our artists
               </p>
             </div>
           )}
