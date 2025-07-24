@@ -6,7 +6,6 @@ import "./globals.css"
 import { cn } from "@/lib/utils"
 import { ThemeProvider } from "@/components/theme-provider"
 import { LanguageProvider } from "@/contexts/language-context"
-import { CartProvider } from "@/contexts/cart-context"
 import NewHeader from "@/components/new-header" // Using the new header
 import Footer from "@/components/footer"
 
@@ -105,13 +104,11 @@ export default function RootLayout({
       <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable, playfairDisplay.variable)}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           <LanguageProvider>
-            <CartProvider>
-              <div className="flex flex-col min-h-screen">
-                <NewHeader /> {/* Render the new header */}
-                <main className="flex-1">{children}</main>
-                <Footer />
-              </div>
-            </CartProvider>
+            <div className="flex flex-col min-h-screen">
+              <NewHeader /> {/* Render the new header */}
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
           </LanguageProvider>
         </ThemeProvider>
       </body>

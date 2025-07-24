@@ -9,7 +9,6 @@ import { useTranslations } from "@/lib/translations"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { CartDropdown, CartButton } from "@/components/shop/cart-dropdown"
 
 export default function NewHeader() {
   const { language, setLanguage } = useLanguage()
@@ -124,11 +123,9 @@ export default function NewHeader() {
             <User className="h-5 w-5" />
             <span className="sr-only">{t.navigation.myAccount}</span>
           </Button>
-          <CartDropdown />
           <Sheet>
             <SheetTrigger asChild>
               <div className="flex items-center gap-2">
-                <CartButton />
                 <Button
                   variant="ghost"
                   size="icon"
